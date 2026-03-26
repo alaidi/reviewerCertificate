@@ -1,0 +1,168 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: OJS Reviewer Certificate Plugin 1.0.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-03-22\n"
+"PO-Revision-Date: 2026-03-22\n"
+"Last-Translator: \n"
+"Language-Team: Arabic\n"
+"Language: ar\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+msgid "plugins.generic.reviewerCertificate.displayName"
+msgstr "إضافة شهادة المحكّم"
+
+msgid "plugins.generic.reviewerCertificate.description"
+msgstr "تُنشئ هذه الإضافة شهادة تقدير قابلة للطباعة للمحكّمين الذين أتمّوا مهمة التحكيم."
+
+msgid "plugins.generic.reviewerCertificate.settings.description"
+msgstr "قم بتهيئة المعلومات التي ستظهر على شهادات المحكّمين."
+
+msgid "plugins.generic.reviewerCertificate.settings.editorSection"
+msgstr "رئيس التحرير"
+
+msgid "plugins.generic.reviewerCertificate.settings.editorName"
+msgstr "اسم رئيس التحرير"
+
+msgid "plugins.generic.reviewerCertificate.settings.editorTitle"
+msgstr "لقب المحرر (يظهر أسفل التوقيع)"
+
+msgid "plugins.generic.reviewerCertificate.settings.editorNameFontSize"
+msgstr "حجم خط الاسم"
+
+msgid "plugins.generic.reviewerCertificate.settings.editorNameColor"
+msgstr "لون الاسم"
+
+msgid "plugins.generic.reviewerCertificate.settings.journalNameSection"
+msgstr "مظهر اسم المجلة"
+
+msgid "plugins.generic.reviewerCertificate.settings.journalNameFontSize"
+msgstr "حجم خط اسم المجلة"
+
+msgid "plugins.generic.reviewerCertificate.settings.journalNameColor"
+msgstr "لون اسم المجلة"
+
+msgid "plugins.generic.reviewerCertificate.settings.themeSection"
+msgstr "نمط الألوان"
+
+msgid "plugins.generic.reviewerCertificate.settings.themePresets"
+msgstr "أنماط جاهزة:"
+
+msgid "plugins.generic.reviewerCertificate.settings.themePresetsHelp"
+msgstr "النقر على نمط يملأ حقول الألوان الثلاثة أدناه تلقائياً. يمكنك تعديلها يدوياً بعد ذلك."
+
+msgid "plugins.generic.reviewerCertificate.settings.themeGold"
+msgstr "ذهبي كلاسيكي"
+
+msgid "plugins.generic.reviewerCertificate.settings.themeBlue"
+msgstr "أزرق أكاديمي"
+
+msgid "plugins.generic.reviewerCertificate.settings.themeDark"
+msgstr "داكن بسيط"
+
+msgid "plugins.generic.reviewerCertificate.settings.themeEmerald"
+msgstr "زمردي"
+
+msgid "plugins.generic.reviewerCertificate.settings.accentColor"
+msgstr "لون التمييز (الحدود والزخارف)"
+
+msgid "plugins.generic.reviewerCertificate.settings.bodySection"
+msgstr "نص الشهادة"
+
+msgid "plugins.generic.reviewerCertificate.settings.certificateBody"
+msgstr "نص مخصص"
+
+msgid "plugins.generic.reviewerCertificate.settings.certificateBodyPlaceholder"
+msgstr "تقديراً للوقت والخبرة والتفاني في العمل محكّماً لمجلة {journalName}، وإقراراً بإتمام مراجعة المخطوطة {submissionTitle}."
+
+msgid "plugins.generic.reviewerCertificate.settings.certificateBodyHelp"
+msgstr "اكتب فقرة نص الشهادة. استخدم {journalName} و{submissionTitle} كمتغيرات تُستبدل بالقيم الفعلية عند العرض. اتركه فارغاً لاستخدام النص المترجم الافتراضي."
+
+msgid "plugins.generic.reviewerCertificate.settings.qrSection"
+msgstr "رمز QR"
+
+msgid "plugins.generic.reviewerCertificate.settings.enableQrCode"
+msgstr "عرض رمز QR على الشهادة للتحقق الفوري"
+
+msgid "plugins.generic.reviewerCertificate.settings.qrHelp"
+msgstr "سيظهر رمز QR صغير يرتبط برابط الشهادة في الزاوية السفلية. يمكن لأي شخص مسحه للتحقق من صحة الشهادة."
+
+msgid "plugins.generic.reviewerCertificate.settings.signatureSection"
+msgstr "صورة التوقيع"
+
+msgid "plugins.generic.reviewerCertificate.settings.signatureUrl"
+msgstr "رابط صورة التوقيع"
+
+msgid "plugins.generic.reviewerCertificate.settings.signatureUrlHelp"
+msgstr "أدخل الرابط الكامل لصورة التوقيع (يُفضّل PNG بخلفية شفافة). اتركه فارغاً لإظهار خط التوقيع الفارغ."
+
+msgid "plugins.generic.reviewerCertificate.settings.logoSection"
+msgstr "شعار المجلة"
+
+msgid "plugins.generic.reviewerCertificate.settings.customLogoUrl"
+msgstr "رابط شعار مخصص (اختياري)"
+
+msgid "plugins.generic.reviewerCertificate.settings.customLogoUrlHelp"
+msgstr "أدخل رابطاً لشعار مخصص لاستبدال شعار المجلة الافتراضي. اتركه فارغاً لاستخدام الشعار المحدد في إعدادات الموقع."
+
+msgid "plugins.generic.reviewerCertificate.settings.uploadImage"
+msgstr "رفع صورة"
+
+msgid "plugins.generic.reviewerCertificate.settings.imageSize"
+msgstr "حجم العرض (الارتفاع)"
+
+msgid "plugins.generic.reviewerCertificate.settings.uploadHelp"
+msgstr "انقر أو اسحب وأفلت صورة JPEG أو PNG أو GIF أو WebP."
+
+msgid "plugins.generic.reviewerCertificate.settings.backgroundSection"
+msgstr "خلفية الشهادة"
+
+msgid "plugins.generic.reviewerCertificate.settings.backgroundImageUrl"
+msgstr "رابط صورة الخلفية (اختياري)"
+
+msgid "plugins.generic.reviewerCertificate.settings.backgroundImageUrlHelp"
+msgstr "أدخل رابط صورة لاستخدامها كخلفية للشهادة. اتركه فارغاً للخلفية البيضاء الافتراضية."
+
+msgid "plugins.generic.reviewerCertificate.certificate.print"
+msgstr "طباعة / حفظ بصيغة PDF"
+
+msgid "plugins.generic.reviewerCertificate.certificate.heading"
+msgstr "شهادة تقدير"
+
+msgid "plugins.generic.reviewerCertificate.certificate.subheading"
+msgstr "تقدير التحكيم العلمي"
+
+msgid "plugins.generic.reviewerCertificate.certificate.presentedTo"
+msgstr "تُمنح هذه الشهادة بفخر إلى"
+
+msgid "plugins.generic.reviewerCertificate.certificate.body"
+msgstr "تقديراً للوقت والخبرة والتفاني في العمل محكّماً لمجلة <em>{$journalName}</em>، وإقراراً بإتمام مراجعة المخطوطة الموسومة بـ <strong>{$submissionTitle}</strong>."
+
+msgid "plugins.generic.reviewerCertificate.certificate.completedOn"
+msgstr "تاريخ إتمام التحكيم:"
+
+msgid "plugins.generic.reviewerCertificate.certificate.editorSignature"
+msgstr "رئيس التحرير"
+
+msgid "plugins.generic.reviewerCertificate.certificate.date"
+msgstr "التاريخ"
+
+msgid "plugins.generic.reviewerCertificate.email.certificateSubject"
+msgstr "شهادة التقدير الخاصة بك جاهزة"
+
+msgid "plugins.generic.reviewerCertificate.email.certificateLabel"
+msgstr "تحميل الشهادة"
+
+msgid "plugins.generic.reviewerCertificate.email.certificateNotice"
+msgstr "شكراً لإتمامك عملية التحكيم. يمكنك الآن تحميل شهادة التقدير الخاصة بك بالنقر على الزر أدناه."
+
+msgid "plugins.generic.reviewerCertificate.certificate.verify"
+msgstr "تحقق"
+
+msgid "plugins.generic.reviewerCertificate.error.title"
+msgstr "الشهادة غير متاحة"
+
+msgid "plugins.generic.reviewerCertificate.error.notCompleted"
+msgstr "لا يمكن إصدار الشهادة لأن مهمة التحكيم لم تكتمل بعد."

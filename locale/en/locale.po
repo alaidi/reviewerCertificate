@@ -1,0 +1,171 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: OJS Reviewer Certificate Plugin 1.0.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-03-22\n"
+"PO-Revision-Date: 2026-03-22\n"
+"Last-Translator: \n"
+"Language-Team: English\n"
+"Language: en\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+msgid "plugins.generic.reviewerCertificate.displayName"
+msgstr "Reviewer Certificate Plugin"
+
+msgid "plugins.generic.reviewerCertificate.description"
+msgstr "Generates a printable appreciation certificate for reviewers who have completed their peer-review assignment."
+
+msgid "plugins.generic.reviewerCertificate.certificate.title"
+msgstr "Certificate of Appreciation"
+
+msgid "plugins.generic.reviewerCertificate.certificate.print"
+msgstr "Print / Save as PDF"
+
+msgid "plugins.generic.reviewerCertificate.certificate.heading"
+msgstr "Certificate of Appreciation"
+
+msgid "plugins.generic.reviewerCertificate.certificate.subheading"
+msgstr "Peer Review Recognition"
+
+msgid "plugins.generic.reviewerCertificate.certificate.presentedTo"
+msgstr "This certificate is proudly presented to"
+
+msgid "plugins.generic.reviewerCertificate.certificate.body"
+msgstr "In grateful recognition of the time, expertise, and dedication contributed as a peer reviewer for <em>{$journalName}</em>. This certificate acknowledges the successful completion of a review for the manuscript titled <strong>{$submissionTitle}</strong>."
+
+msgid "plugins.generic.reviewerCertificate.certificate.completedOn"
+msgstr "Review completed on:"
+
+msgid "plugins.generic.reviewerCertificate.certificate.editorSignature"
+msgstr "Editor-in-Chief"
+
+msgid "plugins.generic.reviewerCertificate.certificate.date"
+msgstr "Date"
+
+msgid "plugins.generic.reviewerCertificate.settings.description"
+msgstr "Configure the information displayed on reviewer certificates."
+
+msgid "plugins.generic.reviewerCertificate.settings.editorSection"
+msgstr "Editor-in-Chief"
+
+msgid "plugins.generic.reviewerCertificate.settings.editorName"
+msgstr "Editor-in-Chief Name"
+
+msgid "plugins.generic.reviewerCertificate.settings.editorTitle"
+msgstr "Editor Title (shown under signature)"
+
+msgid "plugins.generic.reviewerCertificate.settings.editorNameFontSize"
+msgstr "Name Font Size"
+
+msgid "plugins.generic.reviewerCertificate.settings.editorNameColor"
+msgstr "Name Color"
+
+msgid "plugins.generic.reviewerCertificate.settings.journalNameSection"
+msgstr "Journal Name Appearance"
+
+msgid "plugins.generic.reviewerCertificate.settings.journalNameFontSize"
+msgstr "Journal Name Font Size"
+
+msgid "plugins.generic.reviewerCertificate.settings.journalNameColor"
+msgstr "Journal Name Color"
+
+msgid "plugins.generic.reviewerCertificate.settings.themeSection"
+msgstr "Color Theme"
+
+msgid "plugins.generic.reviewerCertificate.settings.themePresets"
+msgstr "Quick presets:"
+
+msgid "plugins.generic.reviewerCertificate.settings.themePresetsHelp"
+msgstr "Clicking a preset fills all three color fields below. You can still adjust them individually."
+
+msgid "plugins.generic.reviewerCertificate.settings.themeGold"
+msgstr "Classic Gold"
+
+msgid "plugins.generic.reviewerCertificate.settings.themeBlue"
+msgstr "Blue Academic"
+
+msgid "plugins.generic.reviewerCertificate.settings.themeDark"
+msgstr "Minimal Dark"
+
+msgid "plugins.generic.reviewerCertificate.settings.themeEmerald"
+msgstr "Emerald"
+
+msgid "plugins.generic.reviewerCertificate.settings.accentColor"
+msgstr "Accent Color (borders & ornaments)"
+
+msgid "plugins.generic.reviewerCertificate.settings.bodySection"
+msgstr "Certificate Body Text"
+
+msgid "plugins.generic.reviewerCertificate.settings.certificateBody"
+msgstr "Custom body text"
+
+msgid "plugins.generic.reviewerCertificate.settings.certificateBodyPlaceholder"
+msgstr "In recognition of your time and expertise as a reviewer for {journalName}, and in acknowledgment of completing the review of {submissionTitle}."
+
+msgid "plugins.generic.reviewerCertificate.settings.certificateBodyHelp"
+msgstr "Write the body paragraph of the certificate. Use {journalName} and {submissionTitle} as placeholders — they will be replaced with the actual values. Leave blank to use the default translated text."
+
+msgid "plugins.generic.reviewerCertificate.settings.qrSection"
+msgstr "QR Code"
+
+msgid "plugins.generic.reviewerCertificate.settings.enableQrCode"
+msgstr "Show QR code on certificate for instant verification"
+
+msgid "plugins.generic.reviewerCertificate.settings.qrHelp"
+msgstr "A small QR code linking back to this certificate URL will be printed in the bottom-right corner. Anyone scanning it can verify the certificate is authentic."
+
+msgid "plugins.generic.reviewerCertificate.settings.signatureSection"
+msgstr "Signature Image"
+
+msgid "plugins.generic.reviewerCertificate.settings.signatureUrl"
+msgstr "Signature Image URL"
+
+msgid "plugins.generic.reviewerCertificate.settings.signatureUrlHelp"
+msgstr "Enter the full URL of the signature image (PNG or JPG with transparent background recommended). Leave blank to show an empty signature line."
+
+msgid "plugins.generic.reviewerCertificate.settings.logoSection"
+msgstr "Journal Logo"
+
+msgid "plugins.generic.reviewerCertificate.settings.customLogoUrl"
+msgstr "Custom Logo URL (optional)"
+
+msgid "plugins.generic.reviewerCertificate.settings.customLogoUrlHelp"
+msgstr "Enter a custom logo URL to override the journal's default logo. Leave blank to use the journal logo configured in Website Settings."
+
+msgid "plugins.generic.reviewerCertificate.settings.uploadImage"
+msgstr "Upload Image"
+
+msgid "plugins.generic.reviewerCertificate.settings.imageSize"
+msgstr "Display Size (height)"
+
+msgid "plugins.generic.reviewerCertificate.settings.uploadHelp"
+msgstr "Click or drag and drop a JPEG, PNG, GIF, or WebP image."
+
+msgid "plugins.generic.reviewerCertificate.settings.backgroundSection"
+msgstr "Certificate Background"
+
+msgid "plugins.generic.reviewerCertificate.settings.backgroundImageUrl"
+msgstr "Background Image URL (optional)"
+
+msgid "plugins.generic.reviewerCertificate.settings.backgroundImageUrlHelp"
+msgstr "Enter the URL of an image to use as the certificate background. Leave blank for a plain white background."
+
+msgid "plugins.generic.reviewerCertificate.email.certificateSubject"
+msgstr "Your Certificate of Appreciation is Ready"
+
+msgid "plugins.generic.reviewerCertificate.email.certificateLabel"
+msgstr "Download Your Certificate"
+
+msgid "plugins.generic.reviewerCertificate.email.certificateNotice"
+msgstr "Thank you for completing your review. You can now download your Certificate of Appreciation by clicking the button below."
+
+msgid "plugins.generic.reviewerCertificate.certificate.verify"
+msgstr "Verify"
+
+msgid "plugins.generic.reviewerCertificate.error.title"
+msgstr "Certificate Unavailable"
+
+msgid "plugins.generic.reviewerCertificate.error.notCompleted"
+msgstr "This certificate cannot be issued because the review assignment has not been completed yet."
