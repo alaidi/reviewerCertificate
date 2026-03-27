@@ -49,6 +49,7 @@ class ReviewerCertificateSettingsForm extends Form
         $this->setData('accentColor',         $p->getSetting($id, 'accentColor') ?: '#b8975a');
         $this->setData('certificateBody',     $p->getSetting($id, 'certificateBody') ?? '');
         $this->setData('enableQrCode',        $p->getSetting($id, 'enableQrCode') ?? '1');
+        $this->setData('wkhtmltopdfPath',     $p->getSetting($id, 'wkhtmltopdfPath') ?? '');
         $this->setData('signatureUrl',        $p->getSetting($id, 'signatureUrl'));
         $this->setData('customLogoUrl',       $p->getSetting($id, 'customLogoUrl'));
         $this->setData('backgroundImageUrl',  $p->getSetting($id, 'backgroundImageUrl'));
@@ -68,6 +69,7 @@ class ReviewerCertificateSettingsForm extends Form
             'accentColor',
             'certificateBody',
             'enableQrCode',
+            'wkhtmltopdfPath',
             'signatureUrl',
             'customLogoUrl',
             'backgroundImageUrl',
@@ -91,6 +93,12 @@ class ReviewerCertificateSettingsForm extends Form
             'temporaryFiles'
         );
         $templateMgr->assign('temporaryFileApiUrl', $temporaryFileApiUrl);
+
+        // Detect wkhtmltopdf for the settings form status indicator
+        $wkhtmltopdfDetected = $this->_detectWkhtmltopdf(
+            $this->_plugin->getSetting($this->_journalId, 'wkhtmltopdfPath') ?? ''
+        );
+        $templateMgr->assign('wkhtmltopdfDetected', $wkhtmltopdfDetected);
 
         return parent::fetch($request, $template, $display);
     }
@@ -133,6 +141,9 @@ class ReviewerCertificateSettingsForm extends Form
 
         $p->updateSetting($id, 'enableQrCode', $this->getData('enableQrCode') ? '1' : '0');
 
+        // wkhtmltopdf path: store as-is; gateway validates executability at runtime
+        $p->updateSetting($id, 'wkhtmltopdfPath', trim($this->getData('wkhtmltopdfPath') ?? ''));
+
         $p->updateSetting($id, 'signatureUrl',       $this->getData('signatureUrl'));
         $p->updateSetting($id, 'customLogoUrl',      $this->getData('customLogoUrl'));
         $p->updateSetting($id, 'backgroundImageUrl', $this->getData('backgroundImageUrl'));
@@ -170,5 +181,19 @@ class ReviewerCertificateSettingsForm extends Form
         }
 
         parent::execute(...$functionArgs);
+    }
+
+    private function _detectWkhtmltopdf(string $configured): string
+    {
+        if ($configured && is_executable($configured)) {
+            return $configured;
+        }
+        foreach (['/usr/local/bin/wkhtmltopdf', '/usr/bin/wkhtmltopdf', '/opt/homebrew/bin/wkhtmltopdf'] as $path) {
+            if (is_executable($path)) {
+                return $path;
+            }
+        }
+        $which = trim((string) shell_exec('which wkhtmltopdf 2>/dev/null'));
+        return ($which && is_executable($which)) ? $which : '';
     }
 }

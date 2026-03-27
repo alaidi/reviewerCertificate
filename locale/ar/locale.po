@@ -89,6 +89,21 @@ msgstr "عرض رمز QR على الشهادة للتحقق الفوري"
 msgid "plugins.generic.reviewerCertificate.settings.qrHelp"
 msgstr "سيظهر رمز QR صغير يرتبط برابط الشهادة في الزاوية السفلية. يمكن لأي شخص مسحه للتحقق من صحة الشهادة."
 
+msgid "plugins.generic.reviewerCertificate.settings.pdfSection"
+msgstr "تنزيل PDF (من الخادم)"
+
+msgid "plugins.generic.reviewerCertificate.settings.wkhtmltopdfPath"
+msgstr "مسار برنامج wkhtmltopdf (اختياري)"
+
+msgid "plugins.generic.reviewerCertificate.settings.wkhtmltopdfHelp"
+msgstr "اتركه فارغاً للاكتشاف التلقائي. أدخل المسار الكامل (مثل /usr/bin/wkhtmltopdf) إذا فشل الاكتشاف التلقائي. عند الإعداد، يظهر زر أحمر \"تنزيل PDF\" على صفحة الشهادة."
+
+msgid "plugins.generic.reviewerCertificate.settings.wkhtmltopdfFound"
+msgstr "تم اكتشاف wkhtmltopdf"
+
+msgid "plugins.generic.reviewerCertificate.settings.wkhtmltopdfNotFound"
+msgstr "لم يتم العثور على wkhtmltopdf. قم بتثبيته لتفعيل تنزيل PDF من الخادم."
+
 msgid "plugins.generic.reviewerCertificate.settings.signatureSection"
 msgstr "صورة التوقيع"
 
@@ -125,6 +140,18 @@ msgstr "رابط صورة الخلفية (اختياري)"
 msgid "plugins.generic.reviewerCertificate.settings.backgroundImageUrlHelp"
 msgstr "أدخل رابط صورة لاستخدامها كخلفية للشهادة. اتركه فارغاً للخلفية البيضاء الافتراضية."
 
+msgid "plugins.generic.reviewerCertificate.settings.backgroundSizeTitle"
+msgstr "الحجم الأمثل للصورة"
+
+msgid "plugins.generic.reviewerCertificate.settings.backgroundSizeRecommended"
+msgstr "موصى به:"
+
+msgid "plugins.generic.reviewerCertificate.settings.backgroundSizeRatio"
+msgstr "(نسبة A4 أفقي، جودة شاشات ريتينا)"
+
+msgid "plugins.generic.reviewerCertificate.settings.backgroundSizeHint"
+msgstr "حجم الشهادة المعروضة"
+
 msgid "plugins.generic.reviewerCertificate.certificate.print"
 msgstr "طباعة / حفظ بصيغة PDF"
 
@@ -160,6 +187,21 @@ msgstr "شكراً لإتمامك عملية التحكيم. يمكنك الآن
 
 msgid "plugins.generic.reviewerCertificate.certificate.verify"
 msgstr "تحقق"
+
+msgid "plugins.generic.reviewerCertificate.certificate.downloadPdf"
+msgstr "تنزيل PDF"
+
+msgid "plugins.generic.reviewerCertificate.certificate.downloadImage"
+msgstr "تنزيل كصورة"
+
+msgid "plugins.generic.reviewerCertificate.certificate.downloadPdfServer"
+msgstr "تنزيل PDF (من الخادم)"
+
+msgid "plugins.generic.reviewerCertificate.certificate.generating"
+msgstr "جارٍ التوليد..."
+
+msgid "plugins.generic.reviewerCertificate.certificate.downloadLink"
+msgstr "تنزيل شهادة التقدير الخاصة بك"
 
 msgid "plugins.generic.reviewerCertificate.error.title"
 msgstr "الشهادة غير متاحة"

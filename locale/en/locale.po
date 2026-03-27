@@ -116,6 +116,21 @@ msgstr "Show QR code on certificate for instant verification"
 msgid "plugins.generic.reviewerCertificate.settings.qrHelp"
 msgstr "A small QR code linking back to this certificate URL will be printed in the bottom-right corner. Anyone scanning it can verify the certificate is authentic."
 
+msgid "plugins.generic.reviewerCertificate.settings.pdfSection"
+msgstr "PDF Download (Server-side)"
+
+msgid "plugins.generic.reviewerCertificate.settings.wkhtmltopdfPath"
+msgstr "wkhtmltopdf binary path (optional)"
+
+msgid "plugins.generic.reviewerCertificate.settings.wkhtmltopdfHelp"
+msgstr "Leave blank to auto-detect. Provide the full path (e.g. /usr/bin/wkhtmltopdf) if auto-detection fails. When configured, a red \"Download PDF\" button appears on the certificate page for a one-click, print-ready PDF."
+
+msgid "plugins.generic.reviewerCertificate.settings.wkhtmltopdfFound"
+msgstr "wkhtmltopdf detected"
+
+msgid "plugins.generic.reviewerCertificate.settings.wkhtmltopdfNotFound"
+msgstr "wkhtmltopdf not found. Install it to enable server-side PDF downloads."
+
 msgid "plugins.generic.reviewerCertificate.settings.signatureSection"
 msgstr "Signature Image"
 
@@ -152,6 +167,18 @@ msgstr "Background Image URL (optional)"
 msgid "plugins.generic.reviewerCertificate.settings.backgroundImageUrlHelp"
 msgstr "Enter the URL of an image to use as the certificate background. Leave blank for a plain white background."
 
+msgid "plugins.generic.reviewerCertificate.settings.backgroundSizeTitle"
+msgstr "Optimal image size"
+
+msgid "plugins.generic.reviewerCertificate.settings.backgroundSizeRecommended"
+msgstr "Recommended:"
+
+msgid "plugins.generic.reviewerCertificate.settings.backgroundSizeRatio"
+msgstr "(A4 landscape ratio, retina quality)"
+
+msgid "plugins.generic.reviewerCertificate.settings.backgroundSizeHint"
+msgstr "Certificate is displayed at"
+
 msgid "plugins.generic.reviewerCertificate.email.certificateSubject"
 msgstr "Your Certificate of Appreciation is Ready"
 
@@ -163,6 +190,21 @@ msgstr "Thank you for completing your review. You can now download your Certific
 
 msgid "plugins.generic.reviewerCertificate.certificate.verify"
 msgstr "Verify"
+
+msgid "plugins.generic.reviewerCertificate.certificate.downloadPdf"
+msgstr "Download PDF"
+
+msgid "plugins.generic.reviewerCertificate.certificate.downloadImage"
+msgstr "Download as Image"
+
+msgid "plugins.generic.reviewerCertificate.certificate.downloadPdfServer"
+msgstr "Download PDF (Server)"
+
+msgid "plugins.generic.reviewerCertificate.certificate.generating"
+msgstr "Generating..."
+
+msgid "plugins.generic.reviewerCertificate.certificate.downloadLink"
+msgstr "Download Your Certificate of Appreciation"
 
 msgid "plugins.generic.reviewerCertificate.error.title"
 msgstr "Certificate Unavailable"

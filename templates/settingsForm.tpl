@@ -282,6 +282,24 @@ function rcApplyTheme(name) {ldelim}
 			<p class="pkp_help" style="margin-top:.35rem;">{translate key="plugins.generic.reviewerCertificate.settings.qrHelp"}</p>
 		{/fbvFormSection}
 
+		{* ── PDF Generation ──────────────────────────────────────────────────── *}
+		{fbvFormSection title="plugins.generic.reviewerCertificate.settings.pdfSection"}
+			{if $wkhtmltopdfDetected}
+				<p class="pkp_help" style="color:#2d7a4f;margin-bottom:.75rem;">
+					&#10003; {translate key="plugins.generic.reviewerCertificate.settings.wkhtmltopdfFound"}:
+					<code style="background:#eee;padding:1px 4px;border-radius:2px;font-size:12px;">{$wkhtmltopdfDetected|escape}</code>
+				</p>
+			{else}
+				<p class="pkp_help" style="color:#c0392b;margin-bottom:.75rem;">
+					&#10007; {translate key="plugins.generic.reviewerCertificate.settings.wkhtmltopdfNotFound"}
+				</p>
+			{/if}
+			{fbvElement type="text" id="wkhtmltopdfPath" value=$wkhtmltopdfPath
+				label="plugins.generic.reviewerCertificate.settings.wkhtmltopdfPath"
+				maxlength="500" size=$fbvStyles.size.LARGE}
+			<p class="pkp_help">{translate key="plugins.generic.reviewerCertificate.settings.wkhtmltopdfHelp"}</p>
+		{/fbvFormSection}
+
 		{* ── Signature ───────────────────────────────────────────────────────── *}
 		{fbvFormSection title="plugins.generic.reviewerCertificate.settings.signatureSection"}
 			<input type="hidden" id="signatureTemporaryFileId" name="signatureTemporaryFileId" value="">
@@ -356,6 +374,24 @@ function rcApplyTheme(name) {ldelim}
 		{fbvFormSection title="plugins.generic.reviewerCertificate.settings.backgroundSection"}
 			<input type="hidden" id="backgroundTemporaryFileId" name="backgroundTemporaryFileId" value="">
 
+			{* Optimal size notice *}
+			<div style="display:flex;align-items:flex-start;gap:.75rem;background:#f0f6fb;border:1px solid #b8d4ed;border-radius:4px;padding:.75rem 1rem;margin-bottom:.85rem;">
+				<span style="font-size:1.3rem;line-height:1;flex-shrink:0;">&#128210;</span>
+				<div style="font-family:Arial,sans-serif;font-size:13px;line-height:1.5;">
+					<strong style="color:#1a3a5c;">{translate key="plugins.generic.reviewerCertificate.settings.backgroundSizeTitle"}</strong><br>
+					<span style="color:#333;">
+						{translate key="plugins.generic.reviewerCertificate.settings.backgroundSizeRecommended"}
+						<code style="background:#dde9f5;padding:1px 5px;border-radius:3px;font-size:12px;font-family:monospace;">1920 &times; 1357 px</code>
+						{translate key="plugins.generic.reviewerCertificate.settings.backgroundSizeRatio"}
+					</span><br>
+					<span style="color:#888;font-size:11px;margin-top:2px;display:block;">
+						{translate key="plugins.generic.reviewerCertificate.settings.backgroundSizeHint"}
+						<code style="background:#eee;padding:1px 4px;border-radius:3px;font-size:11px;font-family:monospace;">960 &times; 678</code>
+						&rarr; &times;2 retina &rarr; &times;3 PNG export
+					</span>
+				</div>
+			</div>
+
 			{fbvElement type="text" id="backgroundImageUrl" value=$backgroundImageUrl
 				label="plugins.generic.reviewerCertificate.settings.backgroundImageUrl"
 				maxlength="500" size=$fbvStyles.size.LARGE}
@@ -367,7 +403,11 @@ function rcApplyTheme(name) {ldelim}
 				<span class="rc-uploader-icon">&#128247;</span>
 				<div class="rc-uploader-text">
 					<strong>{translate key="plugins.generic.reviewerCertificate.settings.uploadImage"}</strong>
-					<small>{translate key="plugins.generic.reviewerCertificate.settings.uploadHelp"}</small>
+					<small>
+						{translate key="plugins.generic.reviewerCertificate.settings.uploadHelp"}
+						&mdash; {translate key="plugins.generic.reviewerCertificate.settings.backgroundSizeRecommended"}
+						<code style="font-size:10px;">1920&times;1357 px</code>
+					</small>
 				</div>
 				{if $backgroundImageUrl}
 					<img id="backgroundPreview" src="{$backgroundImageUrl|escape}" class="rc-uploader-preview" style="display:inline-block;object-fit:cover;">

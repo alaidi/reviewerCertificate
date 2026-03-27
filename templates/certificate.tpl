@@ -11,6 +11,7 @@
 	{if $enableQrCode}
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js" crossorigin="anonymous"></script>
 	{/if}
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js" crossorigin="anonymous"></script>
 	<style>
 		* { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -25,8 +26,14 @@
 			padding: 2rem;
 		}
 
-		.print-btn {
+		.btn-bar {
+			display: flex;
+			gap: .6rem;
 			margin-bottom: 1.5rem;
+			flex-wrap: wrap;
+			justify-content: center;
+		}
+		.print-btn {
 			padding: 0.6rem 2rem;
 			background: #2d6a9f;
 			color: #fff;
@@ -35,16 +42,22 @@
 			font-size: 1rem;
 			cursor: pointer;
 			font-family: Arial, sans-serif;
+			text-decoration: none;
+			display: inline-block;
 		}
 		.print-btn:hover { background: #1f4f78; }
+		.pdf-btn { background: #c0392b; }
+		.pdf-btn:hover { background: #922b21; }
 
 		.certificate {
-			width: 920px;
+			width: 960px;
+			height: 678px;
 			max-width: 100%;
 			background: #fff;
 			position: relative;
-			padding: 50px 65px 55px;
+			padding: 36px 56px 38px;
 			box-shadow: 0 8px 40px rgba(0,0,0,0.15);
+			overflow: hidden;
 		}
 
 		.certificate.has-bg {
@@ -87,8 +100,8 @@
 		.content { position: relative; z-index: 1; text-align: center; }
 
 		/* Logo */
-		.logo-wrap { margin-bottom: 1.2rem; min-height: 10px; }
-		.logo-wrap img { max-height: 70px; max-width: 220px; object-fit: contain; }
+		.logo-wrap { margin-bottom: 0.7rem; min-height: 10px; }
+		.logo-wrap img { max-height: 56px; max-width: 180px; object-fit: contain; }
 
 		.journal-name {
 			font-family: Arial, sans-serif;
@@ -97,40 +110,40 @@
 			letter-spacing: 3px;
 			text-transform: uppercase;
 			color: #7a6030;
-			margin-bottom: 1.4rem;
+			margin-bottom: 0.8rem;
 		}
 
 		.seal {
-			width: 68px; height: 68px;
-			margin: 0 auto 1.2rem;
+			width: 56px; height: 56px;
+			margin: 0 auto 0.7rem;
 			border: 3px solid {$accentColor|escape};
 			border-radius: 50%;
 			display: flex;
 			align-items: center;
 			justify-content: center;
-			font-size: 28px;
+			font-size: 24px;
 			color: {$accentColor|escape};
 		}
 
 		.cert-heading {
-			font-size: 34px;
+			font-size: 32px;
 			font-weight: normal;
 			color: #1a1a2e;
 			letter-spacing: 2px;
-			margin-bottom: 0.3rem;
+			margin-bottom: 0.2rem;
 		}
 		.cert-subheading {
-			font-size: 13px;
+			font-size: 12px;
 			letter-spacing: 5px;
 			text-transform: uppercase;
 			color: #7a6030;
-			margin-bottom: 1.8rem;
+			margin-bottom: 1rem;
 		}
 
 		.divider {
 			width: 80px; height: 2px;
 			background: linear-gradient(to right, transparent, {$accentColor|escape}, transparent);
-			margin: 0 auto 1.8rem;
+			margin: 0 auto 1rem;
 		}
 
 		.presented-to {
@@ -139,31 +152,31 @@
 			letter-spacing: 3px;
 			text-transform: uppercase;
 			color: #888;
-			margin-bottom: 0.4rem;
+			margin-bottom: 0.3rem;
 		}
 
 		.reviewer-name {
-			font-size: 38px;
+			font-size: 34px;
 			font-style: italic;
 			color: #1a1a2e;
-			margin-bottom: 1.8rem;
+			margin-bottom: 1rem;
 			font-weight: normal;
 		}
 
 		.body-text {
-			font-size: 15px;
-			line-height: 1.8;
+			font-size: 14px;
+			line-height: 1.7;
 			color: #444;
 			max-width: 600px;
-			margin: 0 auto 1.6rem;
+			margin: 0 auto 0.9rem;
 		}
 		.submission-title { font-style: italic; font-weight: bold; color: #1a1a2e; }
 
 		.date-line {
 			font-family: Arial, sans-serif;
-			font-size: 13px;
+			font-size: 12px;
 			color: #888;
-			margin-bottom: 2.5rem;
+			margin-bottom: 1.4rem;
 		}
 
 		/* Signature section */
@@ -177,15 +190,15 @@
 		.signature-block { text-align: center; min-width: 180px; }
 
 		.signature-img-wrap {
-			height: 70px;
+			height: 56px;
 			display: flex;
 			align-items: flex-end;
 			justify-content: center;
 			margin-bottom: 4px;
 		}
 		.signature-img-wrap img {
-			max-height: 70px;
-			max-width: 200px;
+			max-height: 56px;
+			max-width: 180px;
 			object-fit: contain;
 		}
 
@@ -245,14 +258,14 @@
 				display: block;
 			}
 
-			.print-btn { display: none; }
+			.btn-bar { display: none; }
 
 			.certificate {
 				box-shadow: none;
 				width: 297mm;
 				height: 210mm;
 				max-width: none;
-				padding: 14mm 18mm;
+				padding: 10mm 15mm;
 				page-break-inside: avoid;
 				break-inside: avoid;
 				overflow: hidden;
@@ -260,18 +273,17 @@
 				flex-direction: column;
 				justify-content: center;
 			}
+		}
 
-			.cert-heading  { font-size: 28px; }
-			.reviewer-name { font-size: 32px; }
-			.body-text     { font-size: 13px; }
-			.date-line     { margin-bottom: 1.5rem; }
+		@media (max-width: 980px) {
+			.certificate { width: 100%; height: auto; min-height: 0; }
 		}
 
 		@media (max-width: 640px) {
-			.certificate { padding: 35px 24px; }
-			.cert-heading { font-size: 24px; }
-			.reviewer-name { font-size: 26px; }
-			.signature-section { gap: 28px; }
+			.certificate { padding: 28px 20px; }
+			.cert-heading { font-size: 22px; }
+			.reviewer-name { font-size: 24px; }
+			.signature-section { gap: 20px; }
 		}
 
 		/* RTL overrides */
@@ -289,9 +301,60 @@
 </head>
 <body>
 
-<button class="print-btn" onclick="window.print()">
-	{translate key="plugins.generic.reviewerCertificate.certificate.print"}
-</button>
+<div class="btn-bar">
+	<button class="print-btn" onclick="window.print()">
+		{translate key="plugins.generic.reviewerCertificate.certificate.print"}
+	</button>
+	<button class="print-btn pdf-btn" id="rc-img-btn" onclick="rcDownloadImage(this)">
+		{translate key="plugins.generic.reviewerCertificate.certificate.downloadImage"}
+	</button>
+	{if $pdfUrl}
+	<a class="print-btn" href="{$pdfUrl|escape}" style="background:#7b3fb0;">
+		{translate key="plugins.generic.reviewerCertificate.certificate.downloadPdfServer"}
+	</a>
+	{/if}
+</div>
+
+<script>
+async function rcDownloadImage(btn) {ldelim}
+	if (typeof html2canvas === 'undefined') {ldelim}
+		alert('Image library not loaded. Please check your internet connection.');
+		return;
+	{rdelim}
+
+	var origText = btn.textContent;
+	btn.textContent = '{translate key="plugins.generic.reviewerCertificate.certificate.generating"}';
+	btn.disabled = true;
+
+	var btnBar = document.querySelector('.btn-bar');
+	var qrWrap = document.getElementById('rc-qr-wrap');
+	if (btnBar) btnBar.style.display = 'none';
+	if (qrWrap) qrWrap.style.display = 'none';
+
+	try {ldelim}
+		var cert = document.querySelector('.certificate');
+		var canvas = await html2canvas(cert, {ldelim}
+			scale: 3,
+			useCORS: true,
+			backgroundColor: '#ffffff',
+			logging: false,
+			imageTimeout: 8000
+		{rdelim});
+
+		var link = document.createElement('a');
+		link.download = 'reviewer_certificate_{$reviewId|escape}.png';
+		link.href = canvas.toDataURL('image/png');
+		link.click();
+	{rdelim} catch (err) {ldelim}
+		alert('Could not generate image: ' + err.message);
+	{rdelim} finally {ldelim}
+		if (btnBar) btnBar.style.display = '';
+		if (qrWrap) qrWrap.style.display = '';
+		btn.textContent = origText;
+		btn.disabled = false;
+	{rdelim}
+{rdelim}
+</script>
 
 {if $backgroundImageUrl}
 <div class="certificate has-bg" style="background-image:url('{$backgroundImageUrl|escape}')">

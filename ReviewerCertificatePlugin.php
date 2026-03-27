@@ -308,6 +308,55 @@ class ReviewerCertificatePlugin extends GenericPlugin
         return date('F d, Y', $timestamp);
     }
 
+    /**
+     * Template hook: inject a "Download Certificate" button on the reviewer's
+     * completed review step page (Templates::Reviewer::Review::Step3).
+     */
+    public function addCertificateLinkToReviewStep(string $hookName, array $args): bool
+    {
+        /** @var \APP\template\TemplateManager $templateMgr */
+        [$templateMgr, &$output] = $args;
+
+        $reviewAssignment = $templateMgr->getTemplateVars('reviewAssignment');
+        if (!$reviewAssignment || !$reviewAssignment->getDateCompleted()) {
+            return false;
+        }
+
+        $request   = Application::get()->getRequest();
+        $context   = $request->getContext();
+        if (!$context) {
+            return false;
+        }
+
+        $contextId = $context->getId();
+        $reviewId  = $reviewAssignment->getId();
+
+        // Prefer the saved static file URL (no login required); fall back to gateway
+        $certUrl = $this->getSetting($contextId, 'cert_saved_url_' . $reviewId);
+        if (!$certUrl) {
+            $certUrl = $request->getDispatcher()->url(
+                $request, PKPApplication::ROUTE_PAGE, null,
+                'gateway', 'plugin',
+                ['ReviewerCertificateGatewayPlugin', 'generate'],
+                ['reviewId' => $reviewId]
+            );
+        }
+
+        $label = __('plugins.generic.reviewerCertificate.certificate.downloadLink');
+
+        $output .= '<div style="margin:1.2rem 0 0;padding:.85rem 1rem;'
+            . 'background:#f0f6fb;border:1px solid #c5d9ec;border-radius:5px;display:inline-block;">'
+            . '<a href="' . htmlspecialchars($certUrl) . '" target="_blank" '
+            . 'style="display:inline-flex;align-items:center;gap:.45rem;padding:7px 18px;'
+            . 'background:#2d6a9f;color:#fff;text-decoration:none;border-radius:4px;'
+            . 'font-size:13px;font-family:Arial,sans-serif;font-weight:bold;">'
+            . '&#127941; ' . htmlspecialchars($label)
+            . '</a>'
+            . '</div>';
+
+        return false;
+    }
+
     public function getDisplayName(): string
     {
         return __('plugins.generic.reviewerCertificate.displayName');
