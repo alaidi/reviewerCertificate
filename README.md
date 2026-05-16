@@ -67,6 +67,10 @@ Navigate to **Settings → Website → Plugins → Reviewer Certificate → Sett
 
 ## Changelog
 
+### 1.1.0.1 — 2026-05-16
+
+- **Fixed:** plugin failed to register on some OJS installs with `Class "…ReviewerCertificateGatewayPlugin" not found` — sibling plugin classes are now loaded explicitly instead of relying on namespace autoloading (also fixes the scheduler error)
+
 ### 1.1.0.0 — 2026-05-16
 
 - **New:** multilingual Editor name, Editor title and certificate body (one input per supported language) with locale-aware rendering and fallback

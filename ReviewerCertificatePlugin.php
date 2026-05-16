@@ -41,6 +41,12 @@ class ReviewerCertificatePlugin extends GenericPlugin
         $this->addLocaleData();
 
         if ($this->getEnabled($mainContextId)) {
+            // Some OJS installs do not autoload sibling plugin classes;
+            // load them explicitly so the plugin is self-contained.
+            if (!class_exists(ReviewerCertificateGatewayPlugin::class, false)) {
+                require_once __DIR__ . '/ReviewerCertificateGatewayPlugin.php';
+            }
+
             PluginRegistry::register(
                 'gateways',
                 new ReviewerCertificateGatewayPlugin($this),
@@ -616,6 +622,9 @@ class ReviewerCertificatePlugin extends GenericPlugin
         switch ($request->getUserVar('verb')) {
             case 'settings':
                 $context = $request->getContext();
+                if (!class_exists(ReviewerCertificateSettingsForm::class, false)) {
+                    require_once __DIR__ . '/ReviewerCertificateSettingsForm.php';
+                }
                 $form = new ReviewerCertificateSettingsForm($this, $context->getId());
 
                 if ($request->getUserVar('save')) {
