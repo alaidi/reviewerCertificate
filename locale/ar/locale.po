@@ -289,3 +289,12 @@ msgstr "محلي قصير (مثال: ١٥/٨/٢٦)"
 
 msgid "plugins.generic.reviewerCertificate.settings.dateFormatHelp"
 msgstr "اختر طريقة عرض التواريخ على الشهادة. الصيغ المحلية تتكيف تلقائياً مع لغة المجلة."
+
+msgid "plugins.generic.reviewerCertificate.settings.dateLocale"
+msgstr "لغة التاريخ (أسماء الأشهر الإقليمية)"
+
+msgid "plugins.generic.reviewerCertificate.settings.dateLocaleAuto"
+msgstr "تلقائي (استخدام لغة المجلة)"
+
+msgid "plugins.generic.reviewerCertificate.settings.dateLocaleHelp"
+msgstr "تختلف أسماء الأشهر حسب البلد (مثلاً: أغسطس في بعض الدول و اب في العراق). اختر البلد الذي تفضّل أسماء أشهره، أو اتركه تلقائياً لاستخدام إعداد لغة المجلة."

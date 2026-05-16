@@ -184,10 +184,10 @@ class ReviewerCertificatePlugin extends GenericPlugin
         $submissionTitle  = $publication->getLocalizedTitle();
         $reviewerName     = $reviewer->getFullName();
         $journalName      = $context->getLocalizedName();
-        $dateCompleted    = $this->_formatDate($reviewAssignment->getDateCompleted(), $locale, $this->getSetting($contextId, 'dateFormat') ?? 'long');
+        $dateCompleted    = $this->_formatDate($reviewAssignment->getDateCompleted(), $locale, $this->getSetting($contextId, 'dateFormat') ?? 'long', $this->getSetting($contextId, 'dateLocale') ?? '');
         $rawAcknowledged  = $reviewAssignment->getDateAcknowledged();
         $dateAcknowledged = $rawAcknowledged
-            ? $this->_formatDate($rawAcknowledged, $locale, $this->getSetting($contextId, 'dateFormat') ?? 'long')
+            ? $this->_formatDate($rawAcknowledged, $locale, $this->getSetting($contextId, 'dateFormat') ?? 'long', $this->getSetting($contextId, 'dateLocale') ?? '')
             : $dateCompleted;
 
         // Plugin settings
@@ -320,12 +320,14 @@ class ReviewerCertificatePlugin extends GenericPlugin
     /**
      * Format a date string using the selected format or locale-based IntlDateFormatter.
      */
-    private function _formatDate(string $dateStr, string $locale, string $format = 'long'): string
+    private function _formatDate(string $dateStr, string $locale, string $format = 'long', string $dateLocale = ''): string
     {
         $timestamp = strtotime($dateStr);
         if (!$timestamp) {
             return $dateStr;
         }
+
+        $effectiveLocale = ($dateLocale !== '') ? $dateLocale : $locale;
 
         $intlMap = [
             'long'   => \IntlDateFormatter::LONG,
@@ -336,7 +338,7 @@ class ReviewerCertificatePlugin extends GenericPlugin
         if (isset($intlMap[$format])) {
             if (class_exists('\IntlDateFormatter')) {
                 $fmt = new \IntlDateFormatter(
-                    $locale,
+                    $effectiveLocale,
                     $intlMap[$format],
                     \IntlDateFormatter::NONE,
                     null,
@@ -369,7 +371,7 @@ class ReviewerCertificatePlugin extends GenericPlugin
             if (class_exists('\IntlDateFormatter') && in_array($format, ['d F Y', 'F d, Y', 'j F Y', 'd M Y', 'M d, Y'])) {
                 $pattern = $format;
                 $fmt = new \IntlDateFormatter(
-                    $locale,
+                    $effectiveLocale,
                     \IntlDateFormatter::NONE,
                     \IntlDateFormatter::NONE,
                     null,

@@ -292,3 +292,12 @@ msgstr "Locale short (e.g. 8/15/26)"
 
 msgid "plugins.generic.reviewerCertificate.settings.dateFormatHelp"
 msgstr "Select how dates are displayed on the certificate. Locale formats adapt automatically to the journal language."
+
+msgid "plugins.generic.reviewerCertificate.settings.dateLocale"
+msgstr "Date locale (regional month names)"
+
+msgid "plugins.generic.reviewerCertificate.settings.dateLocaleAuto"
+msgstr "Auto (use journal language)"
+
+msgid "plugins.generic.reviewerCertificate.settings.dateLocaleHelp"
+msgstr "Month names differ by country (e.g. August = أغسطس in some countries but اب in Iraq). Select the country whose month names you prefer, or leave as Auto to use the journal's language setting."
