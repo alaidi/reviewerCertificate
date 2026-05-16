@@ -150,6 +150,68 @@ function rcApplyTheme(name) {ldelim}
 
 		<p style="margin-bottom:1rem">{translate key="plugins.generic.reviewerCertificate.settings.description"}</p>
 
+		{* ── Certificate Preview ──────────────────────────────────────────────── *}
+		{fbvFormSection title="plugins.generic.reviewerCertificate.settings.previewSection"}
+			<div style="display:flex;align-items:center;gap:.6rem;margin-bottom:.75rem;flex-wrap:wrap;">
+				<label for="rc-preview-id" style="font-family:Arial,sans-serif;font-size:13px;font-weight:bold;white-space:nowrap;">
+					{translate key="plugins.generic.reviewerCertificate.settings.previewReviewId"}
+				</label>
+				<input type="number" id="rc-preview-id" value="{$sampleReviewId|escape}" min="1" step="1"
+					style="width:90px;padding:.35rem .5rem;border:1px solid #ccc;border-radius:3px;font-size:14px;">
+				<button type="button" onclick="rcLoadPreview()"
+					style="padding:.38rem 1.1rem;background:#2d6a9f;color:#fff;border:none;border-radius:4px;font-size:13px;cursor:pointer;font-family:Arial,sans-serif;">
+					{translate key="plugins.generic.reviewerCertificate.settings.previewButton"}
+				</button>
+				<a id="rc-preview-link" href="#" target="_blank"
+					style="font-size:12px;color:#2d6a9f;font-family:Arial,sans-serif;text-decoration:underline;display:none;">
+					{translate key="plugins.generic.reviewerCertificate.settings.previewOpenTab"}
+				</a>
+			</div>
+
+			<div id="rc-preview-wrap" style="position:relative;width:100%;padding-top:70.6%;background:#e8e4dc;border:1px solid #ccc;border-radius:4px;overflow:hidden;display:none;">
+				<iframe id="rc-preview-frame"
+					style="position:absolute;top:0;left:0;width:100%;height:100%;border:none;background:#fff;"
+					src="" title="Certificate Preview" sandbox="allow-scripts allow-same-origin">
+				</iframe>
+				<div id="rc-preview-loading"
+					style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(240,236,228,.85);font-family:Arial,sans-serif;font-size:14px;color:#555;">
+					{translate key="plugins.generic.reviewerCertificate.settings.previewLoading"}
+				</div>
+			</div>
+			<p class="pkp_help" style="margin-top:.4rem;">
+				{translate key="plugins.generic.reviewerCertificate.settings.previewHelp"}
+				<code style="background:#eee;padding:1px 5px;border-radius:3px;font-size:11px;font-family:monospace;" id="rc-preview-url-display"></code>
+			</p>
+		{/fbvFormSection}
+
+		<script>
+		var RC_PREVIEW_BASE = {$previewBaseUrl|json_encode};
+
+		function rcLoadPreview() {ldelim}
+			var id = parseInt(document.getElementById('rc-preview-id').value, 10);
+			if (!id || id < 1) {ldelim} alert('Please enter a valid Review ID.'); return; {rdelim}
+
+			var url = RC_PREVIEW_BASE + '?reviewId=' + id;
+
+			var wrap  = document.getElementById('rc-preview-wrap');
+			var frame = document.getElementById('rc-preview-frame');
+			var loading = document.getElementById('rc-preview-loading');
+			var link  = document.getElementById('rc-preview-link');
+			var display = document.getElementById('rc-preview-url-display');
+
+			wrap.style.display = 'block';
+			loading.style.display = 'flex';
+			frame.src = '';
+
+			link.href = url;
+			link.style.display = 'inline';
+			if (display) display.textContent = url;
+
+			frame.onload = function() {ldelim} loading.style.display = 'none'; {rdelim};
+			frame.src = url;
+		{rdelim}
+		</script>
+
 		{* ── Editor-in-Chief ─────────────────────────────────────────────────── *}
 		{fbvFormSection title="plugins.generic.reviewerCertificate.settings.editorSection"}
 			{fbvElement type="text" id="editorName" value=$editorName

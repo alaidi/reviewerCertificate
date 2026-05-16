@@ -3,6 +3,11 @@
 /**
  * @file plugins/generic/reviewerCertificate/ReviewerCertificatePlugin.php
  *
+ * Copyright (c) 2026 Abdul Hadi Mohammed Alaidi
+ * Distributed under the GNU GPL v3. For full terms see the file docs/COPYING.
+ *
+ * @class ReviewerCertificatePlugin
+ *
  * @brief Plugin to generate appreciation certificates for reviewers
  *        who have completed their review assignments.
  */

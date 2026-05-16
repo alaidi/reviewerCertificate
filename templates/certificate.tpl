@@ -377,8 +377,7 @@ async function rcDownloadImage(btn) {ldelim}
 
 		<div class="journal-name" style="font-size:{$journalNameFontSize|escape}px;color:{$journalNameColor|escape};">{$journalName|escape}</div>
 
-		<div class="seal">&#9733;</div>
-
+		<div class="divider"></div>
 		<h1 class="cert-heading">{translate key="plugins.generic.reviewerCertificate.certificate.heading"}</h1>
 		<div class="cert-subheading">{translate key="plugins.generic.reviewerCertificate.certificate.subheading"}</div>
 

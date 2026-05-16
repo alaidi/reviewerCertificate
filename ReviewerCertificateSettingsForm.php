@@ -3,6 +3,11 @@
 /**
  * @file plugins/generic/reviewerCertificate/ReviewerCertificateSettingsForm.php
  *
+ * Copyright (c) 2026 Abdul Hadi Mohammed Alaidi
+ * Distributed under the GNU GPL v3. For full terms see the file docs/COPYING.
+ *
+ * @class ReviewerCertificateSettingsForm
+ *
  * @brief Settings form for the Reviewer Certificate plugin.
  */
 
@@ -99,6 +104,35 @@ class ReviewerCertificateSettingsForm extends Form
             $this->_plugin->getSetting($this->_journalId, 'wkhtmltopdfPath') ?? ''
         );
         $templateMgr->assign('wkhtmltopdfDetected', $wkhtmltopdfDetected);
+
+        // Build the base certificate preview URL (reviewId appended via JS)
+        $previewBaseUrl = $request->getDispatcher()->url(
+            $request,
+            PKPApplication::ROUTE_PAGE,
+            $context->getPath(),
+            'gateway',
+            'plugin',
+            ['ReviewerCertificateGatewayPlugin', 'generate']
+        );
+        $templateMgr->assign('previewBaseUrl', $previewBaseUrl);
+
+        // Try to find a real completed review ID for a useful default
+        $sampleReviewId = 1;
+        try {
+            $reviewAssignmentDao = \PKP\db\DAORegistry::getDAO('ReviewAssignmentDAO');
+            $result = $reviewAssignmentDao->retrieve(
+                'SELECT review_id FROM review_assignments
+                  WHERE context_id = ? AND date_completed IS NOT NULL
+                  ORDER BY review_id DESC LIMIT 1',
+                [$this->_journalId]
+            );
+            if ($row = $result->current()) {
+                $sampleReviewId = (int) $row->review_id;
+            }
+        } catch (\Exception $e) {
+            // Fall back to 1
+        }
+        $templateMgr->assign('sampleReviewId', $sampleReviewId);
 
         return parent::fetch($request, $template, $display);
     }

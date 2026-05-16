@@ -47,6 +47,24 @@ msgstr "Date"
 msgid "plugins.generic.reviewerCertificate.settings.description"
 msgstr "Configure the information displayed on reviewer certificates."
 
+msgid "plugins.generic.reviewerCertificate.settings.previewSection"
+msgstr "Certificate Preview"
+
+msgid "plugins.generic.reviewerCertificate.settings.previewReviewId"
+msgstr "Review ID:"
+
+msgid "plugins.generic.reviewerCertificate.settings.previewButton"
+msgstr "Preview"
+
+msgid "plugins.generic.reviewerCertificate.settings.previewOpenTab"
+msgstr "Open in new tab"
+
+msgid "plugins.generic.reviewerCertificate.settings.previewLoading"
+msgstr "Loading certificate..."
+
+msgid "plugins.generic.reviewerCertificate.settings.previewHelp"
+msgstr "Enter any completed review ID to preview the certificate with current settings. URL:"
+
 msgid "plugins.generic.reviewerCertificate.settings.editorSection"
 msgstr "Editor-in-Chief"
 

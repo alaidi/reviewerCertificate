@@ -20,6 +20,24 @@ msgstr "تُنشئ هذه الإضافة شهادة تقدير قابلة للط
 msgid "plugins.generic.reviewerCertificate.settings.description"
 msgstr "قم بتهيئة المعلومات التي ستظهر على شهادات المحكّمين."
 
+msgid "plugins.generic.reviewerCertificate.settings.previewSection"
+msgstr "معاينة الشهادة"
+
+msgid "plugins.generic.reviewerCertificate.settings.previewReviewId"
+msgstr "رقم المراجعة:"
+
+msgid "plugins.generic.reviewerCertificate.settings.previewButton"
+msgstr "معاينة"
+
+msgid "plugins.generic.reviewerCertificate.settings.previewOpenTab"
+msgstr "فتح في تبويب جديد"
+
+msgid "plugins.generic.reviewerCertificate.settings.previewLoading"
+msgstr "جارٍ تحميل الشهادة..."
+
+msgid "plugins.generic.reviewerCertificate.settings.previewHelp"
+msgstr "أدخل رقم أي مراجعة مكتملة لمعاينة الشهادة بالإعدادات الحالية. الرابط:"
+
 msgid "plugins.generic.reviewerCertificate.settings.editorSection"
 msgstr "رئيس التحرير"
 
