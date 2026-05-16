@@ -274,3 +274,21 @@ msgstr "Certificate Unavailable"
 
 msgid "plugins.generic.reviewerCertificate.error.notCompleted"
 msgstr "This certificate cannot be issued because the review assignment has not been completed yet."
+
+msgid "plugins.generic.reviewerCertificate.settings.dateFormatSection"
+msgstr "Date Format"
+
+msgid "plugins.generic.reviewerCertificate.settings.dateFormat"
+msgstr "Choose how dates appear on the certificate"
+
+msgid "plugins.generic.reviewerCertificate.settings.dateFormatLong"
+msgstr "Locale long (e.g. August 15, 2026)"
+
+msgid "plugins.generic.reviewerCertificate.settings.dateFormatMedium"
+msgstr "Locale medium (e.g. Aug 15, 2026)"
+
+msgid "plugins.generic.reviewerCertificate.settings.dateFormatShort"
+msgstr "Locale short (e.g. 8/15/26)"
+
+msgid "plugins.generic.reviewerCertificate.settings.dateFormatHelp"
+msgstr "Select how dates are displayed on the certificate. Locale formats adapt automatically to the journal language."

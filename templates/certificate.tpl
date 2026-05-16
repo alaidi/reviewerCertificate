@@ -97,7 +97,14 @@
 		.corner-bl { bottom: 8px; left: 8px;   border-width: 0 0 4px 4px; }
 		.corner-br { bottom: 8px; right: 8px;  border-width: 0 4px 4px 0; }
 
-		.content { position: relative; z-index: 1; text-align: center; }
+		.content {
+			position: relative;
+			z-index: 1;
+			text-align: center;
+			display: flex;
+			flex-direction: column;
+			height: 100%;
+		}
 
 		/* Logo */
 		.logo-wrap { margin-bottom: 0.7rem; min-height: 10px; }
@@ -184,7 +191,8 @@
 			display: flex;
 			justify-content: center;
 			gap: 80px;
-			align-items: flex-end;
+			align-items: flex-start;
+			margin-top: auto;
 		}
 
 		.signature-block {
@@ -207,6 +215,15 @@
 			max-height: 56px;
 			max-width: 180px;
 			object-fit: contain;
+		}
+
+		.signature-date-wrap {
+			position: absolute;
+			bottom: 100%;
+			left: 50%;
+			transform: translateX(-50%);
+			min-height: 36px;
+			margin-bottom: 4px;
 		}
 
 		.signature-line {
@@ -413,12 +430,11 @@ async function rcDownloadImage(btn) {ldelim}
 
 			<div class="signature-block">
 				{if $signatureUrl}
-					<div class="signature-img-wrap" style="height:{$signatureSize|escape}px;">
+					<div class="signature-img-wrap">
 						<img src="{$signatureUrl|escape}" alt="{translate key="plugins.generic.reviewerCertificate.certificate.editorSignature"}" style="max-height:{$signatureSize|escape}px;max-width:{math equation='s*3' s=$signatureSize}px;">
 					</div>
-				{else}
-					<div class="signature-line"></div>
 				{/if}
+				<div class="signature-line"></div>
 				<div class="signature-label">{$editorTitle|escape}</div>
 				{if $editorName}
 					<div class="signature-name"
@@ -429,7 +445,7 @@ async function rcDownloadImage(btn) {ldelim}
 			</div>
 
 			<div class="signature-block">
-				<div class="signature-img-wrap" style="height:auto;min-height:36px;align-items:flex-end;">
+				<div class="signature-img-wrap signature-date-wrap">
 					<div style="font-size:14px;font-weight:bold;color:#333;padding-bottom:4px;">{$dateAcknowledged|escape}</div>
 				</div>
 				<div class="signature-line"></div>

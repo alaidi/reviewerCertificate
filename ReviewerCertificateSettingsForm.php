@@ -54,6 +54,8 @@ class ReviewerCertificateSettingsForm extends Form
         $this->setData('accentColor',         $p->getSetting($id, 'accentColor') ?: '#b8975a');
         $this->setData('certificateBody',     $p->getSetting($id, 'certificateBody') ?? '');
         $this->setData('enableQrCode',        $p->getSetting($id, 'enableQrCode') ?? '1');
+        $this->setData('dateFormat',           $p->getSetting($id, 'dateFormat') ?: 'long');
+        $this->setData('dateLocale',           $p->getSetting($id, 'dateLocale') ?? '');
         $this->setData('wkhtmltopdfPath',     $p->getSetting($id, 'wkhtmltopdfPath') ?? '');
         $this->setData('signatureUrl',        $p->getSetting($id, 'signatureUrl'));
         $this->setData('customLogoUrl',       $p->getSetting($id, 'customLogoUrl'));
@@ -74,6 +76,8 @@ class ReviewerCertificateSettingsForm extends Form
             'accentColor',
             'certificateBody',
             'enableQrCode',
+            'dateFormat',
+            'dateLocale',
             'wkhtmltopdfPath',
             'signatureUrl',
             'customLogoUrl',
@@ -174,6 +178,14 @@ class ReviewerCertificateSettingsForm extends Form
         $p->updateSetting($id, 'certificateBody', $this->getData('certificateBody') ?? '');
 
         $p->updateSetting($id, 'enableQrCode', $this->getData('enableQrCode') ? '1' : '0');
+
+        $allowedFormats = ['long', 'medium', 'short', 'Y-m-d', 'd-m-Y', 'd/m/Y', 'm/d/Y', 'Y/m/d', 'd.m.Y', 'Y.m.d', 'd F Y', 'F d, Y', 'j F Y', 'd M Y', 'M d, Y'];
+        $dateFormat = $this->getData('dateFormat') ?: 'long';
+        $p->updateSetting($id, 'dateFormat', in_array($dateFormat, $allowedFormats) ? $dateFormat : 'long');
+
+        $allowedLocales = ['','ar','ar_IQ','ar_SA','ar_EG','ar_AE','ar_KW','ar_BH','ar_QA','ar_OM','ar_JO','ar_LB','ar_SY','ar_PS','ar_MA','ar_DZ','ar_TN','ar_LY','ar_SD','ar_YE','en','en_US','en_GB','en_AU','en_CA','fr','fr_FR','fr_CA','de','de_DE','es','es_ES','tr','tr_TR','fa','fa_IR','ku','ckb'];
+        $dateLocale = trim($this->getData('dateLocale') ?? '');
+        $p->updateSetting($id, 'dateLocale', in_array($dateLocale, $allowedLocales) ? $dateLocale : '');
 
         // wkhtmltopdf path: store as-is; gateway validates executability at runtime
         $p->updateSetting($id, 'wkhtmltopdfPath', trim($this->getData('wkhtmltopdfPath') ?? ''));

@@ -184,10 +184,10 @@ class ReviewerCertificatePlugin extends GenericPlugin
         $submissionTitle  = $publication->getLocalizedTitle();
         $reviewerName     = $reviewer->getFullName();
         $journalName      = $context->getLocalizedName();
-        $dateCompleted    = $this->_formatDate($reviewAssignment->getDateCompleted(), $locale);
+        $dateCompleted    = $this->_formatDate($reviewAssignment->getDateCompleted(), $locale, $this->getSetting($contextId, 'dateFormat') ?? 'long');
         $rawAcknowledged  = $reviewAssignment->getDateAcknowledged();
         $dateAcknowledged = $rawAcknowledged
-            ? $this->_formatDate($rawAcknowledged, $locale)
+            ? $this->_formatDate($rawAcknowledged, $locale, $this->getSetting($contextId, 'dateFormat') ?? 'long')
             : $dateCompleted;
 
         // Plugin settings
@@ -318,27 +318,72 @@ class ReviewerCertificatePlugin extends GenericPlugin
     }
 
     /**
-     * Format a date string using the active locale (IntlDateFormatter when available).
+     * Format a date string using the selected format or locale-based IntlDateFormatter.
      */
-    private function _formatDate(string $dateStr, string $locale): string
+    private function _formatDate(string $dateStr, string $locale, string $format = 'long'): string
     {
         $timestamp = strtotime($dateStr);
         if (!$timestamp) {
             return $dateStr;
         }
-        if (class_exists('\IntlDateFormatter')) {
-            $fmt = new \IntlDateFormatter(
-                $locale,
-                \IntlDateFormatter::LONG,
-                \IntlDateFormatter::NONE,
-                null,
-                \IntlDateFormatter::GREGORIAN
-            );
-            $result = $fmt->format($timestamp);
-            if ($result !== false) {
-                return $result;
+
+        $intlMap = [
+            'long'   => \IntlDateFormatter::LONG,
+            'medium' => \IntlDateFormatter::MEDIUM,
+            'short'  => \IntlDateFormatter::SHORT,
+        ];
+
+        if (isset($intlMap[$format])) {
+            if (class_exists('\IntlDateFormatter')) {
+                $fmt = new \IntlDateFormatter(
+                    $locale,
+                    $intlMap[$format],
+                    \IntlDateFormatter::NONE,
+                    null,
+                    \IntlDateFormatter::GREGORIAN
+                );
+                $result = $fmt->format($timestamp);
+                if ($result !== false) {
+                    return $result;
+                }
             }
+            return date('F d, Y', $timestamp);
         }
+
+        $phpMap = [
+            'd-m-Y'  => 'd-m-Y',
+            'd/m/Y'  => 'd/m/Y',
+            'm/d/Y'  => 'm/d/Y',
+            'Y-m-d'  => 'Y-m-d',
+            'Y/m/d'  => 'Y/m/d',
+            'd.m.Y'  => 'd.m.Y',
+            'Y.m.d'  => 'Y.m.d',
+            'd F Y'  => 'd F Y',
+            'F d, Y' => 'F d, Y',
+            'j F Y'  => 'j F Y',
+            'd M Y'  => 'd M Y',
+            'M d, Y' => 'M d, Y',
+        ];
+
+        if (isset($phpMap[$format])) {
+            if (class_exists('\IntlDateFormatter') && in_array($format, ['d F Y', 'F d, Y', 'j F Y', 'd M Y', 'M d, Y'])) {
+                $pattern = $format;
+                $fmt = new \IntlDateFormatter(
+                    $locale,
+                    \IntlDateFormatter::NONE,
+                    \IntlDateFormatter::NONE,
+                    null,
+                    \IntlDateFormatter::GREGORIAN,
+                    $pattern
+                );
+                $result = $fmt->format($timestamp);
+                if ($result !== false) {
+                    return $result;
+                }
+            }
+            return date($format, $timestamp);
+        }
+
         return date('F d, Y', $timestamp);
     }
 

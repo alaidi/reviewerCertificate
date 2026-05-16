@@ -271,3 +271,21 @@ msgstr "الشهادة غير متاحة"
 
 msgid "plugins.generic.reviewerCertificate.error.notCompleted"
 msgstr "لا يمكن إصدار الشهادة لأن مهمة التحكيم لم تكتمل بعد."
+
+msgid "plugins.generic.reviewerCertificate.settings.dateFormatSection"
+msgstr "صيغة التاريخ"
+
+msgid "plugins.generic.reviewerCertificate.settings.dateFormat"
+msgstr "اختر كيف تظهر التواريخ على الشهادة"
+
+msgid "plugins.generic.reviewerCertificate.settings.dateFormatLong"
+msgstr "محلي طويل (مثال: ١٥ أغسطس ٢٠٢٦)"
+
+msgid "plugins.generic.reviewerCertificate.settings.dateFormatMedium"
+msgstr "محلي متوسط (مثال: ١٥ أغس ٢٠٢٦)"
+
+msgid "plugins.generic.reviewerCertificate.settings.dateFormatShort"
+msgstr "محلي قصير (مثال: ١٥/٨/٢٦)"
+
+msgid "plugins.generic.reviewerCertificate.settings.dateFormatHelp"
+msgstr "اختر طريقة عرض التواريخ على الشهادة. الصيغ المحلية تتكيف تلقائياً مع لغة المجلة."

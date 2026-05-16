@@ -344,6 +344,84 @@ function rcApplyTheme(name) {ldelim}
 			<p class="pkp_help" style="margin-top:.35rem;">{translate key="plugins.generic.reviewerCertificate.settings.qrHelp"}</p>
 		{/fbvFormSection}
 
+		{* ── Date Format ─────────────────────────────────────────────────────── *}
+		{fbvFormSection title="plugins.generic.reviewerCertificate.settings.dateFormatSection"}
+			<label for="dateFormat" style="display:block;font-size:13px;font-weight:bold;margin-bottom:.35rem;">
+				{translate key="plugins.generic.reviewerCertificate.settings.dateFormat"}
+			</label>
+			<select id="dateFormat" name="dateFormat"
+				style="width:100%;max-width:340px;padding:.45rem .5rem;border:1px solid #ccc;border-radius:3px;font-size:14px;font-family:Arial,sans-serif;">
+				<option value="long" {if $dateFormat === 'long'}selected{/if}>{translate key="plugins.generic.reviewerCertificate.settings.dateFormatLong"}</option>
+				<option value="medium" {if $dateFormat === 'medium'}selected{/if}>{translate key="plugins.generic.reviewerCertificate.settings.dateFormatMedium"}</option>
+				<option value="short" {if $dateFormat === 'short'}selected{/if}>{translate key="plugins.generic.reviewerCertificate.settings.dateFormatShort"}</option>
+				<option value="d-m-Y" {if $dateFormat === 'd-m-Y'}selected{/if}>dd-mm-yyyy</option>
+				<option value="d/m/Y" {if $dateFormat === 'd/m/Y'}selected{/if}>dd/mm/yyyy</option>
+				<option value="m/d/Y" {if $dateFormat === 'm/d/Y'}selected{/if}>mm/dd/yyyy</option>
+				<option value="Y-m-d" {if $dateFormat === 'Y-m-d'}selected{/if}>yyyy-mm-dd</option>
+				<option value="Y/m/d" {if $dateFormat === 'Y/m/d'}selected{/if}>yyyy/mm/dd</option>
+				<option value="d.m.Y" {if $dateFormat === 'd.m.Y'}selected{/if}>dd.mm.yyyy</option>
+				<option value="Y.m.d" {if $dateFormat === 'Y.m.d'}selected{/if}>yyyy.mm.dd</option>
+				<option value="d F Y" {if $dateFormat === 'd F Y'}selected{/if}>dd Month yyyy</option>
+				<option value="F d, Y" {if $dateFormat === 'F d, Y'}selected{/if}>Month dd, yyyy</option>
+				<option value="j F Y" {if $dateFormat === 'j F Y'}selected{/if}>d Month yyyy (no leading zero)</option>
+				<option value="d M Y" {if $dateFormat === 'd M Y'}selected{/if}>dd Mon yyyy</option>
+				<option value="M d, Y" {if $dateFormat === 'M d, Y'}selected{/if}>Mon dd, yyyy</option>
+			</select>
+			<p class="pkp_help" style="margin-top:.35rem;">{translate key="plugins.generic.reviewerCertificate.settings.dateFormatHelp"}</p>
+
+			<label for="dateLocale" style="display:block;font-size:13px;font-weight:bold;margin-bottom:.35rem;margin-top:1rem;">
+				{translate key="plugins.generic.reviewerCertificate.settings.dateLocale"}
+			</label>
+			<select id="dateLocale" name="dateLocale"
+				style="width:100%;max-width:340px;padding:.45rem .5rem;border:1px solid #ccc;border-radius:3px;font-size:14px;font-family:Arial,sans-serif;">
+				<option value="" {if !$dateLocale}selected{/if}>{translate key="plugins.generic.reviewerCertificate.settings.dateLocaleAuto"}</option>
+				<optgroup label="العربية — Arabic">
+					<option value="ar" {if $dateLocale === 'ar'}selected{/if}>ar — العربية (عام)</option>
+					<option value="ar_IQ" {if $dateLocale === 'ar_IQ'}selected{/if}>ar_IQ — العراق</option>
+					<option value="ar_SA" {if $dateLocale === 'ar_SA'}selected{/if}>ar_SA — السعودية</option>
+					<option value="ar_EG" {if $dateLocale === 'ar_EG'}selected{/if}>ar_EG — مصر</option>
+					<option value="ar_AE" {if $dateLocale === 'ar_AE'}selected{/if}>ar_AE — الإمارات</option>
+					<option value="ar_KW" {if $dateLocale === 'ar_KW'}selected{/if}>ar_KW — الكويت</option>
+					<option value="ar_BH" {if $dateLocale === 'ar_BH'}selected{/if}>ar_BH — البحرين</option>
+					<option value="ar_QA" {if $dateLocale === 'ar_QA'}selected{/if}>ar_QA — قطر</option>
+					<option value="ar_OM" {if $dateLocale === 'ar_OM'}selected{/if}>ar_OM — عُمان</option>
+					<option value="ar_JO" {if $dateLocale === 'ar_JO'}selected{/if}>ar_JO — الأردن</option>
+					<option value="ar_LB" {if $dateLocale === 'ar_LB'}selected{/if}>ar_LB — لبنان</option>
+					<option value="ar_SY" {if $dateLocale === 'ar_SY'}selected{/if}>ar_SY — سوريا</option>
+					<option value="ar_PS" {if $dateLocale === 'ar_PS'}selected{/if}>ar_PS — فلسطين</option>
+					<option value="ar_MA" {if $dateLocale === 'ar_MA'}selected{/if}>ar_MA — المغرب</option>
+					<option value="ar_DZ" {if $dateLocale === 'ar_DZ'}selected{/if}>ar_DZ — الجزائر</option>
+					<option value="ar_TN" {if $dateLocale === 'ar_TN'}selected{/if}>ar_TN — تونس</option>
+					<option value="ar_LY" {if $dateLocale === 'ar_LY'}selected{/if}>ar_LY — ليبيا</option>
+					<option value="ar_SD" {if $dateLocale === 'ar_SD'}selected{/if}>ar_SD — السودان</option>
+					<option value="ar_YE" {if $dateLocale === 'ar_YE'}selected{/if}>ar_YE — اليمن</option>
+				</optgroup>
+				<optgroup label="English">
+					<option value="en" {if $dateLocale === 'en'}selected{/if}>en — English (generic)</option>
+					<option value="en_US" {if $dateLocale === 'en_US'}selected{/if}>en_US — English (US)</option>
+					<option value="en_GB" {if $dateLocale === 'en_GB'}selected{/if}>en_GB — English (UK)</option>
+					<option value="en_AU" {if $dateLocale === 'en_AU'}selected{/if}>en_AU — English (Australia)</option>
+					<option value="en_CA" {if $dateLocale === 'en_CA'}selected{/if}>en_CA — English (Canada)</option>
+				</optgroup>
+				<optgroup label="Others">
+					<option value="fr" {if $dateLocale === 'fr'}selected{/if}>fr — Français</option>
+					<option value="fr_FR" {if $dateLocale === 'fr_FR'}selected{/if}>fr_FR — Français (France)</option>
+					<option value="fr_CA" {if $dateLocale === 'fr_CA'}selected{/if}>fr_CA — Français (Canada)</option>
+					<option value="de" {if $dateLocale === 'de'}selected{/if}>de — Deutsch</option>
+					<option value="de_DE" {if $dateLocale === 'de_DE'}selected{/if}>de_DE — Deutsch (Deutschland)</option>
+					<option value="es" {if $dateLocale === 'es'}selected{/if}>es — Español</option>
+					<option value="es_ES" {if $dateLocale === 'es_ES'}selected{/if}>es_ES — Español (España)</option>
+					<option value="tr" {if $dateLocale === 'tr'}selected{/if}>tr — Türkçe</option>
+					<option value="tr_TR" {if $dateLocale === 'tr_TR'}selected{/if}>tr_TR — Türkçe (Türkiye)</option>
+					<option value="fa" {if $dateLocale === 'fa'}selected{/if}>fa — فارسی</option>
+					<option value="fa_IR" {if $dateLocale === 'fa_IR'}selected{/if}>fa_IR — فارسی (ایران)</option>
+					<option value="ku" {if $dateLocale === 'ku'}selected{/if}>ku — Kurdish</option>
+					<option value="ckb" {if $dateLocale === 'ckb'}selected{/if}>ckb — کوردی (سۆرانی)</option>
+				</optgroup>
+			</select>
+			<p class="pkp_help" style="margin-top:.35rem;">{translate key="plugins.generic.reviewerCertificate.settings.dateLocaleHelp"}</p>
+		{/fbvFormSection}
+
 		{* ── PDF Generation ──────────────────────────────────────────────────── *}
 		{fbvFormSection title="plugins.generic.reviewerCertificate.settings.pdfSection"}
 			{if $wkhtmltopdfDetected}
