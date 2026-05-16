@@ -135,7 +135,7 @@
 		.cert-heading {
 			font-size: 32px;
 			font-weight: normal;
-			color: #1a1a2e;
+			color: {$textColor|escape};
 			letter-spacing: 2px;
 			margin-bottom: 0.2rem;
 		}
@@ -165,7 +165,7 @@
 		.reviewer-name {
 			font-size: 34px;
 			font-style: italic;
-			color: #1a1a2e;
+			color: {$textColor|escape};
 			margin-bottom: 1rem;
 			font-weight: normal;
 		}
@@ -173,7 +173,7 @@
 		.body-text {
 			font-size: 14px;
 			line-height: 1.7;
-			color: #444;
+			color: {$textColor|escape};
 			max-width: 600px;
 			margin: 0 auto 0.9rem;
 		}
@@ -269,7 +269,7 @@
 
 		@media print {
 			@page {
-				size: A4 landscape;
+				size: 297mm 210mm;
 				margin: 0;
 			}
 
@@ -280,15 +280,24 @@
 				padding: 0;
 				background: #fff;
 				display: block;
+				position: relative;
 			}
 
-			.btn-bar { display: none; }
+			.btn-bar { display: none !important; }
 
+			/* Absolute fill guarantees the certificate spans the whole
+			   page in wkhtmltopdf, which does not reliably honour an
+			   explicit mm height on a normal-flow element. */
 			.certificate {
-				box-shadow: none;
-				width: 297mm;
-				height: 210mm;
+				position: absolute;
+				top: 0;
+				left: 0;
+				right: 0;
+				bottom: 0;
+				width: auto;
+				height: auto;
 				max-width: none;
+				box-shadow: none;
 				padding: 10mm 15mm;
 				page-break-inside: avoid;
 				break-inside: avoid;
@@ -299,11 +308,14 @@
 			}
 		}
 
-		@media (max-width: 980px) {
+		/* Screen-only responsive rules — must not leak into print/PDF,
+		   where wkhtmltopdf's narrow render width would otherwise
+		   collapse the certificate to content height. */
+		@media screen and (max-width: 980px) {
 			.certificate { width: 100%; height: auto; min-height: 0; }
 		}
 
-		@media (max-width: 640px) {
+		@media screen and (max-width: 640px) {
 			.certificate { padding: 28px 20px; }
 			.cert-heading { font-size: 22px; }
 			.reviewer-name { font-size: 24px; }
@@ -414,9 +426,10 @@ async function rcDownloadImage(btn) {ldelim}
 			{if $certificateBodyHtml}
 				{$certificateBodyHtml nofilter}
 			{else}
+				{capture assign="submissionTitleHtml"}<em>{$submissionTitle|escape}</em>{/capture}
 				{translate key="plugins.generic.reviewerCertificate.certificate.body"
 					journalName=$journalName|escape
-					submissionTitle=$submissionTitle|escape}
+					submissionTitle=$submissionTitleHtml}
 			{/if}
 		</p>
 

@@ -214,10 +214,12 @@ function rcApplyTheme(name) {ldelim}
 
 		{* ── Editor-in-Chief ─────────────────────────────────────────────────── *}
 		{fbvFormSection title="plugins.generic.reviewerCertificate.settings.editorSection"}
-			{fbvElement type="text" id="editorName" value=$editorName
+			{fbvElement type="text" id="editorName" name="editorName" value=$editorName
+				multilingual=true
 				label="plugins.generic.reviewerCertificate.settings.editorName"
 				maxlength="255" size=$fbvStyles.size.LARGE}
-			{fbvElement type="text" id="editorTitle" value=$editorTitle
+			{fbvElement type="text" id="editorTitle" name="editorTitle" value=$editorTitle
+				multilingual=true
 				label="plugins.generic.reviewerCertificate.settings.editorTitle"
 				maxlength="100" size=$fbvStyles.size.MEDIUM}
 			<div style="display:flex;gap:1.5rem;align-items:flex-end;flex-wrap:wrap;margin-top:.5rem;">
@@ -320,17 +322,30 @@ function rcApplyTheme(name) {ldelim}
 							oninput="if(/^#[0-9a-fA-F]{ldelim}6{rdelim}$/.test(this.value))document.getElementById('accentColorPicker').value=this.value;">
 					</div>
 				</div>
+				<div>
+					<label for="textColor" style="display:block;font-size:13px;font-weight:bold;margin-bottom:.25rem;">
+						{translate key="plugins.generic.reviewerCertificate.settings.textColor"}
+					</label>
+					<div style="display:flex;align-items:center;gap:.5rem;">
+						<input type="color" id="textColorPicker"
+							value="{$textColor|escape}"
+							style="width:42px;height:34px;padding:2px;border:1px solid #ccc;border-radius:3px;cursor:pointer;"
+							oninput="document.getElementById('textColor').value=this.value;">
+						<input type="text" id="textColor" name="textColor"
+							value="{$textColor|escape}" maxlength="7"
+							style="width:90px;padding:.35rem .5rem;border:1px solid #ccc;border-radius:3px;font-size:13px;font-family:monospace;"
+							oninput="if(/^#[0-9a-fA-F]{ldelim}6{rdelim}$/.test(this.value))document.getElementById('textColorPicker').value=this.value;">
+					</div>
+					<p class="pkp_help" style="margin-top:.35rem;">{translate key="plugins.generic.reviewerCertificate.settings.textColorHelp"}</p>
+				</div>
 			</div>
 		{/fbvFormSection}
 
 		{* ── Certificate Body Text ────────────────────────────────────────────── *}
 		{fbvFormSection title="plugins.generic.reviewerCertificate.settings.bodySection"}
-			<label for="certificateBody" style="display:block;font-size:13px;font-weight:bold;margin-bottom:.35rem;">
-				{translate key="plugins.generic.reviewerCertificate.settings.certificateBody"}
-			</label>
-			<textarea id="certificateBody" name="certificateBody" rows="4"
-				style="width:100%;padding:.5rem;border:1px solid #ccc;border-radius:3px;font-size:14px;font-family:Arial,sans-serif;resize:vertical;"
-				placeholder="{translate key="plugins.generic.reviewerCertificate.settings.certificateBodyPlaceholder"}">{$certificateBody|escape}</textarea>
+			{fbvElement type="textarea" id="certificateBody" name="certificateBody" value=$certificateBody
+				multilingual=true rows="4"
+				label="plugins.generic.reviewerCertificate.settings.certificateBody"}
 			<p class="pkp_help">{translate key="plugins.generic.reviewerCertificate.settings.certificateBodyHelp"}</p>
 		{/fbvFormSection}
 

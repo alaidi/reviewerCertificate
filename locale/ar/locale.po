@@ -86,6 +86,12 @@ msgstr "زمردي"
 msgid "plugins.generic.reviewerCertificate.settings.accentColor"
 msgstr "لون التمييز (الحدود والزخارف)"
 
+msgid "plugins.generic.reviewerCertificate.settings.textColor"
+msgstr "لون النص"
+
+msgid "plugins.generic.reviewerCertificate.settings.textColorHelp"
+msgstr "لون النص الرئيسي في الشهادة (العنوان واسم المستلم والنص)."
+
 msgid "plugins.generic.reviewerCertificate.settings.bodySection"
 msgstr "نص الشهادة"
 

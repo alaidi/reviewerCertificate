@@ -43,8 +43,8 @@ class ReviewerCertificateSettingsForm extends Form
         $id = $this->_journalId;
         $p  = $this->_plugin;
 
-        $this->setData('editorName',          $p->getSetting($id, 'editorName'));
-        $this->setData('editorTitle',         $p->getSetting($id, 'editorTitle') ?: 'Editor-in-Chief');
+        $this->setData('editorName',          $this->_toLocalized($p->getSetting($id, 'editorName')));
+        $this->setData('editorTitle',         $this->_toLocalized($p->getSetting($id, 'editorTitle')));
         $this->setData('editorNameFontSize',  $p->getSetting($id, 'editorNameFontSize') ?: '12');
         $this->setData('editorNameColor',     $p->getSetting($id, 'editorNameColor') ?: '#222222');
         $this->setData('journalNameFontSize', $p->getSetting($id, 'journalNameFontSize') ?: '12');
@@ -52,14 +52,50 @@ class ReviewerCertificateSettingsForm extends Form
         $this->setData('signatureSize',       $p->getSetting($id, 'signatureSize') ?: '70');
         $this->setData('logoSize',            $p->getSetting($id, 'logoSize') ?: '70');
         $this->setData('accentColor',         $p->getSetting($id, 'accentColor') ?: '#b8975a');
-        $this->setData('certificateBody',     $p->getSetting($id, 'certificateBody') ?? '');
+        $this->setData('textColor',           $p->getSetting($id, 'textColor') ?: '#1a1a2e');
+        $this->setData('certificateBody',     $this->_toLocalized($p->getSetting($id, 'certificateBody')));
         $this->setData('enableQrCode',        $p->getSetting($id, 'enableQrCode') ?? '1');
-        $this->setData('dateFormat',           $p->getSetting($id, 'dateFormat') ?: 'long');
-        $this->setData('dateLocale',           $p->getSetting($id, 'dateLocale') ?? '');
+        $this->setData('dateFormat',          $p->getSetting($id, 'dateFormat') ?: 'long');
+        $this->setData('dateLocale',          $p->getSetting($id, 'dateLocale') ?? '');
         $this->setData('wkhtmltopdfPath',     $p->getSetting($id, 'wkhtmltopdfPath') ?? '');
         $this->setData('signatureUrl',        $p->getSetting($id, 'signatureUrl'));
         $this->setData('customLogoUrl',       $p->getSetting($id, 'customLogoUrl'));
         $this->setData('backgroundImageUrl',  $p->getSetting($id, 'backgroundImageUrl'));
+    }
+
+    /**
+     * Normalize a stored setting into a [localeKey => value] array so the
+     * multilingual form widgets render correctly.
+     *
+     * A legacy scalar value (saved before multilingual support) is
+     * pre-filled into every supported form locale rather than being
+     * guessed onto a single locale: the language of free text cannot be
+     * reliably inferred, and a wrong guess silently mislabels the value
+     * (e.g. Arabic text tagged as English). The admin then corrects each
+     * language box explicitly.
+     */
+    private function _toLocalized($value): array
+    {
+        if (is_array($value)) {
+            return $value;
+        }
+        if ($value === null || $value === '') {
+            return [];
+        }
+
+        $localized = [];
+        foreach (array_keys($this->supportedLocales ?? []) as $localeKey) {
+            $localized[$localeKey] = (string) $value;
+        }
+        return $localized;
+    }
+
+    /**
+     * Fields that hold one value per supported form locale.
+     */
+    public function getLocaleFieldNames(): array
+    {
+        return ['editorName', 'editorTitle', 'certificateBody'];
     }
 
     public function readInputData(): void
@@ -74,6 +110,7 @@ class ReviewerCertificateSettingsForm extends Form
             'signatureSize',
             'logoSize',
             'accentColor',
+            'textColor',
             'certificateBody',
             'enableQrCode',
             'dateFormat',
@@ -146,9 +183,9 @@ class ReviewerCertificateSettingsForm extends Form
         $id = $this->_journalId;
         $p  = $this->_plugin;
 
-        // Plain text / URL fields
-        $p->updateSetting($id, 'editorName',  $this->getData('editorName'));
-        $p->updateSetting($id, 'editorTitle', $this->getData('editorTitle') ?: 'Editor-in-Chief');
+        // Localized text fields (one value per supported locale)
+        $p->updateSetting($id, 'editorName',  $this->getData('editorName') ?: [], 'object');
+        $p->updateSetting($id, 'editorTitle', $this->getData('editorTitle') ?: [], 'object');
 
         $fontSize = (int) $this->getData('editorNameFontSize');
         $p->updateSetting($id, 'editorNameFontSize', ($fontSize >= 8 && $fontSize <= 72) ? $fontSize : 12);
@@ -174,8 +211,12 @@ class ReviewerCertificateSettingsForm extends Form
             ? $this->getData('accentColor') : '#b8975a';
         $p->updateSetting($id, 'accentColor', $accentColor);
 
-        // Certificate body: store raw text (placeholders replaced at render time)
-        $p->updateSetting($id, 'certificateBody', $this->getData('certificateBody') ?? '');
+        $textColor = preg_match('/^#[0-9a-fA-F]{6}$/', $this->getData('textColor'))
+            ? $this->getData('textColor') : '#1a1a2e';
+        $p->updateSetting($id, 'textColor', $textColor);
+
+        // Certificate body: store raw text per locale (placeholders replaced at render time)
+        $p->updateSetting($id, 'certificateBody', $this->getData('certificateBody') ?: [], 'object');
 
         $p->updateSetting($id, 'enableQrCode', $this->getData('enableQrCode') ? '1' : '0');
 

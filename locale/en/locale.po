@@ -113,6 +113,12 @@ msgstr "Emerald"
 msgid "plugins.generic.reviewerCertificate.settings.accentColor"
 msgstr "Accent Color (borders & ornaments)"
 
+msgid "plugins.generic.reviewerCertificate.settings.textColor"
+msgstr "Text Color"
+
+msgid "plugins.generic.reviewerCertificate.settings.textColorHelp"
+msgstr "Color of the main certificate text (heading, recipient name and body)."
+
 msgid "plugins.generic.reviewerCertificate.settings.bodySection"
 msgstr "Certificate Body Text"
 

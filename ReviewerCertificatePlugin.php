@@ -191,8 +191,8 @@ class ReviewerCertificatePlugin extends GenericPlugin
             : $dateCompleted;
 
         // Plugin settings
-        $editorName         = $this->getSetting($contextId, 'editorName') ?? '';
-        $editorTitle        = $this->getSetting($contextId, 'editorTitle') ?: 'Editor-in-Chief';
+        $editorName         = $this->getLocalizedSetting($contextId, 'editorName', $locale, '');
+        $editorTitle        = $this->getLocalizedSetting($contextId, 'editorTitle', $locale, 'Editor-in-Chief');
         $editorNameFontSize = (int) ($this->getSetting($contextId, 'editorNameFontSize') ?: 12);
         $editorNameColor    = $this->getSetting($contextId, 'editorNameColor') ?: '#222222';
         $journalNameFontSize = (int) ($this->getSetting($contextId, 'journalNameFontSize') ?: 12);
@@ -209,14 +209,19 @@ class ReviewerCertificatePlugin extends GenericPlugin
             $accentColor = '#b8975a';
         }
 
+        $textColor = $this->getSetting($contextId, 'textColor') ?: '#1a1a2e';
+        if (!preg_match('/^#[0-9a-fA-F]{6}$/', $textColor)) {
+            $textColor = '#1a1a2e';
+        }
+
         // Custom body text
-        $certificateBodyRaw  = $this->getSetting($contextId, 'certificateBody') ?? '';
+        $certificateBodyRaw  = $this->getLocalizedSetting($contextId, 'certificateBody', $locale, '');
         $certificateBodyHtml = $certificateBodyRaw
             ? str_replace(
                 ['{journalName}', '{submissionTitle}'],
                 [
                     '<em>' . htmlspecialchars($journalName, ENT_QUOTES | ENT_HTML5, 'UTF-8') . '</em>',
-                    '<strong>' . htmlspecialchars($submissionTitle, ENT_QUOTES | ENT_HTML5, 'UTF-8') . '</strong>',
+                    '<em>' . htmlspecialchars($submissionTitle, ENT_QUOTES | ENT_HTML5, 'UTF-8') . '</em>',
                 ],
                 $certificateBodyRaw
             )
@@ -263,6 +268,7 @@ class ReviewerCertificatePlugin extends GenericPlugin
             'signatureSize'       => $signatureSize,
             'logoSize'            => $logoSize,
             'accentColor'         => $accentColor,
+            'textColor'           => $textColor,
             'enableQrCode'        => $enableQrCode,
             'certificateBodyHtml' => $certificateBodyHtml,
             'signatureUrl'        => $signatureUrl,
@@ -306,6 +312,48 @@ class ReviewerCertificatePlugin extends GenericPlugin
         $this->updateSetting($contextId, 'cert_saved_url_' . $reviewId, $url);
 
         return $url;
+    }
+
+    /**
+     * Resolve a (possibly) multilingual plugin setting to a single string.
+     *
+     * Settings written through the settings form are stored as
+     * [localeKey => value] arrays. This picks the value for $locale,
+     * then the context's primary locale, then the first non-empty value,
+     * and finally $default. Plain scalar values (legacy data written
+     * before multilingual support) are returned as-is.
+     *
+     * @param ?int    $contextId Context ID
+     * @param string  $name      Setting name
+     * @param ?string $locale    Preferred locale (defaults to current UI locale)
+     * @param string  $default   Value used when nothing else is available
+     */
+    public function getLocalizedSetting($contextId, string $name, ?string $locale = null, string $default = ''): string
+    {
+        $value  = $this->getSetting($contextId, $name);
+        $locale = $locale ?: Locale::getLocale();
+
+        if (is_array($value)) {
+            if (isset($value[$locale]) && $value[$locale] !== '') {
+                return $value[$locale];
+            }
+
+            $context = Application::getContextDAO()->getById($contextId);
+            $primary = $context ? $context->getPrimaryLocale() : null;
+            if ($primary && isset($value[$primary]) && $value[$primary] !== '') {
+                return $value[$primary];
+            }
+
+            foreach ($value as $localized) {
+                if (is_string($localized) && $localized !== '') {
+                    return $localized;
+                }
+            }
+
+            return $default;
+        }
+
+        return ($value !== null && $value !== '') ? (string) $value : $default;
     }
 
     /**
