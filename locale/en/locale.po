@@ -307,3 +307,30 @@ msgstr "Auto (use journal language)"
 
 msgid "plugins.generic.reviewerCertificate.settings.dateLocaleHelp"
 msgstr "Month names differ by country (e.g. August = أغسطس in some countries but اب in Iraq). Select the country whose month names you prefer, or leave as Auto to use the journal's language setting."
+
+msgid "plugins.generic.reviewerCertificate.settings.positionSection"
+msgstr "Signature & Date Position"
+
+msgid "plugins.generic.reviewerCertificate.settings.positionHelp"
+msgstr "Fine-tune where the Editor-in-Chief and Date blocks sit on the certificate. Use negative values to move up/left and positive values to move down/right. All values are in pixels."
+
+msgid "plugins.generic.reviewerCertificate.settings.signatureSectionOffsetY"
+msgstr "Move both blocks up/down"
+
+msgid "plugins.generic.reviewerCertificate.settings.signatureSectionPaddingTop"
+msgstr "Space above signature row"
+
+msgid "plugins.generic.reviewerCertificate.settings.signatureSectionGap"
+msgstr "Gap between blocks"
+
+msgid "plugins.generic.reviewerCertificate.settings.editorBlockOffsetX"
+msgstr "Editor-in-Chief — left/right"
+
+msgid "plugins.generic.reviewerCertificate.settings.editorBlockOffsetY"
+msgstr "Editor-in-Chief — up/down"
+
+msgid "plugins.generic.reviewerCertificate.settings.dateBlockOffsetX"
+msgstr "Date — left/right"
+
+msgid "plugins.generic.reviewerCertificate.settings.dateBlockOffsetY"
+msgstr "Date — up/down"

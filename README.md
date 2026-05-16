@@ -67,6 +67,12 @@ Navigate to **Settings → Website → Plugins → Reviewer Certificate → Sett
 
 ## Changelog
 
+### 1.2.0.0 — 2026-05-16
+
+- **New:** Signature & Date position controls — nudge the Editor-in-Chief and Date blocks up/down/left/right, adjust the space above the signature row and the gap between blocks (7 pixel-precise settings, clamped server-side)
+- **New:** live preview — clicking **Preview** now reflects unsaved style/layout changes (position, sizes, fonts, colors) without saving; values are re-validated and clamped, and only privileged users may override
+- **Fixed:** plugin settings page returned HTTP 500 (`Class "…Locale" not found`, then `undefined method getLocaleNames()`) — added the correct `PKP\facades\Locale` import and removed an unused, broken locale-names lookup
+
 ### 1.1.0.1 — 2026-05-16
 
 - **Fixed:** plugin failed to register on some OJS installs with `Class "…ReviewerCertificateGatewayPlugin" not found` — sibling plugin classes are now loaded explicitly instead of relying on namespace autoloading (also fixes the scheduler error)

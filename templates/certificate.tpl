@@ -439,9 +439,9 @@ async function rcDownloadImage(btn) {ldelim}
 		</div>
 
 		{* Signature section *}
-		<div class="signature-section">
+		<div class="signature-section" style="gap:{$signatureSectionGap|escape}px;padding-top:{$signatureSectionPaddingTop|escape}px;transform:translateY({$signatureSectionOffsetY|escape}px);">
 
-			<div class="signature-block">
+			<div class="signature-block" style="transform:translate({$editorBlockOffsetX|escape}px,{$editorBlockOffsetY|escape}px);">
 				{if $signatureUrl}
 					<div class="signature-img-wrap">
 						<img src="{$signatureUrl|escape}" alt="{translate key="plugins.generic.reviewerCertificate.certificate.editorSignature"}" style="max-height:{$signatureSize|escape}px;max-width:{math equation='s*3' s=$signatureSize}px;">
@@ -457,7 +457,7 @@ async function rcDownloadImage(btn) {ldelim}
 				{/if}
 			</div>
 
-			<div class="signature-block">
+			<div class="signature-block" style="transform:translate({$dateBlockOffsetX|escape}px,{$dateBlockOffsetY|escape}px);">
 				<div class="signature-img-wrap signature-date-wrap">
 					<div style="font-size:14px;font-weight:bold;color:#333;padding-bottom:4px;">{$dateAcknowledged|escape}</div>
 				</div>

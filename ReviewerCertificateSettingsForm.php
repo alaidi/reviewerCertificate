@@ -18,6 +18,7 @@ use APP\file\PublicFileManager;
 use APP\template\TemplateManager;
 use PKP\core\PKPApplication;
 use PKP\db\DAORegistry;
+use PKP\facades\Locale;
 use PKP\file\TemporaryFileManager;
 use PKP\form\Form;
 use PKP\form\validation\FormValidatorCSRF;
@@ -43,17 +44,23 @@ class ReviewerCertificateSettingsForm extends Form
         $id = $this->_journalId;
         $p  = $this->_plugin;
 
-        $this->setData('editorName',          $this->_toLocalized($p->getSetting($id, 'editorName')));
-        $this->setData('editorTitle',         $this->_toLocalized($p->getSetting($id, 'editorTitle')));
+        $this->setData('editorName',          $this->_getLocalizedSetting($p, $id, 'editorName'));
+        $this->setData('editorTitle',         $this->_getLocalizedSetting($p, $id, 'editorTitle', 'Editor-in-Chief'));
         $this->setData('editorNameFontSize',  $p->getSetting($id, 'editorNameFontSize') ?: '12');
         $this->setData('editorNameColor',     $p->getSetting($id, 'editorNameColor') ?: '#222222');
         $this->setData('journalNameFontSize', $p->getSetting($id, 'journalNameFontSize') ?: '12');
         $this->setData('journalNameColor',    $p->getSetting($id, 'journalNameColor') ?: '#7a6030');
         $this->setData('signatureSize',       $p->getSetting($id, 'signatureSize') ?: '70');
         $this->setData('logoSize',            $p->getSetting($id, 'logoSize') ?: '70');
+        $this->setData('signatureSectionOffsetY',    $p->getSetting($id, 'signatureSectionOffsetY') ?: '0');
+        $this->setData('signatureSectionPaddingTop', $p->getSetting($id, 'signatureSectionPaddingTop') ?: '0');
+        $this->setData('signatureSectionGap',        $p->getSetting($id, 'signatureSectionGap') ?: '80');
+        $this->setData('editorBlockOffsetX',  $p->getSetting($id, 'editorBlockOffsetX') ?: '0');
+        $this->setData('editorBlockOffsetY',  $p->getSetting($id, 'editorBlockOffsetY') ?: '0');
+        $this->setData('dateBlockOffsetX',    $p->getSetting($id, 'dateBlockOffsetX') ?: '0');
+        $this->setData('dateBlockOffsetY',    $p->getSetting($id, 'dateBlockOffsetY') ?: '0');
         $this->setData('accentColor',         $p->getSetting($id, 'accentColor') ?: '#b8975a');
-        $this->setData('textColor',           $p->getSetting($id, 'textColor') ?: '#1a1a2e');
-        $this->setData('certificateBody',     $this->_toLocalized($p->getSetting($id, 'certificateBody')));
+        $this->setData('certificateBody',     $this->_getLocalizedSetting($p, $id, 'certificateBody'));
         $this->setData('enableQrCode',        $p->getSetting($id, 'enableQrCode') ?? '1');
         $this->setData('dateFormat',          $p->getSetting($id, 'dateFormat') ?: 'long');
         $this->setData('dateLocale',          $p->getSetting($id, 'dateLocale') ?? '');
@@ -109,8 +116,14 @@ class ReviewerCertificateSettingsForm extends Form
             'journalNameColor',
             'signatureSize',
             'logoSize',
+            'signatureSectionOffsetY',
+            'signatureSectionPaddingTop',
+            'signatureSectionGap',
+            'editorBlockOffsetX',
+            'editorBlockOffsetY',
+            'dateBlockOffsetX',
+            'dateBlockOffsetY',
             'accentColor',
-            'textColor',
             'certificateBody',
             'enableQrCode',
             'dateFormat',
@@ -132,6 +145,23 @@ class ReviewerCertificateSettingsForm extends Form
 
         // URL for the PKP temporary files API (used by the upload widget)
         $context = $request->getContext();
+        $supportedLocales = $context->getSupportedFormLocales();
+        $templateMgr->assign('supportedLocales', $supportedLocales);
+
+        $id = $this->_journalId;
+        $p  = $this->_plugin;
+        foreach (['editorName', 'editorTitle', 'certificateBody'] as $field) {
+            $raw = $p->getSetting($id, $field);
+            $localized = is_array($raw) ? $raw : [];
+            if (!is_array($raw) && $raw !== null && $raw !== '') {
+                foreach (array_keys($supportedLocales) as $loc) {
+                    if (!isset($localized[$loc])) {
+                        $localized[$loc] = $raw;
+                    }
+                }
+            }
+            $templateMgr->assign($field . 'Localized', $localized);
+        }
         $temporaryFileApiUrl = $request->getDispatcher()->url(
             $request,
             PKPApplication::ROUTE_API,
@@ -184,8 +214,10 @@ class ReviewerCertificateSettingsForm extends Form
         $p  = $this->_plugin;
 
         // Localized text fields (one value per supported locale)
-        $p->updateSetting($id, 'editorName',  $this->getData('editorName') ?: [], 'object');
-        $p->updateSetting($id, 'editorTitle', $this->getData('editorTitle') ?: [], 'object');
+        $editorNameData = $this->getData('editorName');
+        $p->updateSetting($id, 'editorName',  is_array($editorNameData) ? $editorNameData : [], 'object');
+        $editorTitleData = $this->getData('editorTitle');
+        $p->updateSetting($id, 'editorTitle', is_array($editorTitleData) ? $editorTitleData : [], 'object');
 
         $fontSize = (int) $this->getData('editorNameFontSize');
         $p->updateSetting($id, 'editorNameFontSize', ($fontSize >= 8 && $fontSize <= 72) ? $fontSize : 12);
@@ -207,6 +239,17 @@ class ReviewerCertificateSettingsForm extends Form
         $logoSize = (int) $this->getData('logoSize');
         $p->updateSetting($id, 'logoSize', ($logoSize >= 20 && $logoSize <= 300) ? $logoSize : 70);
 
+        // Signature-section layout offsets. Y/X offsets accept negatives
+        // (move up / left); padding-top and gap are non-negative.
+        $clamp = fn ($v, $min, $max, $default) => (($n = (int) $v) >= $min && $n <= $max) ? $n : $default;
+        $p->updateSetting($id, 'signatureSectionOffsetY',    $clamp($this->getData('signatureSectionOffsetY'), -400, 400, 0));
+        $p->updateSetting($id, 'signatureSectionPaddingTop', $clamp($this->getData('signatureSectionPaddingTop'), 0, 400, 0));
+        $p->updateSetting($id, 'signatureSectionGap',        $clamp($this->getData('signatureSectionGap'), 0, 400, 80));
+        $p->updateSetting($id, 'editorBlockOffsetX',         $clamp($this->getData('editorBlockOffsetX'), -400, 400, 0));
+        $p->updateSetting($id, 'editorBlockOffsetY',         $clamp($this->getData('editorBlockOffsetY'), -400, 400, 0));
+        $p->updateSetting($id, 'dateBlockOffsetX',           $clamp($this->getData('dateBlockOffsetX'), -400, 400, 0));
+        $p->updateSetting($id, 'dateBlockOffsetY',           $clamp($this->getData('dateBlockOffsetY'), -400, 400, 0));
+
         $accentColor = preg_match('/^#[0-9a-fA-F]{6}$/', $this->getData('accentColor'))
             ? $this->getData('accentColor') : '#b8975a';
         $p->updateSetting($id, 'accentColor', $accentColor);
@@ -216,7 +259,8 @@ class ReviewerCertificateSettingsForm extends Form
         $p->updateSetting($id, 'textColor', $textColor);
 
         // Certificate body: store raw text per locale (placeholders replaced at render time)
-        $p->updateSetting($id, 'certificateBody', $this->getData('certificateBody') ?: [], 'object');
+        $certificateBodyData = $this->getData('certificateBody');
+        $p->updateSetting($id, 'certificateBody', is_array($certificateBodyData) ? $certificateBodyData : [], 'object');
 
         $p->updateSetting($id, 'enableQrCode', $this->getData('enableQrCode') ? '1' : '0');
 
@@ -282,5 +326,20 @@ class ReviewerCertificateSettingsForm extends Form
         }
         $which = trim((string) shell_exec('which wkhtmltopdf 2>/dev/null'));
         return ($which && is_executable($which)) ? $which : '';
+    }
+
+    private function _getLocalizedSetting(ReviewerCertificatePlugin $plugin, int $contextId, string $name, string $default = ''): array
+    {
+        $raw = $plugin->getSetting($contextId, $name);
+        if (is_array($raw) && !empty($raw)) {
+            return $raw;
+        }
+        $supportedLocales = Locale::getSupportedFormLocales();
+        $fallback = ($raw !== null && $raw !== '' && !is_array($raw)) ? (string) $raw : $default;
+        $result = [];
+        foreach (array_keys($supportedLocales) as $loc) {
+            $result[$loc] = $fallback;
+        }
+        return $result;
     }
 }

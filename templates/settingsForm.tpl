@@ -191,7 +191,24 @@ function rcApplyTheme(name) {ldelim}
 			var id = parseInt(document.getElementById('rc-preview-id').value, 10);
 			if (!id || id < 1) {ldelim} alert('Please enter a valid Review ID.'); return; {rdelim}
 
-			var url = RC_PREVIEW_BASE + '?reviewId=' + id;
+			// Send the in-progress form values so the preview reflects
+			// unsaved changes. Only safe scalar style/layout fields; the
+			// gateway re-validates and clamps every value and saves nothing.
+			var rcLiveFields = [
+				'signatureSectionOffsetY','signatureSectionPaddingTop','signatureSectionGap',
+				'editorBlockOffsetX','editorBlockOffsetY','dateBlockOffsetX','dateBlockOffsetY',
+				'editorNameFontSize','editorNameColor','journalNameFontSize','journalNameColor',
+				'signatureSize','logoSize','accentColor','textColor'
+			];
+			var params = 'reviewId=' + id + '&rcPreview=1';
+			rcLiveFields.forEach(function(name) {ldelim}
+				var el = document.getElementById(name);
+				if (el && el.value !== '') {ldelim}
+					params += '&' + name + '=' + encodeURIComponent(el.value);
+				{rdelim}
+			{rdelim});
+
+			var url = RC_PREVIEW_BASE + '?' + params;
 
 			var wrap  = document.getElementById('rc-preview-wrap');
 			var frame = document.getElementById('rc-preview-frame');
@@ -246,6 +263,82 @@ function rcApplyTheme(name) {ldelim}
 							style="width:90px;padding:.35rem .5rem;border:1px solid #ccc;border-radius:3px;font-size:13px;font-family:monospace;"
 							oninput="if(/^#[0-9a-fA-F]{ldelim}6{rdelim}$/.test(this.value))document.getElementById('editorNameColorPicker').value=this.value;">
 					</div>
+				</div>
+			</div>
+		{/fbvFormSection}
+
+		{* ── Signature Position (Editor-in-Chief + Date) ─────────────────────── *}
+		{fbvFormSection title="plugins.generic.reviewerCertificate.settings.positionSection"}
+			<p class="pkp_help" style="margin-bottom:.85rem;">
+				{translate key="plugins.generic.reviewerCertificate.settings.positionHelp"}
+			</p>
+
+			<div style="display:flex;gap:1.5rem;align-items:flex-end;flex-wrap:wrap;margin-bottom:1rem;">
+				<div>
+					<label for="signatureSectionOffsetY" style="display:block;font-size:13px;font-weight:bold;margin-bottom:.25rem;">
+						{translate key="plugins.generic.reviewerCertificate.settings.signatureSectionOffsetY"}
+					</label>
+					<input type="number" id="signatureSectionOffsetY" name="signatureSectionOffsetY"
+						value="{$signatureSectionOffsetY|escape}" min="-400" max="400" step="2"
+						style="width:90px;padding:.35rem .5rem;border:1px solid #ccc;border-radius:3px;font-size:14px;">
+					<span style="font-size:12px;color:#888;margin-left:.3rem;">px (&minus; up / + down)</span>
+				</div>
+				<div>
+					<label for="signatureSectionPaddingTop" style="display:block;font-size:13px;font-weight:bold;margin-bottom:.25rem;">
+						{translate key="plugins.generic.reviewerCertificate.settings.signatureSectionPaddingTop"}
+					</label>
+					<input type="number" id="signatureSectionPaddingTop" name="signatureSectionPaddingTop"
+						value="{$signatureSectionPaddingTop|escape}" min="0" max="400" step="2"
+						style="width:90px;padding:.35rem .5rem;border:1px solid #ccc;border-radius:3px;font-size:14px;">
+					<span style="font-size:12px;color:#888;margin-left:.3rem;">px (0–400)</span>
+				</div>
+				<div>
+					<label for="signatureSectionGap" style="display:block;font-size:13px;font-weight:bold;margin-bottom:.25rem;">
+						{translate key="plugins.generic.reviewerCertificate.settings.signatureSectionGap"}
+					</label>
+					<input type="number" id="signatureSectionGap" name="signatureSectionGap"
+						value="{$signatureSectionGap|escape}" min="0" max="400" step="5"
+						style="width:90px;padding:.35rem .5rem;border:1px solid #ccc;border-radius:3px;font-size:14px;">
+					<span style="font-size:12px;color:#888;margin-left:.3rem;">px (0–400)</span>
+				</div>
+			</div>
+
+			<div style="display:flex;gap:1.5rem;align-items:flex-end;flex-wrap:wrap;">
+				<div>
+					<label for="editorBlockOffsetX" style="display:block;font-size:13px;font-weight:bold;margin-bottom:.25rem;">
+						{translate key="plugins.generic.reviewerCertificate.settings.editorBlockOffsetX"}
+					</label>
+					<input type="number" id="editorBlockOffsetX" name="editorBlockOffsetX"
+						value="{$editorBlockOffsetX|escape}" min="-400" max="400" step="2"
+						style="width:90px;padding:.35rem .5rem;border:1px solid #ccc;border-radius:3px;font-size:14px;">
+					<span style="font-size:12px;color:#888;margin-left:.3rem;">px (&minus; left / + right)</span>
+				</div>
+				<div>
+					<label for="editorBlockOffsetY" style="display:block;font-size:13px;font-weight:bold;margin-bottom:.25rem;">
+						{translate key="plugins.generic.reviewerCertificate.settings.editorBlockOffsetY"}
+					</label>
+					<input type="number" id="editorBlockOffsetY" name="editorBlockOffsetY"
+						value="{$editorBlockOffsetY|escape}" min="-400" max="400" step="2"
+						style="width:90px;padding:.35rem .5rem;border:1px solid #ccc;border-radius:3px;font-size:14px;">
+					<span style="font-size:12px;color:#888;margin-left:.3rem;">px (&minus; up / + down)</span>
+				</div>
+				<div>
+					<label for="dateBlockOffsetX" style="display:block;font-size:13px;font-weight:bold;margin-bottom:.25rem;">
+						{translate key="plugins.generic.reviewerCertificate.settings.dateBlockOffsetX"}
+					</label>
+					<input type="number" id="dateBlockOffsetX" name="dateBlockOffsetX"
+						value="{$dateBlockOffsetX|escape}" min="-400" max="400" step="2"
+						style="width:90px;padding:.35rem .5rem;border:1px solid #ccc;border-radius:3px;font-size:14px;">
+					<span style="font-size:12px;color:#888;margin-left:.3rem;">px (&minus; left / + right)</span>
+				</div>
+				<div>
+					<label for="dateBlockOffsetY" style="display:block;font-size:13px;font-weight:bold;margin-bottom:.25rem;">
+						{translate key="plugins.generic.reviewerCertificate.settings.dateBlockOffsetY"}
+					</label>
+					<input type="number" id="dateBlockOffsetY" name="dateBlockOffsetY"
+						value="{$dateBlockOffsetY|escape}" min="-400" max="400" step="2"
+						style="width:90px;padding:.35rem .5rem;border:1px solid #ccc;border-radius:3px;font-size:14px;">
+					<span style="font-size:12px;color:#888;margin-left:.3rem;">px (&minus; up / + down)</span>
 				</div>
 			</div>
 		{/fbvFormSection}

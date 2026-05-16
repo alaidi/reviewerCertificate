@@ -304,3 +304,30 @@ msgstr "تلقائي (استخدام لغة المجلة)"
 
 msgid "plugins.generic.reviewerCertificate.settings.dateLocaleHelp"
 msgstr "تختلف أسماء الأشهر حسب البلد (مثلاً: أغسطس في بعض الدول و اب في العراق). اختر البلد الذي تفضّل أسماء أشهره، أو اتركه تلقائياً لاستخدام إعداد لغة المجلة."
+
+msgid "plugins.generic.reviewerCertificate.settings.positionSection"
+msgstr "موضع التوقيع والتاريخ"
+
+msgid "plugins.generic.reviewerCertificate.settings.positionHelp"
+msgstr "اضبط بدقة مكان ظهور كتلتي رئيس التحرير والتاريخ على الشهادة. استخدم القيم السالبة للتحريك لأعلى/لليسار والقيم الموجبة للتحريك لأسفل/لليمين. جميع القيم بالبكسل."
+
+msgid "plugins.generic.reviewerCertificate.settings.signatureSectionOffsetY"
+msgstr "تحريك الكتلتين لأعلى/لأسفل"
+
+msgid "plugins.generic.reviewerCertificate.settings.signatureSectionPaddingTop"
+msgstr "المسافة فوق صف التوقيع"
+
+msgid "plugins.generic.reviewerCertificate.settings.signatureSectionGap"
+msgstr "المسافة بين الكتلتين"
+
+msgid "plugins.generic.reviewerCertificate.settings.editorBlockOffsetX"
+msgstr "رئيس التحرير — يمين/يسار"
+
+msgid "plugins.generic.reviewerCertificate.settings.editorBlockOffsetY"
+msgstr "رئيس التحرير — أعلى/أسفل"
+
+msgid "plugins.generic.reviewerCertificate.settings.dateBlockOffsetX"
+msgstr "التاريخ — يمين/يسار"
+
+msgid "plugins.generic.reviewerCertificate.settings.dateBlockOffsetY"
+msgstr "التاريخ — أعلى/أسفل"
