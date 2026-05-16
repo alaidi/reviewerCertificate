@@ -187,10 +187,17 @@
 			align-items: flex-end;
 		}
 
-		.signature-block { text-align: center; min-width: 180px; }
+		.signature-block {
+			text-align: center;
+			min-width: 180px;
+			position: relative;
+		}
 
 		.signature-img-wrap {
-			height: 56px;
+			position: absolute;
+			bottom: 100%;
+			left: 50%;
+			transform: translateX(-50%);
 			display: flex;
 			align-items: flex-end;
 			justify-content: center;

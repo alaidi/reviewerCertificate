@@ -27,6 +27,8 @@ use PKP\linkAction\request\AjaxModal;
 use PKP\plugins\GenericPlugin;
 use PKP\plugins\Hook;
 use PKP\plugins\PluginRegistry;
+use PKP\security\Role;
+use PKP\userGroup\UserGroup;
 
 class ReviewerCertificatePlugin extends GenericPlugin
 {
@@ -47,6 +49,7 @@ class ReviewerCertificatePlugin extends GenericPlugin
 
             Hook::add('ThankReviewerForm::thankReviewer', $this->sendCertificateEmail(...));
             Hook::add('Templates::Reviewer::Review::Step3', $this->addCertificateLinkToReviewStep(...));
+            Hook::add('TemplateManager::display', $this->addCertificatesMenuItem(...));
         }
 
         return true;
@@ -99,6 +102,17 @@ class ReviewerCertificatePlugin extends GenericPlugin
         $notice  = __('plugins.generic.reviewerCertificate.email.certificateNotice');
         $subject = __('plugins.generic.reviewerCertificate.email.certificateSubject');
 
+        // Central page listing all of the reviewer's certificates
+        $listUrl = $request->getDispatcher()->url(
+            $request,
+            PKPApplication::ROUTE_PAGE,
+            null,
+            'gateway',
+            'plugin',
+            ['ReviewerCertificateGatewayPlugin', 'list']
+        );
+        $listLabel = __('plugins.generic.reviewerCertificate.certificate.viewAllLink');
+
         $htmlBody =
             '<!DOCTYPE html>'
             . '<html dir="' . $dir . '">'
@@ -115,6 +129,12 @@ class ReviewerCertificatePlugin extends GenericPlugin
             . '</a>'
             . '</p>'
             . '<p style="color:#888;font-size:12px;">' . htmlspecialchars($certificateUrl) . '</p>'
+            . '<p style="margin-top:1.4rem;font-size:13px;">'
+            . '<a href="' . htmlspecialchars($listUrl) . '" '
+            . 'style="color:#2d6a9f;text-decoration:underline;">'
+            . htmlspecialchars($listLabel)
+            . '</a>'
+            . '</p>'
             . '</body></html>';
 
         try {
@@ -289,6 +309,15 @@ class ReviewerCertificatePlugin extends GenericPlugin
     }
 
     /**
+     * Whether the active UI locale is written right-to-left.
+     */
+    private function _isRtlLocale(): bool
+    {
+        $rtlLocales = ['ar', 'fa', 'he', 'ur', 'ckb', 'ps'];
+        return in_array(substr(Locale::getLocale(), 0, 2), $rtlLocales);
+    }
+
+    /**
      * Format a date string using the active locale (IntlDateFormatter when available).
      */
     private function _formatDate(string $dateStr, string $locale): string
@@ -349,6 +378,14 @@ class ReviewerCertificatePlugin extends GenericPlugin
 
         $label = __('plugins.generic.reviewerCertificate.certificate.downloadLink');
 
+        // Central "all certificates" page for this reviewer
+        $listUrl = $request->getDispatcher()->url(
+            $request, PKPApplication::ROUTE_PAGE, null,
+            'gateway', 'plugin',
+            ['ReviewerCertificateGatewayPlugin', 'list']
+        );
+        $listLabel = __('plugins.generic.reviewerCertificate.certificate.viewAllLink');
+
         $output .= '<div style="margin:1.2rem 0 0;padding:.85rem 1rem;'
             . 'background:#f0f6fb;border:1px solid #c5d9ec;border-radius:5px;display:inline-block;">'
             . '<a href="' . htmlspecialchars($certUrl) . '" target="_blank" '
@@ -357,7 +394,86 @@ class ReviewerCertificatePlugin extends GenericPlugin
             . 'font-size:13px;font-family:Arial,sans-serif;font-weight:bold;">'
             . '&#127941; ' . htmlspecialchars($label)
             . '</a>'
+            . '<a href="' . htmlspecialchars($listUrl) . '" target="_blank" '
+            . 'style="display:inline-block;margin-' . ($this->_isRtlLocale() ? 'right' : 'left') . ':.6rem;'
+            . 'font-size:13px;font-family:Arial,sans-serif;color:#2d6a9f;text-decoration:underline;">'
+            . htmlspecialchars($listLabel)
+            . '</a>'
             . '</div>';
+
+        return false;
+    }
+
+    /**
+     * Hook callback (TemplateManager::display): add a "My Certificates" entry
+     * to the reviewer's backend side-navigation, under "Review Assignments".
+     *
+     * @param string $hookName
+     * @param array  $args  [$templateMgr, &$template, &$output]
+     */
+    public function addCertificatesMenuItem(string $hookName, array $args): bool
+    {
+        /** @var \APP\template\TemplateManager $templateMgr */
+        $templateMgr = $args[0];
+
+        // Only backend pages that render the side navigation have a 'menu' state
+        $menu = $templateMgr->getState('menu');
+        if (!is_array($menu) || empty($menu)) {
+            return false;
+        }
+
+        $request = Application::get()->getRequest();
+        $context = $request->getContext();
+        $user    = $request->getUser();
+        if (!$context || !$user) {
+            return false;
+        }
+
+        // Show the link only to users who hold the reviewer role here
+        if (!$this->_userIsReviewer((int) $user->getId(), (int) $context->getId())) {
+            return false;
+        }
+
+        $listUrl = $request->getDispatcher()->url(
+            $request, PKPApplication::ROUTE_PAGE, null,
+            'gateway', 'plugin',
+            ['ReviewerCertificateGatewayPlugin', 'list']
+        );
+
+        $item = [
+            'name'      => __('plugins.generic.reviewerCertificate.list.title'),
+            'url'       => $listUrl,
+            'isCurrent' => false,
+        ];
+
+        // Prefer nesting under the existing "Review Assignments" group;
+        // otherwise add a standalone top-level item.
+        if (isset($menu['reviewAssignments']['submenu']) && is_array($menu['reviewAssignments']['submenu'])) {
+            $menu['reviewAssignments']['submenu']['reviewerCertificates'] = $item;
+        } else {
+            $item['icon'] = 'ReviewAssignments';
+            $menu['reviewerCertificates'] = $item;
+        }
+
+        $templateMgr->setState(['menu' => $menu]);
+
+        return false;
+    }
+
+    /**
+     * Whether the user holds the reviewer role in the given context.
+     */
+    private function _userIsReviewer(int $userId, int $contextId): bool
+    {
+        $userGroups = UserGroup::withUserIds([$userId])
+            ->withContextIds([$contextId])
+            ->get();
+
+        foreach ($userGroups as $userGroup) {
+            if ((int) $userGroup->roleId === Role::ROLE_ID_REVIEWER) {
+                return true;
+            }
+        }
 
         return false;
     }

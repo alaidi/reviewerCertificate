@@ -221,6 +221,51 @@ msgstr "جارٍ التوليد..."
 msgid "plugins.generic.reviewerCertificate.certificate.downloadLink"
 msgstr "تنزيل شهادة التقدير الخاصة بك"
 
+msgid "plugins.generic.reviewerCertificate.certificate.viewAllLink"
+msgstr "عرض جميع شهاداتك"
+
+msgid "plugins.generic.reviewerCertificate.list.title"
+msgstr "شهاداتي"
+
+msgid "plugins.generic.reviewerCertificate.list.heading"
+msgstr "شهادات التقدير الخاصة بي"
+
+msgid "plugins.generic.reviewerCertificate.list.colSubmission"
+msgstr "المخطوطة"
+
+msgid "plugins.generic.reviewerCertificate.list.colDate"
+msgstr "تاريخ اكتمال التحكيم"
+
+msgid "plugins.generic.reviewerCertificate.list.colActions"
+msgstr "الشهادة"
+
+msgid "plugins.generic.reviewerCertificate.list.view"
+msgstr "عرض"
+
+msgid "plugins.generic.reviewerCertificate.list.empty"
+msgstr "لا توجد لديك أي شهادات بعد. تصبح الشهادات متاحة بعد إكمالك للتحكيم وإرسال المحرر رسالة شكر."
+
+msgid "plugins.generic.reviewerCertificate.list.searchPlaceholder"
+msgstr "ابحث بعنوان المخطوطة…"
+
+msgid "plugins.generic.reviewerCertificate.list.search"
+msgstr "بحث"
+
+msgid "plugins.generic.reviewerCertificate.list.clear"
+msgstr "مسح"
+
+msgid "plugins.generic.reviewerCertificate.list.showing"
+msgstr "عرض {$start}–{$end} من {$total}"
+
+msgid "plugins.generic.reviewerCertificate.list.noResults"
+msgstr "لا توجد شهادات مطابقة لـ «{$query}»."
+
+msgid "plugins.generic.reviewerCertificate.list.prev"
+msgstr "السابق"
+
+msgid "plugins.generic.reviewerCertificate.list.next"
+msgstr "التالي"
+
 msgid "plugins.generic.reviewerCertificate.error.title"
 msgstr "الشهادة غير متاحة"
 

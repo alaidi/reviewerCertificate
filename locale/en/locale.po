@@ -224,6 +224,51 @@ msgstr "Generating..."
 msgid "plugins.generic.reviewerCertificate.certificate.downloadLink"
 msgstr "Download Your Certificate of Appreciation"
 
+msgid "plugins.generic.reviewerCertificate.certificate.viewAllLink"
+msgstr "View all your certificates"
+
+msgid "plugins.generic.reviewerCertificate.list.title"
+msgstr "My Certificates"
+
+msgid "plugins.generic.reviewerCertificate.list.heading"
+msgstr "My Certificates of Appreciation"
+
+msgid "plugins.generic.reviewerCertificate.list.colSubmission"
+msgstr "Manuscript"
+
+msgid "plugins.generic.reviewerCertificate.list.colDate"
+msgstr "Review completed"
+
+msgid "plugins.generic.reviewerCertificate.list.colActions"
+msgstr "Certificate"
+
+msgid "plugins.generic.reviewerCertificate.list.view"
+msgstr "View"
+
+msgid "plugins.generic.reviewerCertificate.list.empty"
+msgstr "You don't have any certificates yet. Certificates become available once you complete a review and the editor sends a thank-you."
+
+msgid "plugins.generic.reviewerCertificate.list.searchPlaceholder"
+msgstr "Search by manuscript title…"
+
+msgid "plugins.generic.reviewerCertificate.list.search"
+msgstr "Search"
+
+msgid "plugins.generic.reviewerCertificate.list.clear"
+msgstr "Clear"
+
+msgid "plugins.generic.reviewerCertificate.list.showing"
+msgstr "Showing {$start}–{$end} of {$total}"
+
+msgid "plugins.generic.reviewerCertificate.list.noResults"
+msgstr "No certificates match “{$query}”."
+
+msgid "plugins.generic.reviewerCertificate.list.prev"
+msgstr "Previous"
+
+msgid "plugins.generic.reviewerCertificate.list.next"
+msgstr "Next"
+
 msgid "plugins.generic.reviewerCertificate.error.title"
 msgstr "Certificate Unavailable"
 
