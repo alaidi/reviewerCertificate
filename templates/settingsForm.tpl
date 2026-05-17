@@ -198,7 +198,7 @@ function rcApplyTheme(name) {ldelim}
 				'signatureSectionOffsetY','signatureSectionPaddingTop','signatureSectionGap',
 				'editorBlockOffsetX','editorBlockOffsetY','dateBlockOffsetX','dateBlockOffsetY',
 				'editorNameFontSize','editorNameColor','journalNameFontSize','journalNameColor',
-				'signatureSize','logoSize','accentColor','textColor'
+				'signatureSize','logoSize','accentColor','textColor','contentOffsetY'
 			];
 			var params = 'reviewId=' + id + '&rcPreview=1';
 			rcLiveFields.forEach(function(name) {ldelim}
@@ -208,7 +208,18 @@ function rcApplyTheme(name) {ldelim}
 				{rdelim}
 			{rdelim});
 
-			var url = RC_PREVIEW_BASE + '?' + params;
+			var rcToggleFields = [
+					'showLogo','showJournalName','showDividers','showHeading','showSubheading',
+					'showPresentedTo','showReviewerName','showBody','showDateLine','showSignatureSection'
+				];
+				rcToggleFields.forEach(function(name) {ldelim}
+					var el = document.getElementById(name);
+					if (el) {ldelim}
+						params += '&' + name + '=' + (el.checked ? '1' : '0');
+					{rdelim}
+				{rdelim});
+
+				var url = RC_PREVIEW_BASE + '?' + params;
 
 			var wrap  = document.getElementById('rc-preview-wrap');
 			var frame = document.getElementById('rc-preview-frame');
@@ -341,6 +352,92 @@ function rcApplyTheme(name) {ldelim}
 					<span style="font-size:12px;color:#888;margin-left:.3rem;">px (&minus; up / + down)</span>
 				</div>
 			</div>
+		{/fbvFormSection}
+
+		{* ── Show / Hide & Move Elements ─────────────────────────────────────── *}
+		{fbvFormSection title="plugins.generic.reviewerCertificate.settings.visibilitySection"}
+			<p class="pkp_help" style="margin-bottom:.85rem;">
+				{translate key="plugins.generic.reviewerCertificate.settings.visibilityHelp"}
+			</p>
+
+			<div class="rc-toggle-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:.55rem .75rem;margin-bottom:1.1rem;">
+				<label style="display:flex;align-items:center;gap:.55rem;cursor:pointer;font-size:14px;">
+					<input type="checkbox" id="showLogo" name="showLogo" value="1" {if $showLogo}checked{/if} style="width:16px;height:16px;cursor:pointer;">
+					{translate key="plugins.generic.reviewerCertificate.settings.showLogo"}
+				</label>
+				<label style="display:flex;align-items:center;gap:.55rem;cursor:pointer;font-size:14px;">
+					<input type="checkbox" id="showJournalName" name="showJournalName" value="1" {if $showJournalName}checked{/if} style="width:16px;height:16px;cursor:pointer;">
+					{translate key="plugins.generic.reviewerCertificate.settings.showJournalName"}
+				</label>
+				<label style="display:flex;align-items:center;gap:.55rem;cursor:pointer;font-size:14px;">
+					<input type="checkbox" id="showDividers" name="showDividers" value="1" {if $showDividers}checked{/if} style="width:16px;height:16px;cursor:pointer;">
+					{translate key="plugins.generic.reviewerCertificate.settings.showDividers"}
+				</label>
+				<label style="display:flex;align-items:center;gap:.55rem;cursor:pointer;font-size:14px;">
+					<input type="checkbox" id="showHeading" name="showHeading" value="1" {if $showHeading}checked{/if} style="width:16px;height:16px;cursor:pointer;">
+					{translate key="plugins.generic.reviewerCertificate.settings.showHeading"}
+				</label>
+				<label style="display:flex;align-items:center;gap:.55rem;cursor:pointer;font-size:14px;">
+					<input type="checkbox" id="showSubheading" name="showSubheading" value="1" {if $showSubheading}checked{/if} style="width:16px;height:16px;cursor:pointer;">
+					{translate key="plugins.generic.reviewerCertificate.settings.showSubheading"}
+				</label>
+				<label style="display:flex;align-items:center;gap:.55rem;cursor:pointer;font-size:14px;">
+					<input type="checkbox" id="showPresentedTo" name="showPresentedTo" value="1" {if $showPresentedTo}checked{/if} style="width:16px;height:16px;cursor:pointer;">
+					{translate key="plugins.generic.reviewerCertificate.settings.showPresentedTo"}
+				</label>
+				<label style="display:flex;align-items:center;gap:.55rem;cursor:pointer;font-size:14px;">
+					<input type="checkbox" id="showReviewerName" name="showReviewerName" value="1" {if $showReviewerName}checked{/if} style="width:16px;height:16px;cursor:pointer;">
+					{translate key="plugins.generic.reviewerCertificate.settings.showReviewerName"}
+				</label>
+				<label style="display:flex;align-items:center;gap:.55rem;cursor:pointer;font-size:14px;">
+					<input type="checkbox" id="showBody" name="showBody" value="1" {if $showBody}checked{/if} style="width:16px;height:16px;cursor:pointer;">
+					{translate key="plugins.generic.reviewerCertificate.settings.showBody"}
+				</label>
+				<label style="display:flex;align-items:center;gap:.55rem;cursor:pointer;font-size:14px;">
+					<input type="checkbox" id="showDateLine" name="showDateLine" value="1" {if $showDateLine}checked{/if} style="width:16px;height:16px;cursor:pointer;">
+					{translate key="plugins.generic.reviewerCertificate.settings.showDateLine"}
+				</label>
+				<label style="display:flex;align-items:center;gap:.55rem;cursor:pointer;font-size:14px;">
+					<input type="checkbox" id="showSignatureSection" name="showSignatureSection" value="1" {if $showSignatureSection}checked{/if} style="width:16px;height:16px;cursor:pointer;">
+					{translate key="plugins.generic.reviewerCertificate.settings.showSignatureSection"}
+				</label>
+			</div>
+
+			<div>
+				<label for="contentOffsetY" style="display:block;font-size:13px;font-weight:bold;margin-bottom:.25rem;">
+					{translate key="plugins.generic.reviewerCertificate.settings.contentOffsetY"}
+				</label>
+				<input type="number" id="contentOffsetY" name="contentOffsetY"
+					value="{$contentOffsetY|escape}" min="-400" max="400" step="2"
+					style="width:90px;padding:.35rem .5rem;border:1px solid #ccc;border-radius:3px;font-size:14px;">
+				<span style="font-size:12px;color:#888;margin-left:.3rem;">px (&minus; up / + down)</span>
+				<p class="pkp_help" style="margin-top:.35rem;">{translate key="plugins.generic.reviewerCertificate.settings.contentOffsetYHelp"}</p>
+			</div>
+		{/fbvFormSection}
+
+		{* ── Element Text Overrides ──────────────────────────────────────────── *}
+		{fbvFormSection title="plugins.generic.reviewerCertificate.settings.textOverrideSection"}
+			<p class="pkp_help" style="margin-bottom:.85rem;">
+				{translate key="plugins.generic.reviewerCertificate.settings.textOverrideHelp"}
+			</p>
+			{fbvElement type="text" id="journalNameText" name="journalNameText" value=$journalNameText
+				multilingual=true maxlength="255" size=$fbvStyles.size.LARGE
+				label="plugins.generic.reviewerCertificate.settings.journalNameText"}
+			{fbvElement type="text" id="headingText" name="headingText" value=$headingText
+				multilingual=true maxlength="255" size=$fbvStyles.size.LARGE
+				label="plugins.generic.reviewerCertificate.settings.headingText"}
+			{fbvElement type="text" id="subheadingText" name="subheadingText" value=$subheadingText
+				multilingual=true maxlength="255" size=$fbvStyles.size.LARGE
+				label="plugins.generic.reviewerCertificate.settings.subheadingText"}
+			{fbvElement type="text" id="presentedToText" name="presentedToText" value=$presentedToText
+				multilingual=true maxlength="255" size=$fbvStyles.size.MEDIUM
+				label="plugins.generic.reviewerCertificate.settings.presentedToText"}
+			{fbvElement type="text" id="completedOnText" name="completedOnText" value=$completedOnText
+				multilingual=true maxlength="255" size=$fbvStyles.size.MEDIUM
+				label="plugins.generic.reviewerCertificate.settings.completedOnText"}
+			{fbvElement type="text" id="dateLabelText" name="dateLabelText" value=$dateLabelText
+				multilingual=true maxlength="100" size=$fbvStyles.size.SMALL
+				label="plugins.generic.reviewerCertificate.settings.dateLabelText"}
 		{/fbvFormSection}
 
 		{* ── Journal Name ────────────────────────────────────────────────────── *}

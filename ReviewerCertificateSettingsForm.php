@@ -59,6 +59,19 @@ class ReviewerCertificateSettingsForm extends Form
         $this->setData('editorBlockOffsetY',  $p->getSetting($id, 'editorBlockOffsetY') ?: '0');
         $this->setData('dateBlockOffsetX',    $p->getSetting($id, 'dateBlockOffsetX') ?: '0');
         $this->setData('dateBlockOffsetY',    $p->getSetting($id, 'dateBlockOffsetY') ?: '0');
+        $this->setData('contentOffsetY',      $p->getSetting($id, 'contentOffsetY') ?: '0');
+
+        // Element visibility toggles. Default to shown (1) when never saved.
+        foreach (self::elementToggleKeys() as $toggle) {
+            $stored = $p->getSetting($id, $toggle);
+            $this->setData($toggle, ($stored === null || $stored === '') ? '1' : (string) $stored);
+        }
+
+        // Localized text overrides (blank => default used on the certificate)
+        foreach (ReviewerCertificatePlugin::textOverrideKeys() as $key) {
+            $this->setData($key, $this->_getLocalizedSetting($p, $id, $key));
+        }
+
         $this->setData('accentColor',         $p->getSetting($id, 'accentColor') ?: '#b8975a');
         $this->setData('certificateBody',     $this->_getLocalizedSetting($p, $id, 'certificateBody'));
         $this->setData('enableQrCode',        $p->getSetting($id, 'enableQrCode') ?? '1');
@@ -102,12 +115,25 @@ class ReviewerCertificateSettingsForm extends Form
      */
     public function getLocaleFieldNames(): array
     {
-        return ['editorName', 'editorTitle', 'certificateBody'];
+        return array_merge(
+            ['editorName', 'editorTitle', 'certificateBody'],
+            ReviewerCertificatePlugin::textOverrideKeys()
+        );
+    }
+
+    /**
+     * Per-element visibility toggles. Delegates to the parent plugin so the
+     * key list has a single source of truth.
+     */
+    public static function elementToggleKeys(): array
+    {
+        return ReviewerCertificatePlugin::elementToggleKeys();
     }
 
     public function readInputData(): void
     {
         $this->readUserVars([
+            ...ReviewerCertificatePlugin::textOverrideKeys(),
             'editorName',
             'editorTitle',
             'editorNameFontSize',
@@ -123,6 +149,17 @@ class ReviewerCertificateSettingsForm extends Form
             'editorBlockOffsetY',
             'dateBlockOffsetX',
             'dateBlockOffsetY',
+            'contentOffsetY',
+            'showLogo',
+            'showJournalName',
+            'showDividers',
+            'showHeading',
+            'showSubheading',
+            'showPresentedTo',
+            'showReviewerName',
+            'showBody',
+            'showDateLine',
+            'showSignatureSection',
             'accentColor',
             'certificateBody',
             'enableQrCode',
@@ -150,7 +187,7 @@ class ReviewerCertificateSettingsForm extends Form
 
         $id = $this->_journalId;
         $p  = $this->_plugin;
-        foreach (['editorName', 'editorTitle', 'certificateBody'] as $field) {
+        foreach (array_merge(['editorName', 'editorTitle', 'certificateBody'], ReviewerCertificatePlugin::textOverrideKeys()) as $field) {
             $raw = $p->getSetting($id, $field);
             $localized = is_array($raw) ? $raw : [];
             if (!is_array($raw) && $raw !== null && $raw !== '') {
@@ -219,6 +256,12 @@ class ReviewerCertificateSettingsForm extends Form
         $editorTitleData = $this->getData('editorTitle');
         $p->updateSetting($id, 'editorTitle', is_array($editorTitleData) ? $editorTitleData : [], 'object');
 
+        // Localized per-element text overrides (blank => default on render)
+        foreach (ReviewerCertificatePlugin::textOverrideKeys() as $key) {
+            $data = $this->getData($key);
+            $p->updateSetting($id, $key, is_array($data) ? $data : [], 'object');
+        }
+
         $fontSize = (int) $this->getData('editorNameFontSize');
         $p->updateSetting($id, 'editorNameFontSize', ($fontSize >= 8 && $fontSize <= 72) ? $fontSize : 12);
 
@@ -249,6 +292,14 @@ class ReviewerCertificateSettingsForm extends Form
         $p->updateSetting($id, 'editorBlockOffsetY',         $clamp($this->getData('editorBlockOffsetY'), -400, 400, 0));
         $p->updateSetting($id, 'dateBlockOffsetX',           $clamp($this->getData('dateBlockOffsetX'), -400, 400, 0));
         $p->updateSetting($id, 'dateBlockOffsetY',           $clamp($this->getData('dateBlockOffsetY'), -400, 400, 0));
+
+        // Global vertical shift for all certificate text (− up / + down)
+        $p->updateSetting($id, 'contentOffsetY',             $clamp($this->getData('contentOffsetY'), -400, 400, 0));
+
+        // Element visibility toggles (unchecked checkbox => not submitted => hide)
+        foreach (self::elementToggleKeys() as $toggle) {
+            $p->updateSetting($id, $toggle, $this->getData($toggle) ? '1' : '0');
+        }
 
         $accentColor = preg_match('/^#[0-9a-fA-F]{6}$/', $this->getData('accentColor'))
             ? $this->getData('accentColor') : '#b8975a';

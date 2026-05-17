@@ -331,3 +331,69 @@ msgstr "التاريخ — يمين/يسار"
 
 msgid "plugins.generic.reviewerCertificate.settings.dateBlockOffsetY"
 msgstr "التاريخ — أعلى/أسفل"
+
+msgid "plugins.generic.reviewerCertificate.settings.visibilitySection"
+msgstr "إظهار / إخفاء وتحريك العناصر"
+
+msgid "plugins.generic.reviewerCertificate.settings.visibilityHelp"
+msgstr "ألغِ تحديد أي عنصر لإخفائه من الشهادة. استخدم الإزاحة أدناه لتحريك كل نصوص الشهادة لأعلى أو لأسفل معاً."
+
+msgid "plugins.generic.reviewerCertificate.settings.showLogo"
+msgstr "شعار المجلة"
+
+msgid "plugins.generic.reviewerCertificate.settings.showJournalName"
+msgstr "اسم المجلة"
+
+msgid "plugins.generic.reviewerCertificate.settings.showDividers"
+msgstr "الخطوط الفاصلة"
+
+msgid "plugins.generic.reviewerCertificate.settings.showHeading"
+msgstr "العنوان (شهادة تحكيم)"
+
+msgid "plugins.generic.reviewerCertificate.settings.showSubheading"
+msgstr "العنوان الفرعي"
+
+msgid "plugins.generic.reviewerCertificate.settings.showPresentedTo"
+msgstr "عبارة «مقدَّمة إلى»"
+
+msgid "plugins.generic.reviewerCertificate.settings.showReviewerName"
+msgstr "اسم المُحكِّم"
+
+msgid "plugins.generic.reviewerCertificate.settings.showBody"
+msgstr "النص الأساسي"
+
+msgid "plugins.generic.reviewerCertificate.settings.showDateLine"
+msgstr "سطر تاريخ الإنجاز"
+
+msgid "plugins.generic.reviewerCertificate.settings.showSignatureSection"
+msgstr "قسم التوقيع والتاريخ"
+
+msgid "plugins.generic.reviewerCertificate.settings.contentOffsetY"
+msgstr "تحريك كل نصوص الشهادة لأعلى/لأسفل"
+
+msgid "plugins.generic.reviewerCertificate.settings.contentOffsetYHelp"
+msgstr "يزيح كتلة النص بالكامل عمودياً. القيم السالبة تحرّك كل شيء لأعلى، والقيم الموجبة تحرّكه لأسفل (بالبكسل، من −400 إلى 400)."
+
+msgid "plugins.generic.reviewerCertificate.settings.textOverrideSection"
+msgstr "نص العناصر (اختياري)"
+
+msgid "plugins.generic.reviewerCertificate.settings.textOverrideHelp"
+msgstr "استبدل صياغة عناصر الشهادة المفردة. اترك الحقل فارغاً للإبقاء على النص الافتراضي. يمكن لكل لغة أن يكون لها نصها الخاص."
+
+msgid "plugins.generic.reviewerCertificate.settings.journalNameText"
+msgstr "اسم المجلة (فارغ = استخدام اسم المجلة)"
+
+msgid "plugins.generic.reviewerCertificate.settings.headingText"
+msgstr "العنوان (فارغ = «شهادة تحكيم»)"
+
+msgid "plugins.generic.reviewerCertificate.settings.subheadingText"
+msgstr "العنوان الفرعي"
+
+msgid "plugins.generic.reviewerCertificate.settings.presentedToText"
+msgstr "عبارة «مقدَّمة إلى»"
+
+msgid "plugins.generic.reviewerCertificate.settings.completedOnText"
+msgstr "عبارة «أُنجز في» (تظهر قبل التاريخ)"
+
+msgid "plugins.generic.reviewerCertificate.settings.dateLabelText"
+msgstr "تسمية التاريخ (تحت سطر التوقيع)"

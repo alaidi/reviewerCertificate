@@ -169,6 +169,46 @@ class ReviewerCertificatePlugin extends GenericPlugin
      * Returns null if the file could not be saved.
      * Public so the gateway plugin can call it to regenerate on-demand.
      */
+    /**
+     * Per-element visibility toggle keys. Defined here (always-loaded plugin
+     * class) so the gateway and save paths can reference it without depending
+     * on the lazily-required settings form. Each maps to a "show…" checkbox
+     * and a {if $show…} guard in certificate.tpl.
+     */
+    public static function elementToggleKeys(): array
+    {
+        return [
+            'showLogo',
+            'showJournalName',
+            'showDividers',
+            'showHeading',
+            'showSubheading',
+            'showPresentedTo',
+            'showReviewerName',
+            'showBody',
+            'showDateLine',
+            'showSignatureSection',
+        ];
+    }
+
+    /**
+     * Localized free-text override fields. Each lets the admin replace a
+     * fixed label/string on the certificate; left blank, the certificate
+     * falls back to the built-in translation (or live data, for the journal
+     * name). Multilingual, like editorName/editorTitle/certificateBody.
+     */
+    public static function textOverrideKeys(): array
+    {
+        return [
+            'journalNameText',
+            'headingText',
+            'subheadingText',
+            'presentedToText',
+            'completedOnText',
+            'dateLabelText',
+        ];
+    }
+
     public function generateAndSaveCertificate($request, $reviewAssignment, $context): ?string
     {
         $submission = Repo::submission()->get($reviewAssignment->getSubmissionId());
@@ -218,6 +258,22 @@ class ReviewerCertificatePlugin extends GenericPlugin
         $textColor = $this->getSetting($contextId, 'textColor') ?: '#1a1a2e';
         if (!preg_match('/^#[0-9a-fA-F]{6}$/', $textColor)) {
             $textColor = '#1a1a2e';
+        }
+
+        // Global vertical shift for all certificate text (− up / + down)
+        $contentOffsetY = max(-400, min(400, (int) ($this->getSetting($contextId, 'contentOffsetY') ?: 0)));
+
+        // Per-element visibility (default visible when never configured)
+        $elementToggles = [];
+        foreach (self::elementToggleKeys() as $toggle) {
+            $stored = $this->getSetting($contextId, $toggle);
+            $elementToggles[$toggle] = ($stored === null || $stored === '') ? true : ((string) $stored === '1');
+        }
+
+        // Localized text overrides (empty => template uses the default)
+        $textOverrides = [];
+        foreach (self::textOverrideKeys() as $key) {
+            $textOverrides[$key] = $this->getLocalizedSetting($contextId, $key, $locale, '');
         }
 
         // Custom body text
@@ -280,10 +336,13 @@ class ReviewerCertificatePlugin extends GenericPlugin
             'signatureUrl'        => $signatureUrl,
             'logoUrl'             => $logoUrl,
             'backgroundImageUrl'  => $backgroundImageUrl,
+            'contentOffsetY'      => $contentOffsetY,
             'isRtl'               => $isRtl,
             'currentLocale'       => $locale,
             'certificateUrl'      => $gatewayUrl,
         ]);
+        $templateMgr->assign($elementToggles);
+        $templateMgr->assign($textOverrides);
 
         try {
             $html = $templateMgr->fetch($this->getTemplateResource('certificate.tpl'));

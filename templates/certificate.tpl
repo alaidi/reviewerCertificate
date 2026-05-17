@@ -402,26 +402,29 @@ async function rcDownloadImage(btn) {ldelim}
 	<div class="corner corner-bl"></div>
 	<div class="corner corner-br"></div>
 
-	<div class="content">
+	<div class="content" style="transform:translateY({$contentOffsetY|default:0|escape}px);">
 
 		{* Journal logo *}
-		{if $logoUrl}
+		{if $showLogo && $logoUrl}
 		<div class="logo-wrap">
 			<img src="{$logoUrl|escape}" alt="{$journalName|escape}" style="max-height:{$logoSize|escape}px;max-width:{math equation='s*3' s=$logoSize}px;">
 		</div>
 		{/if}
 
-		<div class="journal-name" style="font-size:{$journalNameFontSize|escape}px;color:{$journalNameColor|escape};">{$journalName|escape}</div>
+		{if $showJournalName}
+		<div class="journal-name" style="font-size:{$journalNameFontSize|escape}px;color:{$journalNameColor|escape};">{if $journalNameText}{$journalNameText|escape}{else}{$journalName|escape}{/if}</div>
+		{/if}
 
-		<div class="divider"></div>
-		<h1 class="cert-heading">{translate key="plugins.generic.reviewerCertificate.certificate.heading"}</h1>
-		<div class="cert-subheading">{translate key="plugins.generic.reviewerCertificate.certificate.subheading"}</div>
+		{if $showDividers}<div class="divider"></div>{/if}
+		{if $showHeading}<h1 class="cert-heading">{if $headingText}{$headingText|escape}{else}{translate key="plugins.generic.reviewerCertificate.certificate.heading"}{/if}</h1>{/if}
+		{if $showSubheading}<div class="cert-subheading">{if $subheadingText}{$subheadingText|escape}{else}{translate key="plugins.generic.reviewerCertificate.certificate.subheading"}{/if}</div>{/if}
 
-		<div class="divider"></div>
+		{if $showDividers}<div class="divider"></div>{/if}
 
-		<div class="presented-to">{translate key="plugins.generic.reviewerCertificate.certificate.presentedTo"}</div>
-		<div class="reviewer-name">{$reviewerName|escape}</div>
+		{if $showPresentedTo}<div class="presented-to">{if $presentedToText}{$presentedToText|escape}{else}{translate key="plugins.generic.reviewerCertificate.certificate.presentedTo"}{/if}</div>{/if}
+		{if $showReviewerName}<div class="reviewer-name">{$reviewerName|escape}</div>{/if}
 
+		{if $showBody}
 		<p class="body-text">
 			{if $certificateBodyHtml}
 				{$certificateBodyHtml nofilter}
@@ -432,13 +435,17 @@ async function rcDownloadImage(btn) {ldelim}
 					submissionTitle=$submissionTitleHtml}
 			{/if}
 		</p>
+		{/if}
 
+		{if $showDateLine}
 		<div class="date-line">
-			{translate key="plugins.generic.reviewerCertificate.certificate.completedOn"}
+			{if $completedOnText}{$completedOnText|escape}{else}{translate key="plugins.generic.reviewerCertificate.certificate.completedOn"}{/if}
 			{$dateCompleted|escape}
 		</div>
+		{/if}
 
 		{* Signature section *}
+		{if $showSignatureSection}
 		<div class="signature-section" style="gap:{$signatureSectionGap|escape}px;padding-top:{$signatureSectionPaddingTop|escape}px;transform:translateY({$signatureSectionOffsetY|escape}px);">
 
 			<div class="signature-block" style="transform:translate({$editorBlockOffsetX|escape}px,{$editorBlockOffsetY|escape}px);">
@@ -462,10 +469,11 @@ async function rcDownloadImage(btn) {ldelim}
 					<div style="font-size:14px;font-weight:bold;color:#333;padding-bottom:4px;">{$dateAcknowledged|escape}</div>
 				</div>
 				<div class="signature-line"></div>
-				<div class="signature-label">{translate key="plugins.generic.reviewerCertificate.certificate.date"}</div>
+				<div class="signature-label">{if $dateLabelText}{$dateLabelText|escape}{else}{translate key="plugins.generic.reviewerCertificate.certificate.date"}{/if}</div>
 			</div>
 
 		</div>
+		{/if}
 	</div>
 
 	{* QR code for verification *}

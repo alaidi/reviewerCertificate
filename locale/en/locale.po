@@ -334,3 +334,69 @@ msgstr "Date — left/right"
 
 msgid "plugins.generic.reviewerCertificate.settings.dateBlockOffsetY"
 msgstr "Date — up/down"
+
+msgid "plugins.generic.reviewerCertificate.settings.visibilitySection"
+msgstr "Show / Hide & Move Elements"
+
+msgid "plugins.generic.reviewerCertificate.settings.visibilityHelp"
+msgstr "Uncheck any element to hide it from the certificate. Use the offset below to move all certificate text up or down together."
+
+msgid "plugins.generic.reviewerCertificate.settings.showLogo"
+msgstr "Journal logo"
+
+msgid "plugins.generic.reviewerCertificate.settings.showJournalName"
+msgstr "Journal name"
+
+msgid "plugins.generic.reviewerCertificate.settings.showDividers"
+msgstr "Divider lines"
+
+msgid "plugins.generic.reviewerCertificate.settings.showHeading"
+msgstr "Heading (Certificate of Reviewing)"
+
+msgid "plugins.generic.reviewerCertificate.settings.showSubheading"
+msgstr "Subheading"
+
+msgid "plugins.generic.reviewerCertificate.settings.showPresentedTo"
+msgstr "“Presented to” label"
+
+msgid "plugins.generic.reviewerCertificate.settings.showReviewerName"
+msgstr "Reviewer name"
+
+msgid "plugins.generic.reviewerCertificate.settings.showBody"
+msgstr "Body text"
+
+msgid "plugins.generic.reviewerCertificate.settings.showDateLine"
+msgstr "Completed-on date line"
+
+msgid "plugins.generic.reviewerCertificate.settings.showSignatureSection"
+msgstr "Signature & date section"
+
+msgid "plugins.generic.reviewerCertificate.settings.contentOffsetY"
+msgstr "Move all certificate text up/down"
+
+msgid "plugins.generic.reviewerCertificate.settings.contentOffsetYHelp"
+msgstr "Shifts the entire text block vertically. Negative values move everything up, positive values move it down (pixels, −400 to 400)."
+
+msgid "plugins.generic.reviewerCertificate.settings.textOverrideSection"
+msgstr "Element Text (optional)"
+
+msgid "plugins.generic.reviewerCertificate.settings.textOverrideHelp"
+msgstr "Replace the wording of individual certificate elements. Leave a field blank to keep the built-in default. Each language can have its own text."
+
+msgid "plugins.generic.reviewerCertificate.settings.journalNameText"
+msgstr "Journal name (blank = use the journal's name)"
+
+msgid "plugins.generic.reviewerCertificate.settings.headingText"
+msgstr "Heading (blank = “Certificate of Reviewing”)"
+
+msgid "plugins.generic.reviewerCertificate.settings.subheadingText"
+msgstr "Subheading"
+
+msgid "plugins.generic.reviewerCertificate.settings.presentedToText"
+msgstr "“Presented to” label"
+
+msgid "plugins.generic.reviewerCertificate.settings.completedOnText"
+msgstr "“Completed on” label (appears before the date)"
+
+msgid "plugins.generic.reviewerCertificate.settings.dateLabelText"
+msgstr "Date label (under the signature line)"
