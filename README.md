@@ -116,7 +116,7 @@ language.
 | 7 | `showReviewerName` | Show / Hide & Move | on / off | on | Show reviewer name |
 | 8 | *(automatic)* | — | — | — | Affiliation shows when 7 is on and profile has one |
 | 9 | `showBody` | Show / Hide & Move | on / off | on | Show body paragraph |
-| — | `certificateBody` | Certificate Body Text | localized HTML | translated default | Body text; `{$journalName}`, `{$submissionTitle}` placeholders, basic HTML |
+| — | `certificateBody` | Certificate Body Text | localized HTML | translated default | Body text; `{journalName}` / `{submissionTitle}` placeholders (replaced with the live values), basic HTML |
 | 10 | `showDateLine` | Show / Hide & Move | on / off | on | Show "Completed on …" line |
 | — | `completedOnText` | Element Text Overrides | localized text | "Completed on" | Prefix before the date |
 | — | `dateFormat` | Date Format | long / medium / short / `Y-m-d` / `d-m-Y` / `d/m/Y` / `m/d/Y` / `Y/m/d` / `d.m.Y` / `Y.m.d` / `d F Y` / `F d, Y` / `j F Y` / `d M Y` / `M d, Y` | long | Date display format |
@@ -155,6 +155,10 @@ language.
 > and correct it before saving.
 
 ## Changelog
+
+### 1.3.0.1 — 2026-05-18
+
+- **Docs:** corrected the certificate-body placeholder tokens in the README — they are `{journalName}` and `{submissionTitle}` (no `$`), matching the form help text and the actual replacement code
 
 ### 1.3.0.0 — 2026-05-18
 
