@@ -4,9 +4,8 @@ A generic plugin for Open Journal Systems (OJS) 3.5 that automatically generates
 
 ## Screenshot
 
-<!-- Add a screenshot of a generated certificate here.
-     Place the image file under docs/ and keep the path below. -->
-![Reviewer certificate example](docs/certificate-example.png)
+
+![Reviewer certificate example](docs/certificate-example.jpg)
 
 ## Features
 
