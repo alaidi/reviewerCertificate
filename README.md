@@ -10,7 +10,7 @@ A generic plugin for Open Journal Systems (OJS) 3.5 that automatically generates
 - **Server-side PDF** — full-bleed single-page PDF generated with `wkhtmltopdf` (exact 297 × 210 mm, no page scaling or trailing whitespace)
 - **Print / Save as PDF** — browser print dialog with landscape layout
 - **My Certificates page** — central list of every certificate a reviewer has earned, with search and pagination, linked from the reviewer's side navigation
-- **QR code verification** — optional QR code linking back to the live certificate page
+- **QR code verification** — optional QR code linking back to the live certificate page, with configurable size (20–300 px) and pixel-precise X/Y positioning
 - **Reviewer dashboard button** — "Download Your Certificate" button injected into Step 3 of the review workflow
 - **Multilingual content** — Editor name, Editor title and certificate body text each accept a separate value per supported journal language; the certificate renders in the requested language with graceful fallback to the primary locale
 - **Locale-aware date formatting** — uses PHP `intl` extension when available; configurable date format with an optional date-language override (Automatic by default, follows the certificate language)
@@ -135,6 +135,9 @@ language.
 | — | `editorBlockOffsetX` / `…OffsetY` | Signature Position | −400…400 px | 0 | Nudge editor block left/right, up/down |
 | — | `dateBlockOffsetX` / `…OffsetY` | Signature Position | −400…400 px | 0 | Nudge date block left/right, up/down |
 | 12 | `enableQrCode` | QR Code | on / off | on | Show verification QR (bottom corner) |
+| — | `qrSize` | QR Code | 20–300 px | 68 | QR code width & height |
+| — | `qrOffsetX` | QR Code | −400…400 px | 0 | Move QR left (−) / right (+) |
+| — | `qrOffsetY` | QR Code | −400…400 px | 0 | Move QR up (−) / down (+) |
 | C | `contentOffsetY` | Show / Hide & Move | −400…400 px | 0 | Shift all content up (−) / down (+) |
 | A | `accentColor` | Color Theme | hex `#rrggbb` | `#b8975a` | Borders, corners, seal, dividers, QR |
 | — | `textColor` | Color Theme | hex `#rrggbb` | `#1a1a2e` | Heading, reviewer name and body text |
@@ -158,6 +161,7 @@ language.
 - **New:** reviewer affiliation displayed below the reviewer name on the certificate (uses the user's localized affiliation from their OJS profile)
 - **New:** Show / Hide toggle checkboxes — each certificate element (journal name, heading, subheading, presented-to, reviewer name, body text, date line, QR code, logo, signature) can be toggled on/off; related text-override inputs and settings sections hide automatically when unchecked
 - **New:** Content offset control — shift all certificate content up or down by a pixel value (−400 to +400)
+- **New:** QR code size (20–300 px) and position controls (X/Y offset, −400 to +400 px) for pixel-precise placement
 
 ### 1.2.0.0 — 2026-05-16
 
