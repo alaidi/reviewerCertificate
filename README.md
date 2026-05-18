@@ -162,6 +162,7 @@ language.
 - **New:** Show / Hide toggle checkboxes — each certificate element (journal name, heading, subheading, presented-to, reviewer name, body text, date line, QR code, logo, signature) can be toggled on/off; related text-override inputs and settings sections hide automatically when unchecked
 - **New:** Content offset control — shift all certificate content up or down by a pixel value (−400 to +400)
 - **New:** QR code size (20–300 px) and position controls (X/Y offset, −400 to +400 px) for pixel-precise placement
+- **Fixed:** Text color setting was never persisted — `textColor` is now read from the form and pre-filled with the saved value (was always reverting to the default `#1a1a2e`)
 
 ### 1.2.0.0 — 2026-05-16
 
