@@ -566,6 +566,36 @@ function rcApplyTheme(name) {ldelim}
 				{translate key="plugins.generic.reviewerCertificate.settings.enableQrCode"}
 			</label>
 			<p class="pkp_help" style="margin-top:.35rem;">{translate key="plugins.generic.reviewerCertificate.settings.qrHelp"}</p>
+
+			<div style="display:flex;gap:1.5rem;align-items:flex-end;flex-wrap:wrap;margin-top:1rem;">
+				<div>
+					<label for="qrSize" style="display:block;font-size:13px;font-weight:bold;margin-bottom:.25rem;">
+						{translate key="plugins.generic.reviewerCertificate.settings.qrSize"}
+					</label>
+					<input type="number" id="qrSize" name="qrSize"
+						value="{$qrSize|escape}" min="20" max="300" step="2"
+						style="width:90px;padding:.35rem .5rem;border:1px solid #ccc;border-radius:3px;font-size:14px;">
+					<span style="font-size:12px;color:#888;margin-left:.3rem;">px (20–300)</span>
+				</div>
+				<div>
+					<label for="qrOffsetX" style="display:block;font-size:13px;font-weight:bold;margin-bottom:.25rem;">
+						{translate key="plugins.generic.reviewerCertificate.settings.qrOffsetX"}
+					</label>
+					<input type="number" id="qrOffsetX" name="qrOffsetX"
+						value="{$qrOffsetX|escape}" min="-400" max="400" step="2"
+						style="width:90px;padding:.35rem .5rem;border:1px solid #ccc;border-radius:3px;font-size:14px;">
+					<span style="font-size:12px;color:#888;margin-left:.3rem;">px (&minus; left / + right)</span>
+				</div>
+				<div>
+					<label for="qrOffsetY" style="display:block;font-size:13px;font-weight:bold;margin-bottom:.25rem;">
+						{translate key="plugins.generic.reviewerCertificate.settings.qrOffsetY"}
+					</label>
+					<input type="number" id="qrOffsetY" name="qrOffsetY"
+						value="{$qrOffsetY|escape}" min="-400" max="400" step="2"
+						style="width:90px;padding:.35rem .5rem;border:1px solid #ccc;border-radius:3px;font-size:14px;">
+					<span style="font-size:12px;color:#888;margin-left:.3rem;">px (&minus; up / + down)</span>
+				</div>
+			</div>
 		{/fbvFormSection}
 
 		{* ── Date Format ─────────────────────────────────────────────────────── *}

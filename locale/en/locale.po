@@ -140,6 +140,15 @@ msgstr "Show QR code on certificate for instant verification"
 msgid "plugins.generic.reviewerCertificate.settings.qrHelp"
 msgstr "A small QR code linking back to this certificate URL will be printed in the bottom-right corner. Anyone scanning it can verify the certificate is authentic."
 
+msgid "plugins.generic.reviewerCertificate.settings.qrSize"
+msgstr "QR Code Size"
+
+msgid "plugins.generic.reviewerCertificate.settings.qrOffsetX"
+msgstr "QR Code Offset X"
+
+msgid "plugins.generic.reviewerCertificate.settings.qrOffsetY"
+msgstr "QR Code Offset Y"
+
 msgid "plugins.generic.reviewerCertificate.settings.pdfSection"
 msgstr "PDF Download (Server-side)"
 

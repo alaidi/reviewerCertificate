@@ -258,8 +258,8 @@
 		/* QR code */
 		.rc-qr-wrap {
 			position: absolute;
-			bottom: 28px;
-			right: 28px;
+			bottom: calc(28px + {$qrOffsetY|default:0}px);
+			right: calc(28px - {$qrOffsetX|default:0}px);
 			z-index: 10;
 			text-align: center;
 			-webkit-print-color-adjust: exact;
@@ -342,7 +342,7 @@
 		[dir="rtl"] .date-line       { font-family: 'Cairo', sans-serif; letter-spacing: 0; }
 		[dir="rtl"] .signature-label { font-family: 'Cairo', sans-serif; letter-spacing: 0; }
 		[dir="rtl"] .signature-name  { font-family: 'Cairo', sans-serif; }
-		[dir="rtl"] .rc-qr-wrap      { right: auto; left: 28px; }
+		[dir="rtl"] .rc-qr-wrap      { right: auto; left: calc(28px + {$qrOffsetX|default:0}px); }
 	</style>
 </head>
 <body>
@@ -500,8 +500,8 @@ async function rcDownloadImage(btn) {ldelim}
 			var rcUrl = {if $certificateUrl}'{$certificateUrl|escape:"javascript"}'{else}window.location.href{/if};
 			new QRCode(el, {ldelim}
 				text: rcUrl,
-				width: 68,
-				height: 68,
+				width: {$qrSize|default:68},
+				height: {$qrSize|default:68},
 				colorDark: '{$accentColor|escape}',
 				colorLight: '#ffffff',
 				correctLevel: QRCode.CorrectLevel.M

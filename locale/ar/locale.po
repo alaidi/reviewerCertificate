@@ -113,6 +113,15 @@ msgstr "عرض رمز QR على الشهادة للتحقق الفوري"
 msgid "plugins.generic.reviewerCertificate.settings.qrHelp"
 msgstr "سيظهر رمز QR صغير يرتبط برابط الشهادة في الزاوية السفلية. يمكن لأي شخص مسحه للتحقق من صحة الشهادة."
 
+msgid "plugins.generic.reviewerCertificate.settings.qrSize"
+msgstr "حجم رمز QR"
+
+msgid "plugins.generic.reviewerCertificate.settings.qrOffsetX"
+msgstr "إزاحة رمز QR أفقياً"
+
+msgid "plugins.generic.reviewerCertificate.settings.qrOffsetY"
+msgstr "إزاحة رمز QR عمودياً"
+
 msgid "plugins.generic.reviewerCertificate.settings.pdfSection"
 msgstr "تنزيل PDF (من الخادم)"
 
