@@ -166,8 +166,16 @@
 			font-size: 34px;
 			font-style: italic;
 			color: {$textColor|escape};
-			margin-bottom: 1rem;
+			margin-bottom: 0.15rem;
 			font-weight: normal;
+		}
+
+		.reviewer-affiliation {
+			font-size: 16px;
+			color: {$textColor|escape};
+			opacity: 0.75;
+			margin-bottom: 1rem;
+			font-style: italic;
 		}
 
 		.body-text {
@@ -319,12 +327,14 @@
 			.certificate { padding: 28px 20px; }
 			.cert-heading { font-size: 22px; }
 			.reviewer-name { font-size: 24px; }
+			.reviewer-affiliation { font-size: 13px; }
 			.signature-section { gap: 20px; }
 		}
 
 		/* RTL overrides */
 		[dir="rtl"] .cert-heading    { font-family: 'Amiri', serif; font-size: 36px; letter-spacing: 0; }
 		[dir="rtl"] .reviewer-name   { font-family: 'Amiri', serif; font-size: 40px; }
+		[dir="rtl"] .reviewer-affiliation { font-family: 'Cairo', sans-serif; font-size: 16px; letter-spacing: 0; }
 		[dir="rtl"] .journal-name    { font-family: 'Cairo', sans-serif; letter-spacing: 0; }
 		[dir="rtl"] .cert-subheading { font-family: 'Cairo', sans-serif; letter-spacing: 0; }
 		[dir="rtl"] .presented-to    { font-family: 'Cairo', sans-serif; letter-spacing: 0; }
@@ -423,6 +433,7 @@ async function rcDownloadImage(btn) {ldelim}
 
 		{if $showPresentedTo}<div class="presented-to">{if $presentedToText}{$presentedToText|escape}{else}{translate key="plugins.generic.reviewerCertificate.certificate.presentedTo"}{/if}</div>{/if}
 		{if $showReviewerName}<div class="reviewer-name">{$reviewerName|escape}</div>{/if}
+		{if $showReviewerName && $reviewerAffiliation}<div class="reviewer-affiliation">{$reviewerAffiliation|escape}</div>{/if}
 
 		{if $showBody}
 		<p class="body-text">

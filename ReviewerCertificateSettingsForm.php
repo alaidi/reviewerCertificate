@@ -60,6 +60,9 @@ class ReviewerCertificateSettingsForm extends Form
         $this->setData('dateBlockOffsetX',    $p->getSetting($id, 'dateBlockOffsetX') ?: '0');
         $this->setData('dateBlockOffsetY',    $p->getSetting($id, 'dateBlockOffsetY') ?: '0');
         $this->setData('contentOffsetY',      $p->getSetting($id, 'contentOffsetY') ?: '0');
+        $this->setData('qrSize',              $p->getSetting($id, 'qrSize') ?: '68');
+        $this->setData('qrOffsetX',           $p->getSetting($id, 'qrOffsetX') ?: '0');
+        $this->setData('qrOffsetY',           $p->getSetting($id, 'qrOffsetY') ?: '0');
 
         // Element visibility toggles. Default to shown (1) when never saved.
         foreach (self::elementToggleKeys() as $toggle) {
@@ -150,6 +153,9 @@ class ReviewerCertificateSettingsForm extends Form
             'dateBlockOffsetX',
             'dateBlockOffsetY',
             'contentOffsetY',
+            'qrSize',
+            'qrOffsetX',
+            'qrOffsetY',
             'showLogo',
             'showJournalName',
             'showDividers',
@@ -295,6 +301,11 @@ class ReviewerCertificateSettingsForm extends Form
 
         // Global vertical shift for all certificate text (− up / + down)
         $p->updateSetting($id, 'contentOffsetY',             $clamp($this->getData('contentOffsetY'), -400, 400, 0));
+
+        $qrSize = (int) $this->getData('qrSize');
+        $p->updateSetting($id, 'qrSize', ($qrSize >= 20 && $qrSize <= 300) ? $qrSize : 68);
+        $p->updateSetting($id, 'qrOffsetX', $clamp($this->getData('qrOffsetX'), -400, 400, 0));
+        $p->updateSetting($id, 'qrOffsetY', $clamp($this->getData('qrOffsetY'), -400, 400, 0));
 
         // Element visibility toggles (unchecked checkbox => not submitted => hide)
         foreach (self::elementToggleKeys() as $toggle) {

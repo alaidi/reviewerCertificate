@@ -198,7 +198,8 @@ function rcApplyTheme(name) {ldelim}
 				'signatureSectionOffsetY','signatureSectionPaddingTop','signatureSectionGap',
 				'editorBlockOffsetX','editorBlockOffsetY','dateBlockOffsetX','dateBlockOffsetY',
 				'editorNameFontSize','editorNameColor','journalNameFontSize','journalNameColor',
-				'signatureSize','logoSize','accentColor','textColor','contentOffsetY'
+				'signatureSize','logoSize','accentColor','textColor','contentOffsetY',
+				'qrSize','qrOffsetX','qrOffsetY'
 			];
 			var params = 'reviewId=' + id + '&rcPreview=1';
 			rcLiveFields.forEach(function(name) {ldelim}
@@ -279,6 +280,7 @@ function rcApplyTheme(name) {ldelim}
 		{/fbvFormSection}
 
 		{* ── Signature Position (Editor-in-Chief + Date) ─────────────────────── *}
+		<div id="rc-section-position">
 		{fbvFormSection title="plugins.generic.reviewerCertificate.settings.positionSection"}
 			<p class="pkp_help" style="margin-bottom:.85rem;">
 				{translate key="plugins.generic.reviewerCertificate.settings.positionHelp"}
@@ -353,6 +355,7 @@ function rcApplyTheme(name) {ldelim}
 				</div>
 			</div>
 		{/fbvFormSection}
+		</div>
 
 		{* ── Show / Hide & Move Elements ─────────────────────────────────────── *}
 		{fbvFormSection title="plugins.generic.reviewerCertificate.settings.visibilitySection"}
@@ -420,27 +423,40 @@ function rcApplyTheme(name) {ldelim}
 			<p class="pkp_help" style="margin-bottom:.85rem;">
 				{translate key="plugins.generic.reviewerCertificate.settings.textOverrideHelp"}
 			</p>
+			<div id="rc-override-journalNameText">
 			{fbvElement type="text" id="journalNameText" name="journalNameText" value=$journalNameText
 				multilingual=true maxlength="255" size=$fbvStyles.size.LARGE
 				label="plugins.generic.reviewerCertificate.settings.journalNameText"}
+			</div>
+			<div id="rc-override-headingText">
 			{fbvElement type="text" id="headingText" name="headingText" value=$headingText
 				multilingual=true maxlength="255" size=$fbvStyles.size.LARGE
 				label="plugins.generic.reviewerCertificate.settings.headingText"}
+			</div>
+			<div id="rc-override-subheadingText">
 			{fbvElement type="text" id="subheadingText" name="subheadingText" value=$subheadingText
 				multilingual=true maxlength="255" size=$fbvStyles.size.LARGE
 				label="plugins.generic.reviewerCertificate.settings.subheadingText"}
+			</div>
+			<div id="rc-override-presentedToText">
 			{fbvElement type="text" id="presentedToText" name="presentedToText" value=$presentedToText
 				multilingual=true maxlength="255" size=$fbvStyles.size.MEDIUM
 				label="plugins.generic.reviewerCertificate.settings.presentedToText"}
+			</div>
+			<div id="rc-override-completedOnText">
 			{fbvElement type="text" id="completedOnText" name="completedOnText" value=$completedOnText
 				multilingual=true maxlength="255" size=$fbvStyles.size.MEDIUM
 				label="plugins.generic.reviewerCertificate.settings.completedOnText"}
+			</div>
+			<div id="rc-override-dateLabelText">
 			{fbvElement type="text" id="dateLabelText" name="dateLabelText" value=$dateLabelText
 				multilingual=true maxlength="100" size=$fbvStyles.size.SMALL
 				label="plugins.generic.reviewerCertificate.settings.dateLabelText"}
+			</div>
 		{/fbvFormSection}
 
 		{* ── Journal Name ────────────────────────────────────────────────────── *}
+		<div id="rc-section-journalName">
 		{fbvFormSection title="plugins.generic.reviewerCertificate.settings.journalNameSection"}
 			<div style="display:flex;gap:1.5rem;align-items:flex-end;flex-wrap:wrap;margin-top:.25rem;">
 				<div>
@@ -469,6 +485,7 @@ function rcApplyTheme(name) {ldelim}
 				</div>
 			</div>
 		{/fbvFormSection}
+		</div>
 
 		{* ── Color Theme ─────────────────────────────────────────────────────── *}
 		{fbvFormSection title="plugins.generic.reviewerCertificate.settings.themeSection"}
@@ -532,12 +549,14 @@ function rcApplyTheme(name) {ldelim}
 		{/fbvFormSection}
 
 		{* ── Certificate Body Text ────────────────────────────────────────────── *}
+		<div id="rc-section-body">
 		{fbvFormSection title="plugins.generic.reviewerCertificate.settings.bodySection"}
 			{fbvElement type="textarea" id="certificateBody" name="certificateBody" value=$certificateBody
 				multilingual=true rows="4"
 				label="plugins.generic.reviewerCertificate.settings.certificateBody"}
 			<p class="pkp_help">{translate key="plugins.generic.reviewerCertificate.settings.certificateBodyHelp"}</p>
 		{/fbvFormSection}
+		</div>
 
 		{* ── QR Code ──────────────────────────────────────────────────────────── *}
 		{fbvFormSection title="plugins.generic.reviewerCertificate.settings.qrSection"}
@@ -550,6 +569,7 @@ function rcApplyTheme(name) {ldelim}
 		{/fbvFormSection}
 
 		{* ── Date Format ─────────────────────────────────────────────────────── *}
+		<div id="rc-section-dateFormat">
 		{fbvFormSection title="plugins.generic.reviewerCertificate.settings.dateFormatSection"}
 			<label for="dateFormat" style="display:block;font-size:13px;font-weight:bold;margin-bottom:.35rem;">
 				{translate key="plugins.generic.reviewerCertificate.settings.dateFormat"}
@@ -626,6 +646,7 @@ function rcApplyTheme(name) {ldelim}
 			</select>
 			<p class="pkp_help" style="margin-top:.35rem;">{translate key="plugins.generic.reviewerCertificate.settings.dateLocaleHelp"}</p>
 		{/fbvFormSection}
+		</div>
 
 		{* ── PDF Generation ──────────────────────────────────────────────────── *}
 		{fbvFormSection title="plugins.generic.reviewerCertificate.settings.pdfSection"}
@@ -646,6 +667,7 @@ function rcApplyTheme(name) {ldelim}
 		{/fbvFormSection}
 
 		{* ── Signature ───────────────────────────────────────────────────────── *}
+		<div id="rc-section-signature">
 		{fbvFormSection title="plugins.generic.reviewerCertificate.settings.signatureSection"}
 			<input type="hidden" id="signatureTemporaryFileId" name="signatureTemporaryFileId" value="">
 
@@ -679,8 +701,10 @@ function rcApplyTheme(name) {ldelim}
 				<span style="font-size:12px;color:#888;margin-left:.3rem;">px (20–300)</span>
 			</div>
 		{/fbvFormSection}
+		</div>
 
 		{* ── Logo ────────────────────────────────────────────────────────────── *}
+		<div id="rc-section-logo">
 		{fbvFormSection title="plugins.generic.reviewerCertificate.settings.logoSection"}
 			<input type="hidden" id="logoTemporaryFileId" name="logoTemporaryFileId" value="">
 
@@ -714,6 +738,7 @@ function rcApplyTheme(name) {ldelim}
 				<span style="font-size:12px;color:#888;margin-left:.3rem;">px (20–300)</span>
 			</div>
 		{/fbvFormSection}
+		</div>
 
 		{* ── Background image ────────────────────────────────────────────────── *}
 		{fbvFormSection title="plugins.generic.reviewerCertificate.settings.backgroundSection"}
@@ -764,6 +789,43 @@ function rcApplyTheme(name) {ldelim}
 		{/fbvFormSection}
 
 	{/fbvFormArea}
+
+	<script>
+	var RC_TOGGLE_MAP = {ldelim}
+		'showJournalName':      ['rc-override-journalNameText', 'rc-section-journalName'],
+		'showHeading':          ['rc-override-headingText'],
+		'showSubheading':       ['rc-override-subheadingText'],
+		'showPresentedTo':      ['rc-override-presentedToText'],
+		'showBody':             ['rc-override-completedOnText', 'rc-section-body'],
+		'showDateLine':         ['rc-override-dateLabelText', 'rc-section-dateFormat'],
+		'showLogo':             ['rc-section-logo'],
+		'showSignatureSection': ['rc-section-signature', 'rc-section-position']
+	{rdelim};
+
+	function rcUpdateVisibility() {ldelim}
+		Object.keys(RC_TOGGLE_MAP).forEach(function(cbId) {ldelim}
+			var cb = document.getElementById(cbId);
+			if (!cb) return;
+			var visible = cb.checked;
+			RC_TOGGLE_MAP[cbId].forEach(function(targetId) {ldelim}
+				var el = document.getElementById(targetId);
+				if (el) {ldelim}
+					el.style.display = visible ? '' : 'none';
+					var inputs = el.querySelectorAll('input, select, textarea');
+					inputs.forEach(function(inp) {ldelim} inp.disabled = !visible; {rdelim});
+				{rdelim}
+			{rdelim});
+		{rdelim});
+	{rdelim}
+
+	$(function() {ldelim}
+		Object.keys(RC_TOGGLE_MAP).forEach(function(cbId) {ldelim}
+			var cb = document.getElementById(cbId);
+			if (cb) cb.addEventListener('change', rcUpdateVisibility);
+		{rdelim});
+		rcUpdateVisibility();
+	{rdelim});
+	</script>
 
 	{fbvFormButtons}
 </form>

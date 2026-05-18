@@ -229,6 +229,7 @@ class ReviewerCertificatePlugin extends GenericPlugin
         $publication      = $submission->getCurrentPublication();
         $submissionTitle  = $publication->getLocalizedTitle();
         $reviewerName     = $reviewer->getFullName();
+        $reviewerAffiliation = $reviewer->getLocalizedAffiliation();
         $journalName      = $context->getLocalizedName();
         $dateCompleted    = $this->_formatDate($reviewAssignment->getDateCompleted(), $locale, $this->getSetting($contextId, 'dateFormat') ?? 'long', $this->getSetting($contextId, 'dateLocale') ?? '');
         $rawAcknowledged  = $reviewAssignment->getDateAcknowledged();
@@ -247,6 +248,9 @@ class ReviewerCertificatePlugin extends GenericPlugin
         $logoSize           = (int) ($this->getSetting($contextId, 'logoSize') ?: 70);
         $accentColor        = $this->getSetting($contextId, 'accentColor') ?: '#b8975a';
         $enableQrCode       = (bool) ($this->getSetting($contextId, 'enableQrCode') ?? true);
+        $qrSize             = (int) ($this->getSetting($contextId, 'qrSize') ?: 68);
+        $qrOffsetX          = (int) ($this->getSetting($contextId, 'qrOffsetX') ?: 0);
+        $qrOffsetY          = (int) ($this->getSetting($contextId, 'qrOffsetY') ?: 0);
         $signatureUrl       = $this->getSetting($contextId, 'signatureUrl') ?? '';
         $customLogoUrl      = $this->getSetting($contextId, 'customLogoUrl') ?? '';
         $backgroundImageUrl = $this->getSetting($contextId, 'backgroundImageUrl') ?? '';
@@ -316,6 +320,7 @@ class ReviewerCertificatePlugin extends GenericPlugin
         $templateMgr = TemplateManager::getManager($request);
         $templateMgr->assign([
             'reviewerName'        => $reviewerName,
+            'reviewerAffiliation' => $reviewerAffiliation,
             'submissionTitle'     => $submissionTitle,
             'journalName'         => $journalName,
             'dateCompleted'       => $dateCompleted,
@@ -332,6 +337,9 @@ class ReviewerCertificatePlugin extends GenericPlugin
             'accentColor'         => $accentColor,
             'textColor'           => $textColor,
             'enableQrCode'        => $enableQrCode,
+            'qrSize'              => $qrSize,
+            'qrOffsetX'           => $qrOffsetX,
+            'qrOffsetY'           => $qrOffsetY,
             'certificateBodyHtml' => $certificateBodyHtml,
             'signatureUrl'        => $signatureUrl,
             'logoUrl'             => $logoUrl,
