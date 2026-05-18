@@ -76,6 +76,7 @@ class ReviewerCertificateSettingsForm extends Form
         }
 
         $this->setData('accentColor',         $p->getSetting($id, 'accentColor') ?: '#b8975a');
+        $this->setData('textColor',           $p->getSetting($id, 'textColor') ?: '#1a1a2e');
         $this->setData('certificateBody',     $this->_getLocalizedSetting($p, $id, 'certificateBody'));
         $this->setData('enableQrCode',        $p->getSetting($id, 'enableQrCode') ?? '1');
         $this->setData('dateFormat',          $p->getSetting($id, 'dateFormat') ?: 'long');
@@ -167,6 +168,7 @@ class ReviewerCertificateSettingsForm extends Form
             'showDateLine',
             'showSignatureSection',
             'accentColor',
+            'textColor',
             'certificateBody',
             'enableQrCode',
             'dateFormat',
