@@ -365,10 +365,25 @@ class ReviewerCertificateSettingsForm extends Form
                 continue;
             }
 
-            $ext      = strtolower(pathinfo($temporaryFile->getOriginalFileName(), PATHINFO_EXTENSION)) ?: 'jpg';
-            $filename = 'reviewer_cert_' . $fileType . '.' . $ext;
+            $ext = strtolower(pathinfo($temporaryFile->getOriginalFileName(), PATHINFO_EXTENSION)) ?: 'jpg';
+
+            // Unique filename per upload. A fixed name (e.g.
+            // reviewer_cert_signature.jpg) keeps the same URL across
+            // re-uploads, so browsers and wkhtmltopdf serve the stale
+            // cached copy. A fresh name changes the URL and busts the cache.
+            $filename = 'reviewer_cert_' . $fileType . '_' . time() . '_' . substr(bin2hex(random_bytes(4)), 0, 8) . '.' . $ext;
 
             if ($publicFileManager->copyContextFile($id, $temporaryFile->getFilePath(), $filename)) {
+                // Remove the previously stored managed file so the public
+                // directory does not accumulate orphaned uploads.
+                $oldUrl = (string) $p->getSetting($id, $settingKey);
+                if ($oldUrl !== '') {
+                    $oldName = basename(parse_url($oldUrl, PHP_URL_PATH) ?: '');
+                    if ($oldName !== '' && $oldName !== $filename && strpos($oldName, 'reviewer_cert_' . $fileType . '_') === 0) {
+                        $publicFileManager->removeContextFile($id, $oldName);
+                    }
+                }
+
                 $url = $request->getBaseUrl()
                     . '/' . $publicFileManager->getContextFilesPath($id)
                     . '/' . $filename;

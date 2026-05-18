@@ -2,6 +2,12 @@
 
 A generic plugin for Open Journal Systems (OJS) 3.5 that automatically generates and delivers elegant reviewer appreciation certificates.
 
+## Screenshot
+
+<!-- Add a screenshot of a generated certificate here.
+     Place the image file under docs/ and keep the path below. -->
+![Reviewer certificate example](docs/certificate-example.png)
+
 ## Features
 
 - **Automatic certificate generation** — triggered when an editor clicks "Thank Reviewer" on a completed review
@@ -39,9 +45,70 @@ A generic plugin for Open Journal Systems (OJS) 3.5 that automatically generates
 
 ## Installation
 
-1. Copy the `reviewerCertificate` folder to `plugins/generic/` in your OJS installation.
-2. Log in as Journal Manager → Settings → Website → Plugins → Generic Plugins.
-3. Enable **Reviewer Certificate** and click **Settings** to configure.
+The plugin folder **must** be named `reviewerCertificate` and live in
+`plugins/generic/` of your OJS installation (final path:
+`plugins/generic/reviewerCertificate/`). No database changes are made on
+install — the plugin only registers a gateway and a few hooks while enabled.
+
+### Option A — release archive (recommended)
+
+1. Download the latest archive from the
+   [Releases page](https://github.com/alaidi/reviewerCertificate/releases).
+2. Extract it into `plugins/generic/`:
+
+   ```bash
+   cd /path/to/ojs/plugins/generic
+   unzip ~/Downloads/reviewerCertificate-1.4.0.0.zip
+   # ensure the extracted folder is exactly: reviewerCertificate/
+   ```
+
+3. Give the web-server user access (it must read the plugin and write to
+   `public/` for image uploads and saved certificates):
+
+   ```bash
+   chown -R www-data:www-data reviewerCertificate
+   ```
+
+4. Log in as **Journal Manager → Settings → Website → Plugins → Generic Plugins**.
+5. Tick **Reviewer Certificate** to enable it, then click **Settings** to configure.
+
+### Option B — Git clone
+
+```bash
+cd /path/to/ojs/plugins/generic
+git clone https://github.com/alaidi/reviewerCertificate.git
+git -C reviewerCertificate checkout v1.4.0.0
+```
+
+Then enable it from the Plugins page as in Option A.
+
+> Optional: install `wkhtmltopdf` on the server for one-click PDF download
+> (auto-detected, or set the path in Settings → PDF Generation).
+
+## Upgrading
+
+Settings are stored as per-journal plugin settings, **not** in the plugin
+files, so they survive an in-place replacement — you do not need to
+reconfigure after upgrading.
+
+1. **Back up** the existing `plugins/generic/reviewerCertificate/` folder
+   and your database.
+2. Replace the plugin files with the new version:
+   - **Release archive:** delete the old folder, extract the new one in
+     its place.
+   - **Git:** `cd plugins/generic/reviewerCertificate && git pull && git checkout vX.Y.Z`
+3. Restore ownership/permissions if your deployment resets them
+   (`chown -R www-data:www-data reviewerCertificate`).
+4. Open **Settings → Website → Plugins** in OJS. The new `<release>` from
+   `version.xml` is picked up automatically — no `tools/upgrade.php` run
+   or manual upgrade step is needed for this generic plugin.
+5. Hard-refresh the settings page once (Ctrl/Cmd + Shift + R) so updated
+   form assets are reloaded instead of served from browser cache.
+
+> **Upgrading from a pre-1.1.0 single-language version:** previously saved
+> Editor name / title / body values are shown in **every** language box so
+> they are never silently mislabeled — review each box and correct it
+> before saving (see the note under [Configuration](#configuration)).
 
 ## Requirements
 
@@ -158,6 +225,11 @@ language.
 
 ## Changelog
 
+### 1.4.0.1 — 2026-05-18
+
+- **Fixed:** re-uploaded signature / logo / background images were cached by the browser and wkhtmltopdf because every upload reused a fixed filename — uploads now get a unique filename (cache-busted) and the previously stored managed file is removed to avoid orphans
+- **Docs:** expanded README with detailed Installation and Upgrading instructions, a screenshot placeholder, developer contact, and a free + sponsor License/Support model
+
 ### 1.4.0.0 — 2026-05-18
 
 - **New:** Email Notification toggle — the thank-you email carrying the certificate link can be turned off; the certificate is still generated and saved, and stays reachable from the reviewer's review page and the My Certificates page (defaults to on, preserving existing behavior)
@@ -199,9 +271,37 @@ language.
 
 ## Author
 
-**Abdul Hadi Mohammed Alaidi**
+**Abdul Hadi Mohammed Alaidi** — developer & maintainer
+Email: <alaidi@uowasit.edu.iq>
+GitHub: <https://github.com/alaidi/reviewerCertificate>
 Created: 2026-03-27
 
 ## License
 
-This plugin is released under the GNU General Public License v3.0, consistent with the OJS platform license.
+This plugin is free and open-source software, released under the
+**GNU General Public License v3.0 (GPLv3)**, consistent with the OJS
+platform license. You may use, modify and redistribute it under the GPLv3
+terms. It is provided **with no warranty**.
+
+The full plugin is — and stays — **free for everyone**: free to download,
+test, and run in production, for journals of any size. There are no paid
+tiers, usage limits, or feature locks; nothing in the plugin counts or
+caps certificate generation.
+
+## Support the project
+
+This plugin is developed and maintained on a voluntary basis. If it is
+useful to your journal, please consider **sponsoring** its development —
+sponsorship is entirely optional and funds ongoing maintenance, OJS
+compatibility updates and new features, keeping the plugin free and open
+for the whole community.
+
+- 💖 **Sponsor:** [GitHub Sponsors](https://github.com/sponsors/alaidi)
+- ⭐ **Star** the [repository](https://github.com/alaidi/reviewerCertificate)
+  so others can find it
+- 🐛 **Contribute:** report issues or send pull requests on
+  [GitHub](https://github.com/alaidi/reviewerCertificate/issues)
+- ✉️ **Contact:** Abdul Hadi Mohammed Alaidi — <alaidi@uowasit.edu.iq>
+
+Sponsorship is a thank-you, not a license condition — it does not modify
+or add any terms to the GPLv3 grant above.
