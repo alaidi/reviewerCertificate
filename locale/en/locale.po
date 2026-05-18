@@ -131,6 +131,15 @@ msgstr "In recognition of your time and expertise as a reviewer for {journalName
 msgid "plugins.generic.reviewerCertificate.settings.certificateBodyHelp"
 msgstr "Write the body paragraph of the certificate. Use {journalName} and {submissionTitle} as placeholders — they will be replaced with the actual values. Leave blank to use the default translated text."
 
+msgid "plugins.generic.reviewerCertificate.settings.emailSection"
+msgstr "Email Notification"
+
+msgid "plugins.generic.reviewerCertificate.settings.sendEmail"
+msgstr "Email the certificate to the reviewer when an editor thanks them"
+
+msgid "plugins.generic.reviewerCertificate.settings.sendEmailHelp"
+msgstr "When disabled, no email is sent. The certificate is still generated and stays available from the reviewer's review page and the My Certificates page."
+
 msgid "plugins.generic.reviewerCertificate.settings.qrSection"
 msgstr "QR Code"
 

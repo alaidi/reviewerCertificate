@@ -78,6 +78,7 @@ class ReviewerCertificateSettingsForm extends Form
         $this->setData('accentColor',         $p->getSetting($id, 'accentColor') ?: '#b8975a');
         $this->setData('textColor',           $p->getSetting($id, 'textColor') ?: '#1a1a2e');
         $this->setData('certificateBody',     $this->_getLocalizedSetting($p, $id, 'certificateBody'));
+        $this->setData('sendEmail',           $p->getSetting($id, 'sendEmail') ?? '1');
         $this->setData('enableQrCode',        $p->getSetting($id, 'enableQrCode') ?? '1');
         $this->setData('dateFormat',          $p->getSetting($id, 'dateFormat') ?: 'long');
         $this->setData('dateLocale',          $p->getSetting($id, 'dateLocale') ?? '');
@@ -170,6 +171,7 @@ class ReviewerCertificateSettingsForm extends Form
             'accentColor',
             'textColor',
             'certificateBody',
+            'sendEmail',
             'enableQrCode',
             'dateFormat',
             'dateLocale',
@@ -326,6 +328,7 @@ class ReviewerCertificateSettingsForm extends Form
         $certificateBodyData = $this->getData('certificateBody');
         $p->updateSetting($id, 'certificateBody', is_array($certificateBodyData) ? $certificateBodyData : [], 'object');
 
+        $p->updateSetting($id, 'sendEmail', $this->getData('sendEmail') ? '1' : '0');
         $p->updateSetting($id, 'enableQrCode', $this->getData('enableQrCode') ? '1' : '0');
 
         $allowedFormats = ['long', 'medium', 'short', 'Y-m-d', 'd-m-Y', 'd/m/Y', 'm/d/Y', 'Y/m/d', 'd.m.Y', 'Y.m.d', 'd F Y', 'F d, Y', 'j F Y', 'd M Y', 'M d, Y'];

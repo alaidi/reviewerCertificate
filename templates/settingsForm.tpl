@@ -558,6 +558,16 @@ function rcApplyTheme(name) {ldelim}
 		{/fbvFormSection}
 		</div>
 
+		{* ── Email Notification ──────────────────────────────────────────────── *}
+		{fbvFormSection title="plugins.generic.reviewerCertificate.settings.emailSection"}
+			<label style="display:flex;align-items:center;gap:.6rem;cursor:pointer;font-size:14px;">
+				<input type="checkbox" name="sendEmail" value="1" {if $sendEmail}checked{/if}
+					style="width:16px;height:16px;cursor:pointer;">
+				{translate key="plugins.generic.reviewerCertificate.settings.sendEmail"}
+			</label>
+			<p class="pkp_help" style="margin-top:.35rem;">{translate key="plugins.generic.reviewerCertificate.settings.sendEmailHelp"}</p>
+		{/fbvFormSection}
+
 		{* ── QR Code ──────────────────────────────────────────────────────────── *}
 		{fbvFormSection title="plugins.generic.reviewerCertificate.settings.qrSection"}
 			<label style="display:flex;align-items:center;gap:.6rem;cursor:pointer;font-size:14px;">

@@ -5,6 +5,7 @@ A generic plugin for Open Journal Systems (OJS) 3.5 that automatically generates
 ## Features
 
 - **Automatic certificate generation** — triggered when an editor clicks "Thank Reviewer" on a completed review
+- **Optional email notification** — the thank-you email carrying the certificate link can be turned off; the certificate is still generated and remains reachable from the reviewer's review page and the My Certificates page
 - **Saved static HTML** — certificate is saved to `public/site/images/{username}/` and a direct link is included in the thank-you email
 - **Download as Image** — reviewers can download a high-resolution PNG (2880 × 2034 px) of their certificate directly from their submission dashboard
 - **Server-side PDF** — full-bleed single-page PDF generated with `wkhtmltopdf` (exact 297 × 210 mm, no page scaling or trailing whitespace)
@@ -134,6 +135,7 @@ language.
 | — | `signatureSectionGap` | Signature Position | 0–400 px | 80 | Horizontal gap between the two blocks |
 | — | `editorBlockOffsetX` / `…OffsetY` | Signature Position | −400…400 px | 0 | Nudge editor block left/right, up/down |
 | — | `dateBlockOffsetX` / `…OffsetY` | Signature Position | −400…400 px | 0 | Nudge date block left/right, up/down |
+| — | `sendEmail` | Email Notification | on / off | on | Email the certificate link to the reviewer when thanked (off = certificate still generated, no email sent) |
 | 12 | `enableQrCode` | QR Code | on / off | on | Show verification QR (bottom corner) |
 | — | `qrSize` | QR Code | 20–300 px | 68 | QR code width & height |
 | — | `qrOffsetX` | QR Code | −400…400 px | 0 | Move QR left (−) / right (+) |
@@ -155,6 +157,10 @@ language.
 > and correct it before saving.
 
 ## Changelog
+
+### 1.4.0.0 — 2026-05-18
+
+- **New:** Email Notification toggle — the thank-you email carrying the certificate link can be turned off; the certificate is still generated and saved, and stays reachable from the reviewer's review page and the My Certificates page (defaults to on, preserving existing behavior)
 
 ### 1.3.0.1 — 2026-05-18
 

@@ -104,6 +104,15 @@ msgstr "تقديراً لجهودكم المبذوله والخبرة والتف
 msgid "plugins.generic.reviewerCertificate.settings.certificateBodyHelp"
 msgstr "اكتب فقرة نص الشهادة. استخدم {journalName} و{submissionTitle} كمتغيرات تُستبدل بالقيم الفعلية عند العرض. اتركه فارغاً لاستخدام النص المترجم الافتراضي."
 
+msgid "plugins.generic.reviewerCertificate.settings.emailSection"
+msgstr "إشعار البريد الإلكتروني"
+
+msgid "plugins.generic.reviewerCertificate.settings.sendEmail"
+msgstr "إرسال الشهادة بالبريد الإلكتروني إلى المُحَكِّم عند شكره من قبل المحرر"
+
+msgid "plugins.generic.reviewerCertificate.settings.sendEmailHelp"
+msgstr "عند التعطيل، لا يُرسَل أي بريد إلكتروني. تبقى الشهادة مُولَّدة ومتاحة من صفحة مراجعة المُحَكِّم وصفحة شهاداتي."
+
 msgid "plugins.generic.reviewerCertificate.settings.qrSection"
 msgstr "رمز QR"
 

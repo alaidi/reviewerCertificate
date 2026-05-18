@@ -80,8 +80,17 @@ class ReviewerCertificatePlugin extends GenericPlugin
             return false;
         }
 
-        // Generate and save the static certificate HTML; get its direct URL
+        // Generate and save the static certificate HTML; get its direct URL.
+        // This always runs so the certificate stays available on the reviewer
+        // dashboard and the My Certificates page even when email is disabled.
         $savedUrl = $this->generateAndSaveCertificate($request, $reviewAssignment, $context);
+
+        // Optional: skip the notification email entirely (certificate is still
+        // generated/saved above). Defaults to sending when never configured.
+        $sendEmail = $this->getSetting($context->getId(), 'sendEmail');
+        if ($sendEmail !== null && $sendEmail !== '' && (string) $sendEmail !== '1') {
+            return false;
+        }
 
         // Fall back to the live gateway URL (requires login) if saving failed
         $certificateUrl = $savedUrl ?: $request->getDispatcher()->url(
