@@ -49,10 +49,19 @@
 		.pdf-btn { background: #c0392b; }
 		.pdf-btn:hover { background: #922b21; }
 
+		/* Fixed-size canvas wrapper. The certificate keeps its native
+		   960x678 dimensions on every device; on narrow screens it is
+		   scaled down as a whole (see rcFit) so the layout never
+		   reflows and mobile matches desktop exactly. */
+		.cert-viewport {
+			width: 960px;
+			max-width: 100%;
+		}
+
 		.certificate {
 			width: 960px;
 			height: 678px;
-			max-width: 100%;
+			transform-origin: top left;
 			background: #fff;
 			position: relative;
 			padding: 36px 56px 38px;
@@ -293,6 +302,17 @@
 
 			.btn-bar { display: none !important; }
 
+			/* Neutralise the on-screen scale transform so wkhtmltopdf
+			   / browser print renders at full page size. Stylesheet
+			   !important overrides the inline transform set by rcFit. */
+			.cert-viewport {
+				width: auto !important;
+				max-width: none !important;
+				height: auto !important;
+				overflow: visible !important;
+			}
+			.certificate { transform: none !important; }
+
 			/* Absolute fill guarantees the certificate spans the whole
 			   page in wkhtmltopdf, which does not reliably honour an
 			   explicit mm height on a normal-flow element. */
@@ -316,19 +336,12 @@
 			}
 		}
 
-		/* Screen-only responsive rules — must not leak into print/PDF,
-		   where wkhtmltopdf's narrow render width would otherwise
-		   collapse the certificate to content height. */
-		@media screen and (max-width: 980px) {
-			.certificate { width: 100%; height: auto; min-height: 0; }
-		}
-
+		/* Screen-only: shrink body padding on small screens so the
+		   scaled certificate gets as much width as possible. The
+		   certificate itself is never reflowed — rcFit() scales the
+		   whole canvas proportionally instead. */
 		@media screen and (max-width: 640px) {
-			.certificate { padding: 28px 20px; }
-			.cert-heading { font-size: 22px; }
-			.reviewer-name { font-size: 24px; }
-			.reviewer-affiliation { font-size: 13px; }
-			.signature-section { gap: 20px; }
+			body { padding: 1rem 0.5rem; }
 		}
 
 		/* RTL overrides */
@@ -377,8 +390,13 @@ async function rcDownloadImage(btn) {ldelim}
 	if (btnBar) btnBar.style.display = 'none';
 	if (qrWrap) qrWrap.style.display = 'none';
 
+	// Capture at full native size, not the on-screen mobile scale.
+	var rcVp = document.getElementById('rc-cert-viewport');
+	if (rcVp) rcVp.style.height = '';
+
 	try {ldelim}
 		var cert = document.querySelector('.certificate');
+		cert.style.transform = 'none';
 		var canvas = await html2canvas(cert, {ldelim}
 			scale: 3,
 			useCORS: true,
@@ -396,12 +414,14 @@ async function rcDownloadImage(btn) {ldelim}
 	{rdelim} finally {ldelim}
 		if (btnBar) btnBar.style.display = '';
 		if (qrWrap) qrWrap.style.display = '';
+		if (typeof window.rcFit === 'function') window.rcFit();
 		btn.textContent = origText;
 		btn.disabled = false;
 	{rdelim}
 {rdelim}
 </script>
 
+<div class="cert-viewport" id="rc-cert-viewport">
 {if $backgroundImageUrl}
 <div class="certificate has-bg" style="background-image:url('{$backgroundImageUrl|escape}')">
 {else}
@@ -512,6 +532,42 @@ async function rcDownloadImage(btn) {ldelim}
 	{/if}
 
 </div>
+</div>
+
+<script>
+(function() {ldelim}
+	function rcFit() {ldelim}
+		var vp   = document.getElementById('rc-cert-viewport');
+		var cert = vp ? vp.querySelector('.certificate') : null;
+		if (!vp || !cert) return;
+		// Native canvas size is fixed (960x678); offsetWidth/Height
+		// ignore the transform so they stay the true dimensions.
+		var natW = 960, natH = 678;
+		cert.style.transform = 'none';
+		var avail = vp.clientWidth;
+		var scale = Math.min(1, avail / natW);
+		cert.style.transform = 'scale(' + scale + ')';
+		vp.style.height = (natH * scale) + 'px';
+	{rdelim}
+
+	window.rcFit = rcFit;
+	window.addEventListener('load', rcFit);
+	window.addEventListener('resize', rcFit);
+	window.addEventListener('orientationchange', rcFit);
+
+	// Clear the scale transform before printing so the @media print
+	// rules render at full page size, then restore it afterwards.
+	window.addEventListener('beforeprint', function() {ldelim}
+		var vp = document.getElementById('rc-cert-viewport');
+		var cert = vp ? vp.querySelector('.certificate') : null;
+		if (cert) cert.style.transform = 'none';
+		if (vp) vp.style.height = '';
+	{rdelim});
+	window.addEventListener('afterprint', rcFit);
+
+	rcFit();
+{rdelim})();
+</script>
 
 </body>
 </html>

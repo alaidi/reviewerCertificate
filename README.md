@@ -224,6 +224,10 @@ language.
 
 ## Changelog
 
+### 1.4.0.2 — 2026-05-19
+
+- **Fixed:** mobile rendering no longer reflowed the certificate to a different layout than desktop — the certificate now keeps its native 960×678 canvas and is scaled down as a whole on narrow screens, so phones match desktop exactly; print/PDF output neutralises the on-screen scale and renders at full page size
+
 ### 1.4.0.1 — 2026-05-18
 
 - **Fixed:** re-uploaded signature / logo / background images were cached by the browser and wkhtmltopdf because every upload reused a fixed filename — uploads now get a unique filename (cache-busted) and the previously stored managed file is removed to avoid orphans
