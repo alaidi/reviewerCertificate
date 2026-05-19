@@ -1,5 +1,7 @@
 # Reviewer Certificate Plugin for OJS 3.5
 
+> 🌐 **Language:** **English** · [العربية](README_ar.md)
+
 A generic plugin for Open Journal Systems (OJS) 3.5 that automatically generates and delivers elegant reviewer appreciation certificates.
 
 ## Screenshot
