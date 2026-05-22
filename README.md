@@ -310,12 +310,27 @@ Created: 2026-03-27
 This plugin is free and open-source software, released under the
 **GNU General Public License v3.0 (GPLv3)**, consistent with the OJS
 platform license. You may use, modify and redistribute it under the GPLv3
-terms. It is provided **with no warranty**.
+terms. It is provided **with no warranty**. The full license text is
+included in the root [`LICENSE`](LICENSE) file.
 
 The full plugin is — and stays — **free for everyone**: free to download,
 test, and run in production, for journals of any size. There are no paid
 tiers, usage limits, or feature locks; nothing in the plugin counts or
 caps certificate generation.
+
+## Third-Party Components
+
+This plugin loads a small number of third-party client-side libraries and
+fonts. Their licenses are compatible with GPLv3 distribution, but they
+remain under their own terms:
+
+- **html2canvas** — MIT License
+- **QRCode.js** — MIT License
+- **Amiri** font — SIL Open Font License 1.1
+- **Cairo** font — SIL Open Font License 1.1
+
+These assets are referenced from public CDNs / Google Fonts at runtime; they
+are not bundled into this repository.
 
 ## Support the project
 

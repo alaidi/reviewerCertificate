@@ -1,0 +1,46 @@
+name: CI
+on:
+  push:
+    branches:
+      - main
+      - master
+  pull_request:
+
+jobs:
+  tests:
+    name: Tests
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        php-version: ['8.2', '8.3']
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup PHP ${{ matrix.php-version }}
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php-version }}
+          coverage: none
+          tools: composer:v2
+
+      - name: Cache Composer dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/.composer/cache/files
+          key: composer-${{ hashFiles('**/composer.lock') }}
+          restore-keys: composer-
+
+      - name: Install PHPUnit
+        run: |
+          cd "${{ github.workspace }}"
+          if [ ! -d vendor ]; then
+            composer require --dev phpunit/phpunit:"^10" --no-interaction --no-scripts
+          fi
+
+      - name: Run PHPUnit
+        run: |
+          cd "${{ github.workspace }}"
+          ./vendor/bin/phpunit -c phpunit.xml.dist
