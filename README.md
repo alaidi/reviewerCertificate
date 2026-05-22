@@ -86,6 +86,30 @@ Then enable it from the Plugins page as in Option A.
 > Optional: install `wkhtmltopdf` on the server for one-click PDF download
 > (auto-detected, or set the path in Settings → PDF Generation).
 
+### Setup in OJS (with screenshots)
+
+If you prefer installing the plugin from the OJS dashboard, use the following
+steps:
+
+1. Open **Journal Manager → Settings → Website → Plugins**, then click
+   **Upload A New Plugin**.
+
+   ![Step 1: open the Plugins page and click Upload A New Plugin](docs/1.png)
+
+2. On the upload screen, click **Upload File** and select the plugin ZIP
+   archive.
+
+   ![Step 2: choose the plugin ZIP file](docs/2.png)
+
+3. After the ZIP file is attached, click **Save** to upload and install it.
+
+   ![Step 3: save the uploaded plugin](docs/3.png)
+
+4. Back on the plugins list, enable **Reviewer Certificate Plugin**, then click
+   **Settings** to configure it.
+
+   ![Step 4: enable the plugin and open Settings](docs/4.png)
+
 ## Upgrading
 
 Settings are stored as per-journal plugin settings, **not** in the plugin
