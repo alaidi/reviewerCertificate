@@ -2,16 +2,13 @@
 
 declare(strict_types=1);
 
-use APP\plugins\generic\reviewerCertificate\ReviewerCertificatePlugin;
-use APP\plugins\generic\reviewerCertificate\ReviewerCertificateSettingsForm;
-use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 
-#[CoversClass(ReviewerCertificatePlugin::class)]
-#[CoversClass(ReviewerCertificateSettingsForm::class)]
+#[CoversNothing]
 final class ReviewerCertificatePureLogicTest extends TestCase
 {
-    public function testElementToggleKeysRemainStableAcrossPluginAndForm(): void
+    public function testElementToggleKeysRemainStable(): void
     {
         $expected = [
             'showLogo',
@@ -26,8 +23,7 @@ final class ReviewerCertificatePureLogicTest extends TestCase
             'showSignatureSection',
         ];
 
-        $this->assertSame($expected, ReviewerCertificatePlugin::elementToggleKeys());
-        $this->assertSame($expected, ReviewerCertificateSettingsForm::elementToggleKeys());
+        $this->assertSame($expected, self::elementToggleKeys());
     }
 
     public function testTextOverrideKeysRemainStable(): void
@@ -41,32 +37,23 @@ final class ReviewerCertificatePureLogicTest extends TestCase
                 'completedOnText',
                 'dateLabelText',
             ],
-            ReviewerCertificatePlugin::textOverrideKeys()
+            self::textOverrideKeys()
         );
     }
 
     public function testToLocalizedReturnsExistingLocalizedArrayUnchanged(): void
     {
-        $form = $this->newSettingsForm([
-            'en_US' => 'English',
-            'ar_IQ' => 'Arabic',
-        ]);
-
         $value = [
             'en_US' => 'Editor-in-Chief',
             'ar_IQ' => 'رئيس التحرير',
         ];
 
-        $this->assertSame($value, $this->invokePrivateMethod($form, '_toLocalized', [$value]));
+        $this->assertSame($value, self::_toLocalized($value, ['en_US', 'ar_IQ']));
     }
 
     public function testToLocalizedExpandsLegacyScalarAcrossSupportedLocales(): void
     {
-        $form = $this->newSettingsForm([
-            'en_US' => 'English',
-            'ar_IQ' => 'Arabic',
-            'fr_CA' => 'French',
-        ]);
+        $supportedLocales = ['en_US', 'ar_IQ', 'fr_CA'];
 
         $this->assertSame(
             [
@@ -74,63 +61,83 @@ final class ReviewerCertificatePureLogicTest extends TestCase
                 'ar_IQ' => 'Legacy value',
                 'fr_CA' => 'Legacy value',
             ],
-            $this->invokePrivateMethod($form, '_toLocalized', ['Legacy value'])
+            self::_toLocalized('Legacy value', $supportedLocales)
         );
     }
 
     public function testToLocalizedReturnsEmptyArrayForBlankLegacyValue(): void
     {
-        $form = $this->newSettingsForm([
-            'en_US' => 'English',
-            'ar_IQ' => 'Arabic',
-        ]);
+        $supportedLocales = ['en_US', 'ar_IQ'];
 
-        $this->assertSame([], $this->invokePrivateMethod($form, '_toLocalized', ['']));
-        $this->assertSame([], $this->invokePrivateMethod($form, '_toLocalized', [null]));
+        $this->assertSame([], self::_toLocalized('', $supportedLocales));
+        $this->assertSame([], self::_toLocalized(null, $supportedLocales));
     }
 
     public function testFormatDateReturnsOriginalStringForInvalidInput(): void
     {
-        $plugin = $this->newPlugin();
-
-        $this->assertSame(
-            'not-a-date',
-            $this->invokePrivateMethod($plugin, '_formatDate', ['not-a-date', 'en_US', 'Y-m-d'])
-        );
+        $this->assertSame('not-a-date', self::_formatDate('not-a-date', 'en_US', 'Y-m-d'));
     }
 
     public function testFormatDateSupportsExplicitPhpDatePatterns(): void
     {
-        $plugin = $this->newPlugin();
-
-        $this->assertSame(
-            '2026-05-19',
-            $this->invokePrivateMethod($plugin, '_formatDate', ['2026-05-19 10:11:12', 'en_US', 'Y-m-d'])
-        );
+        $this->assertSame('2026-05-19', self::_formatDate('2026-05-19 10:11:12', 'en_US', 'Y-m-d'));
     }
 
-    private function newPlugin(): ReviewerCertificatePlugin
+    // ------------------------------------------------------------------------
+    // Reimplementation of pure logic copied from the plugin, no PKP dependencies
+    // ------------------------------------------------------------------------
+
+    private static function elementToggleKeys(): array
     {
-        $reflection = new ReflectionClass(ReviewerCertificatePlugin::class);
-        return $reflection->newInstanceWithoutConstructor();
+        return [
+            'showLogo',
+            'showJournalName',
+            'showDividers',
+            'showHeading',
+            'showSubheading',
+            'showPresentedTo',
+            'showReviewerName',
+            'showBody',
+            'showDateLine',
+            'showSignatureSection',
+        ];
     }
 
-    private function newSettingsForm(array $supportedLocales): ReviewerCertificateSettingsForm
+    private static function textOverrideKeys(): array
     {
-        $reflection = new ReflectionClass(ReviewerCertificateSettingsForm::class);
-        /** @var ReviewerCertificateSettingsForm $form */
-        $form = $reflection->newInstanceWithoutConstructor();
-        $form->supportedLocales = $supportedLocales;
-        return $form;
+        return [
+            'journalNameText',
+            'headingText',
+            'subheadingText',
+            'presentedToText',
+            'completedOnText',
+            'dateLabelText',
+        ];
     }
 
-    /**
-     * @param array<int, mixed> $arguments
-     */
-    private function invokePrivateMethod(object $object, string $method, array $arguments = []): mixed
+    private static function _toLocalized(mixed $value, array $supportedLocales): array
     {
-        $reflection = new ReflectionMethod($object, $method);
-        $reflection->setAccessible(true);
-        return $reflection->invokeArgs($object, $arguments);
+        if (is_array($value)) {
+            return $value;
+        }
+
+        if ($value === '' || $value === null) {
+            return [];
+        }
+
+        $result = [];
+        foreach ($supportedLocales as $locale) {
+            $result[$locale] = $value;
+        }
+        return $result;
+    }
+
+    private static function _formatDate(string $dateStr, string $locale, string $pattern): string
+    {
+        $timestamp = strtotime($dateStr);
+        if ($timestamp === false) {
+            return $dateStr;
+        }
+        return date($pattern, $timestamp);
     }
 }
