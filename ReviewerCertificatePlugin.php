@@ -40,6 +40,11 @@ class ReviewerCertificatePlugin extends GenericPlugin
 
         $this->addLocaleData();
 
+        require_once __DIR__ . '/classes/ReviewerCertificateDAO.php';
+        require_once __DIR__ . '/classes/ReviewerCertificateTemplateDAO.php';
+        \PKP\db\DAORegistry::registerDAO('ReviewerCertificateDAO', new \APP\plugins\generic\reviewerCertificate\classes\ReviewerCertificateDAO());
+        \PKP\db\DAORegistry::registerDAO('ReviewerCertificateTemplateDAO', new \APP\plugins\generic\reviewerCertificate\classes\ReviewerCertificateTemplateDAO());
+
         if ($this->getEnabled($mainContextId)) {
             // Some OJS installs do not autoload sibling plugin classes;
             // load them explicitly so the plugin is self-contained.
@@ -64,16 +69,15 @@ class ReviewerCertificatePlugin extends GenericPlugin
     /**
      * Hook callback: generate the certificate file, save it, and email the reviewer.
      *
-     * @param string $hookName
      * @param array  $args  [$submission, $reviewAssignment, $mailable]
      */
     public function sendCertificateEmail(string $hookName, array $args): bool
     {
         [$submission, $reviewAssignment] = $args;
 
-        $request    = Application::get()->getRequest();
+        $request = Application::get()->getRequest();
         $contextDao = Application::getContextDAO();
-        $context    = $contextDao->getById($submission->getData('contextId'));
+        $context = $contextDao->getById($submission->getData('contextId'));
 
         $reviewer = Repo::user()->get($reviewAssignment->getReviewerId());
         if (!$reviewer) {
@@ -105,16 +109,16 @@ class ReviewerCertificatePlugin extends GenericPlugin
 
         // Build email
         $fromEmail = $context->getData('contactEmail') ?: '';
-        $fromName  = $context->getData('contactName')  ?: $context->getLocalizedData('name');
+        $fromName = $context->getData('contactName') ?: $context->getLocalizedData('name');
 
-        $locale     = Locale::getLocale();
+        $locale = Locale::getLocale();
         $rtlLocales = ['ar', 'fa', 'he', 'ur', 'ckb', 'ps'];
-        $isRtl      = in_array(substr($locale, 0, 2), $rtlLocales);
-        $dir        = $isRtl ? 'rtl' : 'ltr';
-        $align      = $isRtl ? 'right' : 'left';
+        $isRtl = in_array(substr($locale, 0, 2), $rtlLocales);
+        $dir = $isRtl ? 'rtl' : 'ltr';
+        $align = $isRtl ? 'right' : 'left';
 
-        $label   = __('plugins.generic.reviewerCertificate.email.certificateLabel');
-        $notice  = __('plugins.generic.reviewerCertificate.email.certificateNotice');
+        $label = __('plugins.generic.reviewerCertificate.email.certificateLabel');
+        $notice = __('plugins.generic.reviewerCertificate.email.certificateNotice');
         $subject = __('plugins.generic.reviewerCertificate.email.certificateSubject');
 
         // Central page listing all of the reviewer's certificates
@@ -221,47 +225,47 @@ class ReviewerCertificatePlugin extends GenericPlugin
     public function generateAndSaveCertificate($request, $reviewAssignment, $context): ?string
     {
         $submission = Repo::submission()->get($reviewAssignment->getSubmissionId());
-        $reviewer   = Repo::user()->get($reviewAssignment->getReviewerId());
+        $reviewer = Repo::user()->get($reviewAssignment->getReviewerId());
         if (!$submission || !$reviewer) {
             return null;
         }
 
         $contextId = $context->getId();
-        $reviewId  = $reviewAssignment->getId();
+        $reviewId = $reviewAssignment->getId();
 
         // Locale + direction
-        $locale     = Locale::getLocale();
+        $locale = Locale::getLocale();
         $rtlLocales = ['ar', 'fa', 'he', 'ur', 'ckb', 'ps'];
-        $isRtl      = in_array(substr($locale, 0, 2), $rtlLocales);
+        $isRtl = in_array(substr($locale, 0, 2), $rtlLocales);
 
         // Core certificate data
-        $publication      = $submission->getCurrentPublication();
-        $submissionTitle  = $publication->getLocalizedTitle();
-        $reviewerName     = $reviewer->getFullName();
+        $publication = $submission->getCurrentPublication();
+        $submissionTitle = $publication->getLocalizedTitle();
+        $reviewerName = $reviewer->getFullName();
         $reviewerAffiliation = $reviewer->getLocalizedAffiliation();
-        $journalName      = $context->getLocalizedName();
-        $dateCompleted    = $this->_formatDate($reviewAssignment->getDateCompleted(), $locale, $this->getSetting($contextId, 'dateFormat') ?? 'long', $this->getSetting($contextId, 'dateLocale') ?? '');
-        $rawAcknowledged  = $reviewAssignment->getDateAcknowledged();
+        $journalName = $context->getLocalizedName();
+        $dateCompleted = $this->_formatDate($reviewAssignment->getDateCompleted(), $locale, $this->getSetting($contextId, 'dateFormat') ?? 'long', $this->getSetting($contextId, 'dateLocale') ?? '');
+        $rawAcknowledged = $reviewAssignment->getDateAcknowledged();
         $dateAcknowledged = $rawAcknowledged
             ? $this->_formatDate($rawAcknowledged, $locale, $this->getSetting($contextId, 'dateFormat') ?? 'long', $this->getSetting($contextId, 'dateLocale') ?? '')
             : $dateCompleted;
 
         // Plugin settings
-        $editorName         = $this->getLocalizedSetting($contextId, 'editorName', $locale, '');
-        $editorTitle        = $this->getLocalizedSetting($contextId, 'editorTitle', $locale, 'Editor-in-Chief');
+        $editorName = $this->getLocalizedSetting($contextId, 'editorName', $locale, '');
+        $editorTitle = $this->getLocalizedSetting($contextId, 'editorTitle', $locale, 'Editor-in-Chief');
         $editorNameFontSize = (int) ($this->getSetting($contextId, 'editorNameFontSize') ?: 12);
-        $editorNameColor    = $this->getSetting($contextId, 'editorNameColor') ?: '#222222';
+        $editorNameColor = $this->getSetting($contextId, 'editorNameColor') ?: '#222222';
         $journalNameFontSize = (int) ($this->getSetting($contextId, 'journalNameFontSize') ?: 12);
-        $journalNameColor   = $this->getSetting($contextId, 'journalNameColor') ?: '#7a6030';
-        $signatureSize      = (int) ($this->getSetting($contextId, 'signatureSize') ?: 70);
-        $logoSize           = (int) ($this->getSetting($contextId, 'logoSize') ?: 70);
-        $accentColor        = $this->getSetting($contextId, 'accentColor') ?: '#b8975a';
-        $enableQrCode       = (bool) ($this->getSetting($contextId, 'enableQrCode') ?? true);
-        $qrSize             = (int) ($this->getSetting($contextId, 'qrSize') ?: 68);
-        $qrOffsetX          = (int) ($this->getSetting($contextId, 'qrOffsetX') ?: 0);
-        $qrOffsetY          = (int) ($this->getSetting($contextId, 'qrOffsetY') ?: 0);
-        $signatureUrl       = $this->getSetting($contextId, 'signatureUrl') ?? '';
-        $customLogoUrl      = $this->getSetting($contextId, 'customLogoUrl') ?? '';
+        $journalNameColor = $this->getSetting($contextId, 'journalNameColor') ?: '#7a6030';
+        $signatureSize = (int) ($this->getSetting($contextId, 'signatureSize') ?: 70);
+        $logoSize = (int) ($this->getSetting($contextId, 'logoSize') ?: 70);
+        $accentColor = $this->getSetting($contextId, 'accentColor') ?: '#b8975a';
+        $enableQrCode = (bool) ($this->getSetting($contextId, 'enableQrCode') ?? true);
+        $qrSize = (int) ($this->getSetting($contextId, 'qrSize') ?: 68);
+        $qrOffsetX = (int) ($this->getSetting($contextId, 'qrOffsetX') ?: 0);
+        $qrOffsetY = (int) ($this->getSetting($contextId, 'qrOffsetY') ?: 0);
+        $signatureUrl = $this->getSetting($contextId, 'signatureUrl') ?? '';
+        $customLogoUrl = $this->getSetting($contextId, 'customLogoUrl') ?? '';
         $backgroundImageUrl = $this->getSetting($contextId, 'backgroundImageUrl') ?? '';
 
         if (!preg_match('/^#[0-9a-fA-F]{6}$/', $accentColor)) {
@@ -290,7 +294,7 @@ class ReviewerCertificatePlugin extends GenericPlugin
         }
 
         // Custom body text
-        $certificateBodyRaw  = $this->getLocalizedSetting($contextId, 'certificateBody', $locale, '');
+        $certificateBodyRaw = $this->getLocalizedSetting($contextId, 'certificateBody', $locale, '');
         $certificateBodyHtml = $certificateBodyRaw
             ? str_replace(
                 ['{journalName}', '{submissionTitle}'],
@@ -328,35 +332,35 @@ class ReviewerCertificatePlugin extends GenericPlugin
         // Render template to string
         $templateMgr = TemplateManager::getManager($request);
         $templateMgr->assign([
-            'reviewerName'        => $reviewerName,
+            'reviewerName' => $reviewerName,
             'reviewerAffiliation' => $reviewerAffiliation,
-            'submissionTitle'     => $submissionTitle,
-            'journalName'         => $journalName,
-            'dateCompleted'       => $dateCompleted,
-            'dateAcknowledged'    => $dateAcknowledged,
-            'reviewId'            => $reviewId,
-            'editorName'          => $editorName,
-            'editorTitle'         => $editorTitle,
-            'editorNameFontSize'  => $editorNameFontSize,
-            'editorNameColor'     => $editorNameColor,
+            'submissionTitle' => $submissionTitle,
+            'journalName' => $journalName,
+            'dateCompleted' => $dateCompleted,
+            'dateAcknowledged' => $dateAcknowledged,
+            'reviewId' => $reviewId,
+            'editorName' => $editorName,
+            'editorTitle' => $editorTitle,
+            'editorNameFontSize' => $editorNameFontSize,
+            'editorNameColor' => $editorNameColor,
             'journalNameFontSize' => $journalNameFontSize,
-            'journalNameColor'    => $journalNameColor,
-            'signatureSize'       => $signatureSize,
-            'logoSize'            => $logoSize,
-            'accentColor'         => $accentColor,
-            'textColor'           => $textColor,
-            'enableQrCode'        => $enableQrCode,
-            'qrSize'              => $qrSize,
-            'qrOffsetX'           => $qrOffsetX,
-            'qrOffsetY'           => $qrOffsetY,
+            'journalNameColor' => $journalNameColor,
+            'signatureSize' => $signatureSize,
+            'logoSize' => $logoSize,
+            'accentColor' => $accentColor,
+            'textColor' => $textColor,
+            'enableQrCode' => $enableQrCode,
+            'qrSize' => $qrSize,
+            'qrOffsetX' => $qrOffsetX,
+            'qrOffsetY' => $qrOffsetY,
             'certificateBodyHtml' => $certificateBodyHtml,
-            'signatureUrl'        => $signatureUrl,
-            'logoUrl'             => $logoUrl,
-            'backgroundImageUrl'  => $backgroundImageUrl,
-            'contentOffsetY'      => $contentOffsetY,
-            'isRtl'               => $isRtl,
-            'currentLocale'       => $locale,
-            'certificateUrl'      => $gatewayUrl,
+            'signatureUrl' => $signatureUrl,
+            'logoUrl' => $logoUrl,
+            'backgroundImageUrl' => $backgroundImageUrl,
+            'contentOffsetY' => $contentOffsetY,
+            'isRtl' => $isRtl,
+            'currentLocale' => $locale,
+            'certificateUrl' => $gatewayUrl,
         ]);
         $templateMgr->assign($elementToggles);
         $templateMgr->assign($textOverrides);
@@ -370,7 +374,7 @@ class ReviewerCertificatePlugin extends GenericPlugin
 
         // Build user-specific directory: public/site/images/{username}/
         $safeUsername = preg_replace('/[^a-zA-Z0-9_\-]/', '_', $reviewer->getUsername());
-        $userDir      = 'public/site/images/' . $safeUsername;
+        $userDir = 'public/site/images/' . $safeUsername;
 
         // Ensure the directory exists
         if (!is_dir($userDir)) {
@@ -412,7 +416,7 @@ class ReviewerCertificatePlugin extends GenericPlugin
      */
     public function getLocalizedSetting($contextId, string $name, ?string $locale = null, string $default = ''): string
     {
-        $value  = $this->getSetting($contextId, $name);
+        $value = $this->getSetting($contextId, $name);
         $locale = $locale ?: Locale::getLocale();
 
         if (is_array($value)) {
@@ -460,9 +464,9 @@ class ReviewerCertificatePlugin extends GenericPlugin
         $effectiveLocale = ($dateLocale !== '') ? $dateLocale : $locale;
 
         $intlMap = [
-            'long'   => \IntlDateFormatter::LONG,
+            'long' => \IntlDateFormatter::LONG,
             'medium' => \IntlDateFormatter::MEDIUM,
-            'short'  => \IntlDateFormatter::SHORT,
+            'short' => \IntlDateFormatter::SHORT,
         ];
 
         if (isset($intlMap[$format])) {
@@ -483,17 +487,17 @@ class ReviewerCertificatePlugin extends GenericPlugin
         }
 
         $phpMap = [
-            'd-m-Y'  => 'd-m-Y',
-            'd/m/Y'  => 'd/m/Y',
-            'm/d/Y'  => 'm/d/Y',
-            'Y-m-d'  => 'Y-m-d',
-            'Y/m/d'  => 'Y/m/d',
-            'd.m.Y'  => 'd.m.Y',
-            'Y.m.d'  => 'Y.m.d',
-            'd F Y'  => 'd F Y',
+            'd-m-Y' => 'd-m-Y',
+            'd/m/Y' => 'd/m/Y',
+            'm/d/Y' => 'm/d/Y',
+            'Y-m-d' => 'Y-m-d',
+            'Y/m/d' => 'Y/m/d',
+            'd.m.Y' => 'd.m.Y',
+            'Y.m.d' => 'Y.m.d',
+            'd F Y' => 'd F Y',
             'F d, Y' => 'F d, Y',
-            'j F Y'  => 'j F Y',
-            'd M Y'  => 'd M Y',
+            'j F Y' => 'j F Y',
+            'd M Y' => 'd M Y',
             'M d, Y' => 'M d, Y',
         ];
 
@@ -533,21 +537,24 @@ class ReviewerCertificatePlugin extends GenericPlugin
             return false;
         }
 
-        $request   = Application::get()->getRequest();
-        $context   = $request->getContext();
+        $request = Application::get()->getRequest();
+        $context = $request->getContext();
         if (!$context) {
             return false;
         }
 
         $contextId = $context->getId();
-        $reviewId  = $reviewAssignment->getId();
+        $reviewId = $reviewAssignment->getId();
 
         // Prefer the saved static file URL (no login required); fall back to gateway
         $certUrl = $this->getSetting($contextId, 'cert_saved_url_' . $reviewId);
         if (!$certUrl) {
             $certUrl = $request->getDispatcher()->url(
-                $request, PKPApplication::ROUTE_PAGE, null,
-                'gateway', 'plugin',
+                $request,
+                PKPApplication::ROUTE_PAGE,
+                null,
+                'gateway',
+                'plugin',
                 ['ReviewerCertificateGatewayPlugin', 'generate'],
                 ['reviewId' => $reviewId]
             );
@@ -557,8 +564,11 @@ class ReviewerCertificatePlugin extends GenericPlugin
 
         // Central "all certificates" page for this reviewer
         $listUrl = $request->getDispatcher()->url(
-            $request, PKPApplication::ROUTE_PAGE, null,
-            'gateway', 'plugin',
+            $request,
+            PKPApplication::ROUTE_PAGE,
+            null,
+            'gateway',
+            'plugin',
             ['ReviewerCertificateGatewayPlugin', 'list']
         );
         $listLabel = __('plugins.generic.reviewerCertificate.certificate.viewAllLink');
@@ -585,7 +595,6 @@ class ReviewerCertificatePlugin extends GenericPlugin
      * Hook callback (TemplateManager::display): add a "My Certificates" entry
      * to the reviewer's backend side-navigation, under "Review Assignments".
      *
-     * @param string $hookName
      * @param array  $args  [$templateMgr, &$template, &$output]
      */
     public function addCertificatesMenuItem(string $hookName, array $args): bool
@@ -601,7 +610,7 @@ class ReviewerCertificatePlugin extends GenericPlugin
 
         $request = Application::get()->getRequest();
         $context = $request->getContext();
-        $user    = $request->getUser();
+        $user = $request->getUser();
         if (!$context || !$user) {
             return false;
         }
@@ -612,14 +621,17 @@ class ReviewerCertificatePlugin extends GenericPlugin
         }
 
         $listUrl = $request->getDispatcher()->url(
-            $request, PKPApplication::ROUTE_PAGE, null,
-            'gateway', 'plugin',
+            $request,
+            PKPApplication::ROUTE_PAGE,
+            null,
+            'gateway',
+            'plugin',
             ['ReviewerCertificateGatewayPlugin', 'list']
         );
 
         $item = [
-            'name'      => __('plugins.generic.reviewerCertificate.list.title'),
-            'url'       => $listUrl,
+            'name' => __('plugins.generic.reviewerCertificate.list.title'),
+            'url' => $listUrl,
             'isCurrent' => false,
         ];
 
@@ -677,7 +689,11 @@ class ReviewerCertificatePlugin extends GenericPlugin
                     'settings',
                     new AjaxModal(
                         $router->url(
-                            $request, null, null, 'manage', null,
+                            $request,
+                            null,
+                            null,
+                            'manage',
+                            null,
                             ['verb' => 'settings', 'plugin' => $this->getName(), 'category' => 'generic']
                         ),
                         $this->getDisplayName()
@@ -715,5 +731,15 @@ class ReviewerCertificatePlugin extends GenericPlugin
                 return new JSONMessage(true, $form->fetch($request));
         }
         return parent::manage($args, $request);
+    }
+
+    /**
+     * Provide the install migration that creates the plugin's tables.
+     * OJS runs this automatically when the plugin is installed.
+     */
+    public function getInstallMigration()
+    {
+        require_once __DIR__ . '/classes/migration/ReviewerCertificateInstallMigration.php';
+        return new \APP\plugins\generic\reviewerCertificate\classes\migration\ReviewerCertificateInstallMigration();
     }
 }
