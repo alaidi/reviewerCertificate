@@ -551,6 +551,16 @@ class ReviewerCertificatePlugin extends GenericPlugin
         $page = $args[0];
         $handler = &$args[3];
 
+        // ── Public certificate verification (no login required) ───────────────
+        if ($page === 'reviewerCertificateVerify') {
+            require_once __DIR__ . '/controllers/ReviewerCertificateVerifyHandler.php';
+            $verifyHandler = new \APP\plugins\generic\reviewerCertificate\controllers\ReviewerCertificateVerifyHandler();
+            $verifyHandler->setPlugin($this);
+            $handler = $verifyHandler;
+            return true;
+        }
+
+        // ── Authenticated reviewer certificate list ───────────────────────────
         if ($page !== 'reviewerCertificates') {
             return false;
         }
