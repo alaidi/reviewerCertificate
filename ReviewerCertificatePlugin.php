@@ -61,6 +61,7 @@ class ReviewerCertificatePlugin extends GenericPlugin
             Hook::add('ThankReviewerForm::thankReviewer', $this->sendCertificateEmail(...));
             Hook::add('Templates::Reviewer::Review::Step3', $this->addCertificateLinkToReviewStep(...));
             Hook::add('TemplateManager::display', $this->addCertificatesMenuItem(...));
+            Hook::add('LoadHandler', $this->setupListHandler(...));
         }
 
         return true;
@@ -620,19 +621,20 @@ class ReviewerCertificatePlugin extends GenericPlugin
             return false;
         }
 
+        // Point at the in-app backend page (routed via setupListHandler) so the
+        // dashboard opens it in-page rather than as a standalone new window.
         $listUrl = $request->getDispatcher()->url(
             $request,
             PKPApplication::ROUTE_PAGE,
             null,
-            'gateway',
-            'plugin',
-            ['ReviewerCertificateGatewayPlugin', 'list']
+            'reviewerCertificates'
         );
 
         $item = [
             'name' => __('plugins.generic.reviewerCertificate.list.title'),
             'url' => $listUrl,
-            'isCurrent' => false,
+            'icon' => 'ReviewAssignments',
+            'isCurrent' => $request->getRequestedPage() === 'reviewerCertificates',
         ];
 
         // Prefer nesting under the existing "Review Assignments" group;
@@ -640,13 +642,42 @@ class ReviewerCertificatePlugin extends GenericPlugin
         if (isset($menu['reviewAssignments']['submenu']) && is_array($menu['reviewAssignments']['submenu'])) {
             $menu['reviewAssignments']['submenu']['reviewerCertificates'] = $item;
         } else {
-            $item['icon'] = 'ReviewAssignments';
             $menu['reviewerCertificates'] = $item;
         }
 
         $templateMgr->setState(['menu' => $menu]);
 
         return false;
+    }
+
+    /**
+     * Hook callback (LoadHandler): route the "reviewerCertificates" page to the
+     * backend dashboard handler so the reviewer's certificate list renders inside
+     * the standard OJS backend layout (with the side navigation) instead of as a
+     * standalone new window.
+     *
+     * @param array  $args  [&$page, &$op, &$sourceFile, &$handler]
+     */
+    public function setupListHandler(string $hookName, array $args): bool
+    {
+        $page = $args[0];
+        $handler = &$args[3];
+
+        if ($page !== 'reviewerCertificates') {
+            return false;
+        }
+
+        $context = Application::get()->getRequest()->getContext();
+        if (!$context) {
+            return false;
+        }
+
+        if (!class_exists(ReviewerCertificateListHandler::class, false)) {
+            require_once __DIR__ . '/ReviewerCertificateListHandler.php';
+        }
+
+        $handler = new ReviewerCertificateListHandler($this);
+        return true;
     }
 
     /**

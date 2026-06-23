@@ -16,7 +16,6 @@
 
 namespace APP\plugins\generic\reviewerCertificate;
 
-use APP\core\Application;
 use APP\facades\Repo;
 use APP\file\PublicFileManager;
 use APP\template\TemplateManager;
@@ -36,12 +35,30 @@ class ReviewerCertificateGatewayPlugin extends GatewayPlugin
         parent::__construct();
     }
 
-    public function getName(): string { return 'ReviewerCertificateGatewayPlugin'; }
-    public function getHideManagement(): bool { return true; }
-    public function getDisplayName(): string { return __('plugins.generic.reviewerCertificate.displayName'); }
-    public function getDescription(): string { return __('plugins.generic.reviewerCertificate.description'); }
-    public function getPluginPath(): string { return $this->_parentPlugin->getPluginPath(); }
-    public function getEnabled(): bool { return $this->_parentPlugin->getEnabled(); }
+    public function getName(): string
+    {
+        return 'ReviewerCertificateGatewayPlugin';
+    }
+    public function getHideManagement(): bool
+    {
+        return true;
+    }
+    public function getDisplayName(): string
+    {
+        return __('plugins.generic.reviewerCertificate.displayName');
+    }
+    public function getDescription(): string
+    {
+        return __('plugins.generic.reviewerCertificate.description');
+    }
+    public function getPluginPath(): string
+    {
+        return $this->_parentPlugin->getPluginPath();
+    }
+    public function getEnabled(): bool
+    {
+        return $this->_parentPlugin->getEnabled();
+    }
 
     /**
      * Dispatch gateway requests.
@@ -90,7 +107,7 @@ class ReviewerCertificateGatewayPlugin extends GatewayPlugin
         }
 
         // Access control: the reviewer themselves OR a manager/editor
-        $isReviewer   = ((int) $reviewAssignment->getReviewerId() === (int) $user->getId());
+        $isReviewer = ((int) $reviewAssignment->getReviewerId() === (int) $user->getId());
         $isPrivileged = $this->_userHasPrivilegedRole($user->getId(), $context->getId());
 
         if (!$isReviewer && !$isPrivileged) {
@@ -111,23 +128,23 @@ class ReviewerCertificateGatewayPlugin extends GatewayPlugin
 
         // ── generate (HTML view) ────────────────────────────────────────────
 
-        $locale     = Locale::getLocale();
+        $locale = Locale::getLocale();
         $rtlLocales = ['ar', 'fa', 'he', 'ur', 'ckb', 'ps'];
-        $isRtl      = in_array(substr($locale, 0, 2), $rtlLocales);
+        $isRtl = in_array(substr($locale, 0, 2), $rtlLocales);
 
-        $reviewer        = Repo::user()->get($reviewAssignment->getReviewerId());
-        $publication     = $submission->getCurrentPublication();
+        $reviewer = Repo::user()->get($reviewAssignment->getReviewerId());
+        $publication = $submission->getCurrentPublication();
         $submissionTitle = $publication->getLocalizedTitle();
-        $reviewerName    = $reviewer->getFullName();
+        $reviewerName = $reviewer->getFullName();
         $reviewerAffiliation = $reviewer->getLocalizedAffiliation();
-        $journalName     = $context->getLocalizedName();
+        $journalName = $context->getLocalizedName();
 
-        $dateCompleted    = $this->_formatDate($reviewAssignment->getDateCompleted(), $locale, $this->_parentPlugin->getSetting($context->getId(), 'dateFormat') ?? 'long', $this->_parentPlugin->getSetting($context->getId(), 'dateLocale') ?? '');
-        $rawAcknowledged  = $reviewAssignment->getDateAcknowledged();
+        $dateCompleted = $this->_formatDate($reviewAssignment->getDateCompleted(), $locale, $this->_parentPlugin->getSetting($context->getId(), 'dateFormat') ?? 'long', $this->_parentPlugin->getSetting($context->getId(), 'dateLocale') ?? '');
+        $rawAcknowledged = $reviewAssignment->getDateAcknowledged();
         $dateAcknowledged = $rawAcknowledged ? $this->_formatDate($rawAcknowledged, $locale, $this->_parentPlugin->getSetting($context->getId(), 'dateFormat') ?? 'long', $this->_parentPlugin->getSetting($context->getId(), 'dateLocale') ?? '') : $dateCompleted;
 
-        $contextId          = $context->getId();
-        $plugin             = $this->_parentPlugin;
+        $contextId = $context->getId();
+        $plugin = $this->_parentPlugin;
 
         // Live preview: when the settings-form preview iframe requests the
         // certificate it appends the in-progress form values plus rcPreview=1.
@@ -162,30 +179,30 @@ class ReviewerCertificateGatewayPlugin extends GatewayPlugin
             return ($stored === null || $stored === '') ? true : ((string) $stored === '1');
         };
 
-        $editorName         = $plugin->getLocalizedSetting($contextId, 'editorName', $locale, '');
-        $editorTitle        = $plugin->getLocalizedSetting($contextId, 'editorTitle', $locale, 'Editor-in-Chief');
+        $editorName = $plugin->getLocalizedSetting($contextId, 'editorName', $locale, '');
+        $editorTitle = $plugin->getLocalizedSetting($contextId, 'editorTitle', $locale, 'Editor-in-Chief');
         $editorNameFontSize = (int) ($ovNum('editorNameFontSize', $plugin->getSetting($contextId, 'editorNameFontSize')) ?: 12);
         $editorNameFontSize = max(8, min(72, $editorNameFontSize));
-        $editorNameColor    = $ovColor('editorNameColor', $plugin->getSetting($contextId, 'editorNameColor')) ?: '#222222';
+        $editorNameColor = $ovColor('editorNameColor', $plugin->getSetting($contextId, 'editorNameColor')) ?: '#222222';
         $journalNameFontSize = (int) ($ovNum('journalNameFontSize', $plugin->getSetting($contextId, 'journalNameFontSize')) ?: 12);
         $journalNameFontSize = max(8, min(72, $journalNameFontSize));
-        $journalNameColor   = $ovColor('journalNameColor', $plugin->getSetting($contextId, 'journalNameColor')) ?: '#7a6030';
-        $signatureSize      = (int) ($ovNum('signatureSize', $plugin->getSetting($contextId, 'signatureSize')) ?: 70);
-        $signatureSize      = max(20, min(300, $signatureSize));
-        $logoSize           = (int) ($ovNum('logoSize', $plugin->getSetting($contextId, 'logoSize')) ?: 70);
-        $logoSize           = max(20, min(300, $logoSize));
+        $journalNameColor = $ovColor('journalNameColor', $plugin->getSetting($contextId, 'journalNameColor')) ?: '#7a6030';
+        $signatureSize = (int) ($ovNum('signatureSize', $plugin->getSetting($contextId, 'signatureSize')) ?: 70);
+        $signatureSize = max(20, min(300, $signatureSize));
+        $logoSize = (int) ($ovNum('logoSize', $plugin->getSetting($contextId, 'logoSize')) ?: 70);
+        $logoSize = max(20, min(300, $logoSize));
 
         // Signature-section layout (Editor-in-Chief + Date blocks).
         // Offsets let the admin nudge the blocks up/down/sideways; values
         // are clamped to keep the layout from being pushed off the page.
         $clampOffset = fn ($v, $min = -400, $max = 400) => max($min, min($max, (int) $v));
-        $signatureSectionOffsetY  = $clampOffset($ovNum('signatureSectionOffsetY', $plugin->getSetting($contextId, 'signatureSectionOffsetY')) ?: 0);
+        $signatureSectionOffsetY = $clampOffset($ovNum('signatureSectionOffsetY', $plugin->getSetting($contextId, 'signatureSectionOffsetY')) ?: 0);
         $signatureSectionPaddingTop = $clampOffset($ovNum('signatureSectionPaddingTop', $plugin->getSetting($contextId, 'signatureSectionPaddingTop')) ?: 0, 0, 400);
-        $signatureSectionGap      = $clampOffset($ovNum('signatureSectionGap', $plugin->getSetting($contextId, 'signatureSectionGap')) ?: 80, 0, 400);
-        $editorBlockOffsetX       = $clampOffset($ovNum('editorBlockOffsetX', $plugin->getSetting($contextId, 'editorBlockOffsetX')) ?: 0);
-        $editorBlockOffsetY       = $clampOffset($ovNum('editorBlockOffsetY', $plugin->getSetting($contextId, 'editorBlockOffsetY')) ?: 0);
-        $dateBlockOffsetX         = $clampOffset($ovNum('dateBlockOffsetX', $plugin->getSetting($contextId, 'dateBlockOffsetX')) ?: 0);
-        $dateBlockOffsetY         = $clampOffset($ovNum('dateBlockOffsetY', $plugin->getSetting($contextId, 'dateBlockOffsetY')) ?: 0);
+        $signatureSectionGap = $clampOffset($ovNum('signatureSectionGap', $plugin->getSetting($contextId, 'signatureSectionGap')) ?: 80, 0, 400);
+        $editorBlockOffsetX = $clampOffset($ovNum('editorBlockOffsetX', $plugin->getSetting($contextId, 'editorBlockOffsetX')) ?: 0);
+        $editorBlockOffsetY = $clampOffset($ovNum('editorBlockOffsetY', $plugin->getSetting($contextId, 'editorBlockOffsetY')) ?: 0);
+        $dateBlockOffsetX = $clampOffset($ovNum('dateBlockOffsetX', $plugin->getSetting($contextId, 'dateBlockOffsetX')) ?: 0);
+        $dateBlockOffsetY = $clampOffset($ovNum('dateBlockOffsetY', $plugin->getSetting($contextId, 'dateBlockOffsetY')) ?: 0);
 
         // Global vertical shift for the whole text block (− up / + down)
         $contentOffsetY = $clampOffset($ovNum('contentOffsetY', $plugin->getSetting($contextId, 'contentOffsetY')) ?: 0);
@@ -204,13 +221,13 @@ class ReviewerCertificateGatewayPlugin extends GatewayPlugin
             $textOverrides[$key] = $plugin->getLocalizedSetting($contextId, $key, $locale, '');
         }
 
-        $accentColor        = $ovColor('accentColor', $plugin->getSetting($contextId, 'accentColor')) ?: '#b8975a';
-        $enableQrCode       = (bool) ($plugin->getSetting($contextId, 'enableQrCode') ?? true);
-        $qrSize             = max(20, min(300, (int) ($ovNum('qrSize', $plugin->getSetting($contextId, 'qrSize')) ?: 68)));
-        $qrOffsetX          = $clampOffset($ovNum('qrOffsetX', $plugin->getSetting($contextId, 'qrOffsetX')) ?: 0);
-        $qrOffsetY          = $clampOffset($ovNum('qrOffsetY', $plugin->getSetting($contextId, 'qrOffsetY')) ?: 0);
-        $signatureUrl       = $plugin->getSetting($contextId, 'signatureUrl') ?? '';
-        $customLogoUrl      = $plugin->getSetting($contextId, 'customLogoUrl') ?? '';
+        $accentColor = $ovColor('accentColor', $plugin->getSetting($contextId, 'accentColor')) ?: '#b8975a';
+        $enableQrCode = (bool) ($plugin->getSetting($contextId, 'enableQrCode') ?? true);
+        $qrSize = max(20, min(300, (int) ($ovNum('qrSize', $plugin->getSetting($contextId, 'qrSize')) ?: 68)));
+        $qrOffsetX = $clampOffset($ovNum('qrOffsetX', $plugin->getSetting($contextId, 'qrOffsetX')) ?: 0);
+        $qrOffsetY = $clampOffset($ovNum('qrOffsetY', $plugin->getSetting($contextId, 'qrOffsetY')) ?: 0);
+        $signatureUrl = $plugin->getSetting($contextId, 'signatureUrl') ?? '';
+        $customLogoUrl = $plugin->getSetting($contextId, 'customLogoUrl') ?? '';
         $backgroundImageUrl = $plugin->getSetting($contextId, 'backgroundImageUrl') ?? '';
 
         if (!preg_match('/^#[0-9a-fA-F]{6}$/', $accentColor)) {
@@ -222,7 +239,7 @@ class ReviewerCertificateGatewayPlugin extends GatewayPlugin
             $textColor = '#1a1a2e';
         }
 
-        $certificateBodyRaw  = $plugin->getLocalizedSetting($contextId, 'certificateBody', $locale, '');
+        $certificateBodyRaw = $plugin->getLocalizedSetting($contextId, 'certificateBody', $locale, '');
         $certificateBodyHtml = $certificateBodyRaw
             ? str_replace(
                 ['{journalName}', '{submissionTitle}'],
@@ -249,8 +266,11 @@ class ReviewerCertificateGatewayPlugin extends GatewayPlugin
         $pdfUrl = '';
         if ($this->_getWkhtmltopdfPath($contextId)) {
             $pdfUrl = $request->getDispatcher()->url(
-                $request, PKPApplication::ROUTE_PAGE, null,
-                'gateway', 'plugin',
+                $request,
+                PKPApplication::ROUTE_PAGE,
+                null,
+                'gateway',
+                'plugin',
                 ['ReviewerCertificateGatewayPlugin', 'pdf'],
                 ['reviewId' => $reviewId]
             );
@@ -258,43 +278,43 @@ class ReviewerCertificateGatewayPlugin extends GatewayPlugin
 
         $templateMgr = TemplateManager::getManager($request);
         $templateMgr->assign([
-            'reviewerName'        => $reviewerName,
+            'reviewerName' => $reviewerName,
             'reviewerAffiliation' => $reviewerAffiliation,
-            'submissionTitle'     => $submissionTitle,
-            'journalName'         => $journalName,
-            'dateCompleted'       => $dateCompleted,
-            'dateAcknowledged'    => $dateAcknowledged,
-            'reviewId'            => $reviewId,
-            'editorName'          => $editorName,
-            'editorTitle'         => $editorTitle,
-            'editorNameFontSize'  => $editorNameFontSize,
-            'editorNameColor'     => $editorNameColor,
+            'submissionTitle' => $submissionTitle,
+            'journalName' => $journalName,
+            'dateCompleted' => $dateCompleted,
+            'dateAcknowledged' => $dateAcknowledged,
+            'reviewId' => $reviewId,
+            'editorName' => $editorName,
+            'editorTitle' => $editorTitle,
+            'editorNameFontSize' => $editorNameFontSize,
+            'editorNameColor' => $editorNameColor,
             'journalNameFontSize' => $journalNameFontSize,
-            'journalNameColor'    => $journalNameColor,
-            'signatureSize'       => $signatureSize,
-            'logoSize'            => $logoSize,
-            'signatureSectionOffsetY'    => $signatureSectionOffsetY,
+            'journalNameColor' => $journalNameColor,
+            'signatureSize' => $signatureSize,
+            'logoSize' => $logoSize,
+            'signatureSectionOffsetY' => $signatureSectionOffsetY,
             'signatureSectionPaddingTop' => $signatureSectionPaddingTop,
-            'signatureSectionGap'        => $signatureSectionGap,
-            'editorBlockOffsetX'  => $editorBlockOffsetX,
-            'editorBlockOffsetY'  => $editorBlockOffsetY,
-            'dateBlockOffsetX'    => $dateBlockOffsetX,
-            'dateBlockOffsetY'    => $dateBlockOffsetY,
-            'contentOffsetY'      => $contentOffsetY,
-            'accentColor'         => $accentColor,
-            'textColor'           => $textColor,
-            'enableQrCode'        => $enableQrCode,
-            'qrSize'              => $qrSize,
-            'qrOffsetX'           => $qrOffsetX,
-            'qrOffsetY'           => $qrOffsetY,
+            'signatureSectionGap' => $signatureSectionGap,
+            'editorBlockOffsetX' => $editorBlockOffsetX,
+            'editorBlockOffsetY' => $editorBlockOffsetY,
+            'dateBlockOffsetX' => $dateBlockOffsetX,
+            'dateBlockOffsetY' => $dateBlockOffsetY,
+            'contentOffsetY' => $contentOffsetY,
+            'accentColor' => $accentColor,
+            'textColor' => $textColor,
+            'enableQrCode' => $enableQrCode,
+            'qrSize' => $qrSize,
+            'qrOffsetX' => $qrOffsetX,
+            'qrOffsetY' => $qrOffsetY,
             'certificateBodyHtml' => $certificateBodyHtml,
-            'signatureUrl'        => $signatureUrl,
-            'logoUrl'             => $logoUrl,
-            'backgroundImageUrl'  => $backgroundImageUrl,
-            'isRtl'               => $isRtl,
-            'currentLocale'       => $locale,
-            'certificateUrl'      => null,
-            'pdfUrl'              => $pdfUrl,
+            'signatureUrl' => $signatureUrl,
+            'logoUrl' => $logoUrl,
+            'backgroundImageUrl' => $backgroundImageUrl,
+            'isRtl' => $isRtl,
+            'currentLocale' => $locale,
+            'certificateUrl' => null,
+            'pdfUrl' => $pdfUrl,
         ]);
 
         $templateMgr->assign($elementToggles);
@@ -313,13 +333,36 @@ class ReviewerCertificateGatewayPlugin extends GatewayPlugin
      */
     private function _listCertificates($request, $context, $user): bool
     {
+        $listUrl = $request->getDispatcher()->url(
+            $request,
+            PKPApplication::ROUTE_PAGE,
+            null,
+            'gateway',
+            'plugin',
+            ['ReviewerCertificateGatewayPlugin', 'list']
+        );
+        $data = $this->buildCertificatesViewData($request, $context, $user, $listUrl);
+        $templateMgr = TemplateManager::getManager($request);
+        $templateMgr->assign($data);
+        $templateMgr->display($this->_parentPlugin->getTemplateResource('certificates.tpl'));
+        return true;
+    }
+
+    /**
+     * Build the reviewer's certificate-list view data. Shared by the standalone
+     * gateway page and the in-dashboard backend page (ReviewerCertificateListHandler),
+     * so both render the same list. $listUrl is the base used for search/pagination
+     * links (gateway URL or backend page URL, depending on the caller).
+     */
+    public function buildCertificatesViewData($request, $context, $user, string $listUrl): array
+    {
         $contextId = $context->getId();
-        $locale    = Locale::getLocale();
+        $locale = Locale::getLocale();
         $dateFormat = $this->_parentPlugin->getSetting($contextId, 'dateFormat') ?? 'long';
         $dateLocaleSetting = $this->_parentPlugin->getSetting($contextId, 'dateLocale') ?? '';
 
         $rtlLocales = ['ar', 'fa', 'he', 'ur', 'ckb', 'ps'];
-        $isRtl      = in_array(substr($locale, 0, 2), $rtlLocales);
+        $isRtl = in_array(substr($locale, 0, 2), $rtlLocales);
 
         $reviewAssignments = Repo::reviewAssignment()->getCollector()
             ->filterByContextIds([$contextId])
@@ -327,7 +370,7 @@ class ReviewerCertificateGatewayPlugin extends GatewayPlugin
             ->filterByCompleted(true)
             ->getMany();
 
-        $dispatcher   = $request->getDispatcher();
+        $dispatcher = $request->getDispatcher();
         $pdfAvailable = (bool) $this->_getWkhtmltopdfPath($contextId);
 
         // Search term (matched against submission title, case-insensitive)
@@ -353,18 +396,24 @@ class ReviewerCertificateGatewayPlugin extends GatewayPlugin
             $reviewId = $reviewAssignment->getId();
 
             $certificates[] = [
-                'reviewId'        => $reviewId,
+                'reviewId' => $reviewId,
                 'submissionTitle' => $submissionTitle,
-                'dateCompleted'   => $this->_formatDate($reviewAssignment->getDateCompleted(), $locale, $dateFormat, $dateLocaleSetting),
-                'viewUrl'         => $dispatcher->url(
-                    $request, PKPApplication::ROUTE_PAGE, null,
-                    'gateway', 'plugin',
+                'dateCompleted' => $this->_formatDate($reviewAssignment->getDateCompleted(), $locale, $dateFormat, $dateLocaleSetting),
+                'viewUrl' => $dispatcher->url(
+                    $request,
+                    PKPApplication::ROUTE_PAGE,
+                    null,
+                    'gateway',
+                    'plugin',
                     ['ReviewerCertificateGatewayPlugin', 'generate'],
                     ['reviewId' => $reviewId]
                 ),
-                'pdfUrl'          => $pdfAvailable ? $dispatcher->url(
-                    $request, PKPApplication::ROUTE_PAGE, null,
-                    'gateway', 'plugin',
+                'pdfUrl' => $pdfAvailable ? $dispatcher->url(
+                    $request,
+                    PKPApplication::ROUTE_PAGE,
+                    null,
+                    'gateway',
+                    'plugin',
                     ['ReviewerCertificateGatewayPlugin', 'pdf'],
                     ['reviewId' => $reviewId]
                 ) : '',
@@ -372,10 +421,10 @@ class ReviewerCertificateGatewayPlugin extends GatewayPlugin
         }
 
         // ── Pagination ──────────────────────────────────────────────────────
-        $perPage    = 10;
+        $perPage = 10;
         $totalCount = count($certificates);
         $totalPages = max(1, (int) ceil($totalCount / $perPage));
-        $page       = (int) $request->getUserVar('page');
+        $page = (int) $request->getUserVar('page');
         if ($page < 1) {
             $page = 1;
         }
@@ -384,35 +433,25 @@ class ReviewerCertificateGatewayPlugin extends GatewayPlugin
         }
         $pageCertificates = array_slice($certificates, ($page - 1) * $perPage, $perPage);
 
-        // Base URL of this list page, used to build search/pagination links
-        $listUrl = $dispatcher->url(
-            $request, PKPApplication::ROUTE_PAGE, null,
-            'gateway', 'plugin',
-            ['ReviewerCertificateGatewayPlugin', 'list']
-        );
-
         $rangeStart = $totalCount ? (($page - 1) * $perPage) + 1 : 0;
-        $rangeEnd   = min($page * $perPage, $totalCount);
+        $rangeEnd = min($page * $perPage, $totalCount);
 
-        $templateMgr = TemplateManager::getManager($request);
-        $templateMgr->assign([
+        return [
             'reviewerName' => $user->getFullName(),
             'reviewerAffiliation' => $user->getLocalizedAffiliation(),
-            'journalName'  => $context->getLocalizedName(),
+            'journalName' => $context->getLocalizedName(),
             'certificates' => $pageCertificates,
-            'isRtl'        => $isRtl,
+            'isRtl' => $isRtl,
             'currentLocale' => $locale,
-            'searchQuery'  => $searchQuery,
-            'listUrl'      => $listUrl,
-            'page'         => $page,
-            'totalPages'   => $totalPages,
-            'pageNumbers'  => range(1, $totalPages),
-            'totalCount'   => $totalCount,
-            'rangeStart'   => $rangeStart,
-            'rangeEnd'     => $rangeEnd,
-        ]);
-        $templateMgr->display($this->_parentPlugin->getTemplateResource('certificates.tpl'));
-        return true;
+            'searchQuery' => $searchQuery,
+            'listUrl' => $listUrl,
+            'page' => $page,
+            'totalPages' => $totalPages,
+            'pageNumbers' => range(1, $totalPages),
+            'totalCount' => $totalCount,
+            'rangeStart' => $rangeStart,
+            'rangeEnd' => $rangeEnd,
+        ];
     }
 
     // ── PDF generation ──────────────────────────────────────────────────────
@@ -424,10 +463,10 @@ class ReviewerCertificateGatewayPlugin extends GatewayPlugin
             return false;
         }
 
-        $contextId    = $context->getId();
-        $reviewId     = $reviewAssignment->getId();
+        $contextId = $context->getId();
+        $reviewId = $reviewAssignment->getId();
         $safeUsername = preg_replace('/[^a-zA-Z0-9_\-]/', '_', $reviewer->getUsername());
-        $htmlFile     = 'public/site/images/' . $safeUsername . '/reviewer_cert_' . $reviewId . '.html';
+        $htmlFile = 'public/site/images/' . $safeUsername . '/reviewer_cert_' . $reviewId . '.html';
 
         // Always regenerate from the current template/settings so the PDF
         // reflects the latest design, colours and locale (the saved file is
@@ -524,9 +563,9 @@ class ReviewerCertificateGatewayPlugin extends GatewayPlugin
         $effectiveLocale = ($dateLocale !== '') ? $dateLocale : $locale;
 
         $intlMap = [
-            'long'   => \IntlDateFormatter::LONG,
+            'long' => \IntlDateFormatter::LONG,
             'medium' => \IntlDateFormatter::MEDIUM,
-            'short'  => \IntlDateFormatter::SHORT,
+            'short' => \IntlDateFormatter::SHORT,
         ];
 
         if (isset($intlMap[$format])) {
@@ -547,17 +586,17 @@ class ReviewerCertificateGatewayPlugin extends GatewayPlugin
         }
 
         $phpMap = [
-            'd-m-Y'  => 'd-m-Y',
-            'd/m/Y'  => 'd/m/Y',
-            'm/d/Y'  => 'm/d/Y',
-            'Y-m-d'  => 'Y-m-d',
-            'Y/m/d'  => 'Y/m/d',
-            'd.m.Y'  => 'd.m.Y',
-            'Y.m.d'  => 'Y.m.d',
-            'd F Y'  => 'd F Y',
+            'd-m-Y' => 'd-m-Y',
+            'd/m/Y' => 'd/m/Y',
+            'm/d/Y' => 'm/d/Y',
+            'Y-m-d' => 'Y-m-d',
+            'Y/m/d' => 'Y/m/d',
+            'd.m.Y' => 'd.m.Y',
+            'Y.m.d' => 'Y.m.d',
+            'd F Y' => 'd F Y',
             'F d, Y' => 'F d, Y',
-            'j F Y'  => 'j F Y',
-            'd M Y'  => 'd M Y',
+            'j F Y' => 'j F Y',
+            'd M Y' => 'd M Y',
             'M d, Y' => 'M d, Y',
         ];
 

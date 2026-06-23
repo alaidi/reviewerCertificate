@@ -1,0 +1,120 @@
+/**
+ * plugins/generic/reviewerCertificate/styles/certificates.css
+ *
+ * Styles for the "My Certificates" list when rendered inside the OJS backend
+ * dashboard layout. Scoped under .rc-list so nothing leaks into the dashboard.
+ * (Inline <style> in a backend page block is stripped when the Vue app mounts,
+ * so this must load as a registered backend stylesheet.)
+ */
+
+.rc-list .wrap {
+	max-width: 880px;
+	margin: 0 auto;
+	background: #fff;
+	border: 1px solid #d9d2c3;
+	border-radius: 8px;
+	overflow: hidden;
+}
+.rc-list .head {
+	background: #2d6a9f;
+	color: #fff;
+	padding: 1.6rem 2rem;
+}
+.rc-list .head h1 { font-size: 1.4rem; margin-bottom: .25rem; }
+.rc-list .head p { font-size: .9rem; opacity: .9; }
+.rc-list .body { padding: 1.5rem 2rem 2rem; }
+.rc-list table { width: 100%; border-collapse: collapse; }
+.rc-list th, .rc-list td {
+	padding: .8rem .6rem;
+	border-bottom: 1px solid #eee;
+	font-size: .92rem;
+	vertical-align: middle;
+}
+.rc-list th {
+	font-size: .78rem;
+	text-transform: uppercase;
+	letter-spacing: .04em;
+	color: #888;
+	border-bottom: 2px solid #ddd;
+}
+.rc-list[dir="rtl"] th, .rc-list[dir="rtl"] td { text-align: right; }
+.rc-list[dir="ltr"] th, .rc-list[dir="ltr"] td { text-align: left; }
+.rc-list tr:last-child td { border-bottom: none; }
+.rc-list .title-cell { font-weight: 600; color: #2c2c2c; }
+.rc-list .date-cell { color: #666; white-space: nowrap; }
+.rc-list .actions { white-space: nowrap; }
+.rc-list .btn {
+	display: inline-block;
+	padding: 6px 14px;
+	border-radius: 4px;
+	text-decoration: none;
+	font-size: .82rem;
+	font-weight: 600;
+	margin-right: .4rem;
+}
+.rc-list[dir="rtl"] .btn { margin-right: 0; margin-left: .4rem; }
+.rc-list .btn-view { background: #2d6a9f; color: #fff; }
+.rc-list .btn-pdf { background: #c0392b; color: #fff; }
+.rc-list .empty { text-align: center; padding: 3rem 1rem; color: #888; font-size: .95rem; }
+.rc-list .toolbar {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	justify-content: space-between;
+	gap: .75rem;
+	margin-bottom: 1.25rem;
+}
+.rc-list .search-form { display: flex; gap: .5rem; }
+.rc-list .search-form input[type="search"] {
+	padding: 7px 12px;
+	border: 1px solid #ccc;
+	border-radius: 4px;
+	font-size: .9rem;
+	min-width: 240px;
+	font-family: inherit;
+}
+.rc-list .search-form input[type="search"]:focus { outline: none; border-color: #2d6a9f; }
+.rc-list .search-form button {
+	padding: 7px 16px;
+	border: none;
+	border-radius: 4px;
+	background: #2d6a9f;
+	color: #fff;
+	font-size: .85rem;
+	font-weight: 600;
+	cursor: pointer;
+	font-family: inherit;
+}
+.rc-list .search-form .btn-clear {
+	padding: 7px 14px;
+	border: 1px solid #ccc;
+	border-radius: 4px;
+	background: #fff;
+	color: #666;
+	text-decoration: none;
+	font-size: .85rem;
+	font-weight: 600;
+}
+.rc-list .result-count { color: #888; font-size: .85rem; }
+.rc-list .pagination {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: .4rem;
+	margin-top: 1.5rem;
+	flex-wrap: wrap;
+}
+.rc-list .pagination a, .rc-list .pagination span {
+	display: inline-block;
+	min-width: 34px;
+	padding: 6px 10px;
+	text-align: center;
+	border: 1px solid #d9d2c3;
+	border-radius: 4px;
+	text-decoration: none;
+	font-size: .85rem;
+	color: #2d6a9f;
+}
+.rc-list .pagination a:hover { background: #f0ece4; }
+.rc-list .pagination .current { background: #2d6a9f; color: #fff; border-color: #2d6a9f; font-weight: 600; }
+.rc-list .pagination .disabled { color: #bbb; border-color: #eee; }
