@@ -418,3 +418,78 @@ msgstr "“Completed on” label (appears before the date)"
 
 msgid "plugins.generic.reviewerCertificate.settings.dateLabelText"
 msgstr "Date label (under the signature line)"
+
+msgid "plugins.generic.reviewerCertificate.templates.heading"
+msgstr "Certificate Templates"
+
+msgid "plugins.generic.reviewerCertificate.templates.newTemplate"
+msgstr "New Template"
+
+msgid "plugins.generic.reviewerCertificate.templates.colName"
+msgstr "Template"
+
+msgid "plugins.generic.reviewerCertificate.templates.colDefault"
+msgstr "Default"
+
+msgid "plugins.generic.reviewerCertificate.templates.colActions"
+msgstr "Actions"
+
+msgid "plugins.generic.reviewerCertificate.templates.badge.default"
+msgstr "Default"
+
+msgid "plugins.generic.reviewerCertificate.templates.edit"
+msgstr "Edit"
+
+msgid "plugins.generic.reviewerCertificate.templates.setDefault"
+msgstr "Set Default"
+
+msgid "plugins.generic.reviewerCertificate.templates.delete"
+msgstr "Delete"
+
+msgid "plugins.generic.reviewerCertificate.templates.empty"
+msgstr "No certificate templates have been created yet. Click \"New template\" to create one."
+
+msgid "plugins.generic.reviewerCertificate.templates.verify.setDefault"
+msgstr "Set this template as the default?"
+
+msgid "plugins.generic.reviewerCertificate.templates.verify.delete"
+msgstr "Delete this template? This cannot be undone."
+
+msgid "plugins.generic.reviewerCertificate.templates.error.noTemplate"
+msgstr "No template was specified."
+
+msgid "plugins.generic.reviewerCertificate.templates.error.cannotDeleteLast"
+msgstr "The last remaining template cannot be deleted."
+
+msgid "plugins.generic.reviewerCertificate.templates.error.notFound"
+msgstr "The requested template could not be found."
+
+msgid "plugins.generic.reviewerCertificate.verify.title"
+msgstr "Verify Certificate"
+
+msgid "plugins.generic.reviewerCertificate.verify.description"
+msgstr "Enter the certificate code shown on a reviewer certificate to confirm its authenticity."
+
+msgid "plugins.generic.reviewerCertificate.verify.button"
+msgstr "Verify"
+
+msgid "plugins.generic.reviewerCertificate.verify.code"
+msgstr "Certificate Code"
+
+msgid "plugins.generic.reviewerCertificate.verify.valid"
+msgstr "Valid Certificate"
+
+msgid "plugins.generic.reviewerCertificate.verify.invalid"
+msgstr "Invalid Certificate"
+
+msgid "plugins.generic.reviewerCertificate.verify.invalidDescription"
+msgstr "This certificate code could not be found or does not belong to this journal."
+
+msgid "plugins.generic.reviewerCertificate.verify.reviewerName"
+msgstr "Reviewer"
+
+msgid "plugins.generic.reviewerCertificate.verify.journalName"
+msgstr "Journal"
+
+msgid "plugins.generic.reviewerCertificate.verify.dateCompleted"
+msgstr "Review Completed"

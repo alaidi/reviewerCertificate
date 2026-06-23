@@ -415,3 +415,78 @@ msgstr "عبارة «أُنجز في» (تظهر قبل التاريخ)"
 
 msgid "plugins.generic.reviewerCertificate.settings.dateLabelText"
 msgstr "تسمية التاريخ (تحت سطر التوقيع)"
+
+msgid "plugins.generic.reviewerCertificate.templates.heading"
+msgstr "قوالب الشهادة"
+
+msgid "plugins.generic.reviewerCertificate.templates.newTemplate"
+msgstr "قالب جديد"
+
+msgid "plugins.generic.reviewerCertificate.templates.colName"
+msgstr "القالب"
+
+msgid "plugins.generic.reviewerCertificate.templates.colDefault"
+msgstr "الافتراضي"
+
+msgid "plugins.generic.reviewerCertificate.templates.colActions"
+msgstr "إجراءات"
+
+msgid "plugins.generic.reviewerCertificate.templates.badge.default"
+msgstr "افتراضي"
+
+msgid "plugins.generic.reviewerCertificate.templates.edit"
+msgstr "تحرير"
+
+msgid "plugins.generic.reviewerCertificate.templates.setDefault"
+msgstr "تعيين كافتراضي"
+
+msgid "plugins.generic.reviewerCertificate.templates.delete"
+msgstr "حذف"
+
+msgid "plugins.generic.reviewerCertificate.templates.empty"
+msgstr "لم يتم إنشاء أي قوالب شهادات بعد. انقر على «قالب جديد» لإنشاء واحد."
+
+msgid "plugins.generic.reviewerCertificate.templates.verify.setDefault"
+msgstr "تعيين هذا القالب كافتراضي؟"
+
+msgid "plugins.generic.reviewerCertificate.templates.verify.delete"
+msgstr "حذف هذا القالب؟ لا يمكن التراجع عن هذا الإجراء."
+
+msgid "plugins.generic.reviewerCertificate.templates.error.noTemplate"
+msgstr "لم يتم تحديد أي قالب."
+
+msgid "plugins.generic.reviewerCertificate.templates.error.cannotDeleteLast"
+msgstr "لا يمكن حذف القالب الأخير المتبقي."
+
+msgid "plugins.generic.reviewerCertificate.templates.error.notFound"
+msgstr "تعذّر العثور على القالب المطلوب."
+
+msgid "plugins.generic.reviewerCertificate.verify.title"
+msgstr "التحقق من الشهادة"
+
+msgid "plugins.generic.reviewerCertificate.verify.description"
+msgstr "أدخل رمز الشهادة الظاهر على شهادة المحكّم للتأكد من صحتها."
+
+msgid "plugins.generic.reviewerCertificate.verify.button"
+msgstr "تحقق"
+
+msgid "plugins.generic.reviewerCertificate.verify.code"
+msgstr "رمز الشهادة"
+
+msgid "plugins.generic.reviewerCertificate.verify.valid"
+msgstr "شهادة صالحة"
+
+msgid "plugins.generic.reviewerCertificate.verify.invalid"
+msgstr "شهادة غير صالحة"
+
+msgid "plugins.generic.reviewerCertificate.verify.invalidDescription"
+msgstr "تعذّر العثور على رمز الشهادة هذا، أو أنه لا ينتمي إلى هذه المجلة."
+
+msgid "plugins.generic.reviewerCertificate.verify.reviewerName"
+msgstr "المحكّم"
+
+msgid "plugins.generic.reviewerCertificate.verify.journalName"
+msgstr "المجلة"
+
+msgid "plugins.generic.reviewerCertificate.verify.dateCompleted"
+msgstr "تاريخ إتمام التحكيم"
