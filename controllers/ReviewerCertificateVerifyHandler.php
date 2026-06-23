@@ -73,8 +73,11 @@ class ReviewerCertificateVerifyHandler extends Handler
                 $journalName = $certContext ? $certContext->getLocalizedName() : '';
 
                 // Try to get reviewer name and date from the frozen per-cert snapshot first.
+                // The snapshot's dateCompleted is already a formatted string, so it is
+                // used verbatim; only raw fallback values get reformatted below.
                 $reviewerName = '';
                 $dateCompleted = '';
+                $dateFromSnapshot = false;
 
                 $snapshotJson = $cert->getSnapshot();
                 if ($snapshotJson) {
@@ -82,6 +85,7 @@ class ReviewerCertificateVerifyHandler extends Handler
                     if (is_array($snapshot)) {
                         $reviewerName = $snapshot['reviewerName'] ?? '';
                         $dateCompleted = $snapshot['dateCompleted'] ?? '';
+                        $dateFromSnapshot = ($dateCompleted !== '');
                     }
                 }
 
@@ -105,9 +109,12 @@ class ReviewerCertificateVerifyHandler extends Handler
                     }
                 }
 
-                // Format the date for display
+                // Format for display only when the value is a raw DB timestamp;
+                // the snapshot already stores a frozen, formatted string.
                 $locale = Locale::getLocale();
-                $formattedDate = $dateCompleted ? $this->_formatDate($dateCompleted, $locale) : '';
+                $formattedDate = ($dateCompleted && !$dateFromSnapshot)
+                    ? $this->_formatDate($dateCompleted, $locale)
+                    : $dateCompleted;
 
                 if ($reviewerName) {
                     $templateMgr->assign([
