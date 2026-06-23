@@ -28,11 +28,21 @@ class ReviewerCertificateSettingsForm extends Form
 {
     protected int $_journalId;
     protected ReviewerCertificatePlugin $_plugin;
+    protected int $templateId;
 
-    public function __construct(ReviewerCertificatePlugin $plugin, int $journalId)
+    public function __construct(ReviewerCertificatePlugin $plugin, int $journalId, ?int $templateId = null)
     {
         $this->_journalId = $journalId;
-        $this->_plugin    = $plugin;
+        $this->_plugin = $plugin;
+
+        if ($templateId !== null && $templateId > 0) {
+            $this->templateId = $templateId;
+        } else {
+            /** @var \APP\plugins\generic\reviewerCertificate\classes\ReviewerCertificateTemplateDAO $templateDao */
+            $templateDao = DAORegistry::getDAO('ReviewerCertificateTemplateDAO');
+            $defaultTemplate = $templateDao->getDefault($journalId);
+            $this->templateId = $defaultTemplate ? (int) $defaultTemplate->getTemplateId() : 0;
+        }
 
         parent::__construct($plugin->getTemplateResource('settingsForm.tpl'));
         $this->addCheck(new FormValidatorPost($this));
@@ -42,50 +52,53 @@ class ReviewerCertificateSettingsForm extends Form
     public function initData(): void
     {
         $id = $this->_journalId;
-        $p  = $this->_plugin;
+        $tid = $this->templateId;
 
-        $this->setData('editorName',          $this->_getLocalizedSetting($p, $id, 'editorName'));
-        $this->setData('editorTitle',         $this->_getLocalizedSetting($p, $id, 'editorTitle', 'Editor-in-Chief'));
-        $this->setData('editorNameFontSize',  $p->getSetting($id, 'editorNameFontSize') ?: '12');
-        $this->setData('editorNameColor',     $p->getSetting($id, 'editorNameColor') ?: '#222222');
-        $this->setData('journalNameFontSize', $p->getSetting($id, 'journalNameFontSize') ?: '12');
-        $this->setData('journalNameColor',    $p->getSetting($id, 'journalNameColor') ?: '#7a6030');
-        $this->setData('signatureSize',       $p->getSetting($id, 'signatureSize') ?: '70');
-        $this->setData('logoSize',            $p->getSetting($id, 'logoSize') ?: '70');
-        $this->setData('signatureSectionOffsetY',    $p->getSetting($id, 'signatureSectionOffsetY') ?: '0');
-        $this->setData('signatureSectionPaddingTop', $p->getSetting($id, 'signatureSectionPaddingTop') ?: '0');
-        $this->setData('signatureSectionGap',        $p->getSetting($id, 'signatureSectionGap') ?: '80');
-        $this->setData('editorBlockOffsetX',  $p->getSetting($id, 'editorBlockOffsetX') ?: '0');
-        $this->setData('editorBlockOffsetY',  $p->getSetting($id, 'editorBlockOffsetY') ?: '0');
-        $this->setData('dateBlockOffsetX',    $p->getSetting($id, 'dateBlockOffsetX') ?: '0');
-        $this->setData('dateBlockOffsetY',    $p->getSetting($id, 'dateBlockOffsetY') ?: '0');
-        $this->setData('contentOffsetY',      $p->getSetting($id, 'contentOffsetY') ?: '0');
-        $this->setData('qrSize',              $p->getSetting($id, 'qrSize') ?: '68');
-        $this->setData('qrOffsetX',           $p->getSetting($id, 'qrOffsetX') ?: '0');
-        $this->setData('qrOffsetY',           $p->getSetting($id, 'qrOffsetY') ?: '0');
+        /** @var \APP\plugins\generic\reviewerCertificate\classes\ReviewerCertificateTemplateDAO $templateDao */
+        $templateDao = DAORegistry::getDAO('ReviewerCertificateTemplateDAO');
+
+        $this->setData('editorName', $this->_getLocalizedTemplateSetting($templateDao, $tid, 'editorName'));
+        $this->setData('editorTitle', $this->_getLocalizedTemplateSetting($templateDao, $tid, 'editorTitle', 'Editor-in-Chief'));
+        $this->setData('editorNameFontSize', $this->_getTemplateSetting($templateDao, $tid, 'editorNameFontSize') ?: '12');
+        $this->setData('editorNameColor', $this->_getTemplateSetting($templateDao, $tid, 'editorNameColor') ?: '#222222');
+        $this->setData('journalNameFontSize', $this->_getTemplateSetting($templateDao, $tid, 'journalNameFontSize') ?: '12');
+        $this->setData('journalNameColor', $this->_getTemplateSetting($templateDao, $tid, 'journalNameColor') ?: '#7a6030');
+        $this->setData('signatureSize', $this->_getTemplateSetting($templateDao, $tid, 'signatureSize') ?: '70');
+        $this->setData('logoSize', $this->_getTemplateSetting($templateDao, $tid, 'logoSize') ?: '70');
+        $this->setData('signatureSectionOffsetY', $this->_getTemplateSetting($templateDao, $tid, 'signatureSectionOffsetY') ?: '0');
+        $this->setData('signatureSectionPaddingTop', $this->_getTemplateSetting($templateDao, $tid, 'signatureSectionPaddingTop') ?: '0');
+        $this->setData('signatureSectionGap', $this->_getTemplateSetting($templateDao, $tid, 'signatureSectionGap') ?: '80');
+        $this->setData('editorBlockOffsetX', $this->_getTemplateSetting($templateDao, $tid, 'editorBlockOffsetX') ?: '0');
+        $this->setData('editorBlockOffsetY', $this->_getTemplateSetting($templateDao, $tid, 'editorBlockOffsetY') ?: '0');
+        $this->setData('dateBlockOffsetX', $this->_getTemplateSetting($templateDao, $tid, 'dateBlockOffsetX') ?: '0');
+        $this->setData('dateBlockOffsetY', $this->_getTemplateSetting($templateDao, $tid, 'dateBlockOffsetY') ?: '0');
+        $this->setData('contentOffsetY', $this->_getTemplateSetting($templateDao, $tid, 'contentOffsetY') ?: '0');
+        $this->setData('qrSize', $this->_getTemplateSetting($templateDao, $tid, 'qrSize') ?: '68');
+        $this->setData('qrOffsetX', $this->_getTemplateSetting($templateDao, $tid, 'qrOffsetX') ?: '0');
+        $this->setData('qrOffsetY', $this->_getTemplateSetting($templateDao, $tid, 'qrOffsetY') ?: '0');
 
         // Element visibility toggles. Default to shown (1) when never saved.
         foreach (self::elementToggleKeys() as $toggle) {
-            $stored = $p->getSetting($id, $toggle);
+            $stored = $this->_getTemplateSetting($templateDao, $tid, $toggle);
             $this->setData($toggle, ($stored === null || $stored === '') ? '1' : (string) $stored);
         }
 
         // Localized text overrides (blank => default used on the certificate)
         foreach (ReviewerCertificatePlugin::textOverrideKeys() as $key) {
-            $this->setData($key, $this->_getLocalizedSetting($p, $id, $key));
+            $this->setData($key, $this->_getLocalizedTemplateSetting($templateDao, $tid, $key));
         }
 
-        $this->setData('accentColor',         $p->getSetting($id, 'accentColor') ?: '#b8975a');
-        $this->setData('textColor',           $p->getSetting($id, 'textColor') ?: '#1a1a2e');
-        $this->setData('certificateBody',     $this->_getLocalizedSetting($p, $id, 'certificateBody'));
-        $this->setData('sendEmail',           $p->getSetting($id, 'sendEmail') ?? '1');
-        $this->setData('enableQrCode',        $p->getSetting($id, 'enableQrCode') ?? '1');
-        $this->setData('dateFormat',          $p->getSetting($id, 'dateFormat') ?: 'long');
-        $this->setData('dateLocale',          $p->getSetting($id, 'dateLocale') ?? '');
-        $this->setData('wkhtmltopdfPath',     $p->getSetting($id, 'wkhtmltopdfPath') ?? '');
-        $this->setData('signatureUrl',        $p->getSetting($id, 'signatureUrl'));
-        $this->setData('customLogoUrl',       $p->getSetting($id, 'customLogoUrl'));
-        $this->setData('backgroundImageUrl',  $p->getSetting($id, 'backgroundImageUrl'));
+        $this->setData('accentColor', $this->_getTemplateSetting($templateDao, $tid, 'accentColor') ?: '#b8975a');
+        $this->setData('textColor', $this->_getTemplateSetting($templateDao, $tid, 'textColor') ?: '#1a1a2e');
+        $this->setData('certificateBody', $this->_getLocalizedTemplateSetting($templateDao, $tid, 'certificateBody'));
+        $this->setData('sendEmail', $this->_getTemplateSetting($templateDao, $tid, 'sendEmail') ?? '1');
+        $this->setData('enableQrCode', $this->_getTemplateSetting($templateDao, $tid, 'enableQrCode') ?? '1');
+        $this->setData('dateFormat', $this->_getTemplateSetting($templateDao, $tid, 'dateFormat') ?: 'long');
+        $this->setData('dateLocale', $this->_getTemplateSetting($templateDao, $tid, 'dateLocale') ?? '');
+        $this->setData('wkhtmltopdfPath', $this->_plugin->getSetting($id, 'wkhtmltopdfPath') ?? '');
+        $this->setData('signatureUrl', $this->_getTemplateSetting($templateDao, $tid, 'signatureUrl'));
+        $this->setData('customLogoUrl', $this->_getTemplateSetting($templateDao, $tid, 'customLogoUrl'));
+        $this->setData('backgroundImageUrl', $this->_getTemplateSetting($templateDao, $tid, 'backgroundImageUrl'));
     }
 
     /**
@@ -196,9 +209,13 @@ class ReviewerCertificateSettingsForm extends Form
         $templateMgr->assign('supportedLocales', $supportedLocales);
 
         $id = $this->_journalId;
-        $p  = $this->_plugin;
+        $tid = $this->templateId;
+
+        /** @var \APP\plugins\generic\reviewerCertificate\classes\ReviewerCertificateTemplateDAO $templateDao */
+        $templateDao = DAORegistry::getDAO('ReviewerCertificateTemplateDAO');
+
         foreach (array_merge(['editorName', 'editorTitle', 'certificateBody'], ReviewerCertificatePlugin::textOverrideKeys()) as $field) {
-            $raw = $p->getSetting($id, $field);
+            $raw = $this->_getLocalizedTemplateSetting($templateDao, $tid, $field);
             $localized = is_array($raw) ? $raw : [];
             if (!is_array($raw) && $raw !== null && $raw !== '') {
                 foreach (array_keys($supportedLocales) as $loc) {
@@ -258,98 +275,117 @@ class ReviewerCertificateSettingsForm extends Form
     public function execute(...$functionArgs): void
     {
         $id = $this->_journalId;
-        $p  = $this->_plugin;
+        $p = $this->_plugin;
+        $tid = $this->templateId;
 
-        // Localized text fields (one value per supported locale)
+        /** @var \APP\plugins\generic\reviewerCertificate\classes\ReviewerCertificateTemplateDAO $templateDao */
+        $templateDao = DAORegistry::getDAO('ReviewerCertificateTemplateDAO');
+
+        // Localized text fields — stored per locale as individual setting rows
+        $supportedLocales = Locale::getSupportedFormLocales();
+
         $editorNameData = $this->getData('editorName');
-        $p->updateSetting($id, 'editorName',  is_array($editorNameData) ? $editorNameData : [], 'object');
+        $editorNameArr = is_array($editorNameData) ? $editorNameData : [];
+        foreach (array_keys($supportedLocales) as $locale) {
+            $templateDao->upsertSetting($tid, 'editorName', $editorNameArr[$locale] ?? '', 'string', $locale);
+        }
+
         $editorTitleData = $this->getData('editorTitle');
-        $p->updateSetting($id, 'editorTitle', is_array($editorTitleData) ? $editorTitleData : [], 'object');
+        $editorTitleArr = is_array($editorTitleData) ? $editorTitleData : [];
+        foreach (array_keys($supportedLocales) as $locale) {
+            $templateDao->upsertSetting($tid, 'editorTitle', $editorTitleArr[$locale] ?? '', 'string', $locale);
+        }
 
         // Localized per-element text overrides (blank => default on render)
         foreach (ReviewerCertificatePlugin::textOverrideKeys() as $key) {
             $data = $this->getData($key);
-            $p->updateSetting($id, $key, is_array($data) ? $data : [], 'object');
+            $arr = is_array($data) ? $data : [];
+            foreach (array_keys($supportedLocales) as $locale) {
+                $templateDao->upsertSetting($tid, $key, $arr[$locale] ?? '', 'string', $locale);
+            }
         }
 
         $fontSize = (int) $this->getData('editorNameFontSize');
-        $p->updateSetting($id, 'editorNameFontSize', ($fontSize >= 8 && $fontSize <= 72) ? $fontSize : 12);
+        $templateDao->upsertSetting($tid, 'editorNameFontSize', ($fontSize >= 8 && $fontSize <= 72) ? (string) $fontSize : '12');
 
-        $color = preg_match('/^#[0-9a-fA-F]{6}$/', $this->getData('editorNameColor'))
+        $color = preg_match('/^#[0-9a-fA-F]{6}$/', (string) $this->getData('editorNameColor'))
             ? $this->getData('editorNameColor') : '#222222';
-        $p->updateSetting($id, 'editorNameColor', $color);
+        $templateDao->upsertSetting($tid, 'editorNameColor', $color);
 
         $journalFontSize = (int) $this->getData('journalNameFontSize');
-        $p->updateSetting($id, 'journalNameFontSize', ($journalFontSize >= 8 && $journalFontSize <= 72) ? $journalFontSize : 12);
+        $templateDao->upsertSetting($tid, 'journalNameFontSize', ($journalFontSize >= 8 && $journalFontSize <= 72) ? (string) $journalFontSize : '12');
 
-        $journalColor = preg_match('/^#[0-9a-fA-F]{6}$/', $this->getData('journalNameColor'))
+        $journalColor = preg_match('/^#[0-9a-fA-F]{6}$/', (string) $this->getData('journalNameColor'))
             ? $this->getData('journalNameColor') : '#7a6030';
-        $p->updateSetting($id, 'journalNameColor', $journalColor);
+        $templateDao->upsertSetting($tid, 'journalNameColor', $journalColor);
 
         $signatureSize = (int) $this->getData('signatureSize');
-        $p->updateSetting($id, 'signatureSize', ($signatureSize >= 20 && $signatureSize <= 300) ? $signatureSize : 70);
+        $templateDao->upsertSetting($tid, 'signatureSize', (string) (($signatureSize >= 20 && $signatureSize <= 300) ? $signatureSize : 70));
 
         $logoSize = (int) $this->getData('logoSize');
-        $p->updateSetting($id, 'logoSize', ($logoSize >= 20 && $logoSize <= 300) ? $logoSize : 70);
+        $templateDao->upsertSetting($tid, 'logoSize', (string) (($logoSize >= 20 && $logoSize <= 300) ? $logoSize : 70));
 
         // Signature-section layout offsets. Y/X offsets accept negatives
         // (move up / left); padding-top and gap are non-negative.
         $clamp = fn ($v, $min, $max, $default) => (($n = (int) $v) >= $min && $n <= $max) ? $n : $default;
-        $p->updateSetting($id, 'signatureSectionOffsetY',    $clamp($this->getData('signatureSectionOffsetY'), -400, 400, 0));
-        $p->updateSetting($id, 'signatureSectionPaddingTop', $clamp($this->getData('signatureSectionPaddingTop'), 0, 400, 0));
-        $p->updateSetting($id, 'signatureSectionGap',        $clamp($this->getData('signatureSectionGap'), 0, 400, 80));
-        $p->updateSetting($id, 'editorBlockOffsetX',         $clamp($this->getData('editorBlockOffsetX'), -400, 400, 0));
-        $p->updateSetting($id, 'editorBlockOffsetY',         $clamp($this->getData('editorBlockOffsetY'), -400, 400, 0));
-        $p->updateSetting($id, 'dateBlockOffsetX',           $clamp($this->getData('dateBlockOffsetX'), -400, 400, 0));
-        $p->updateSetting($id, 'dateBlockOffsetY',           $clamp($this->getData('dateBlockOffsetY'), -400, 400, 0));
+        $templateDao->upsertSetting($tid, 'signatureSectionOffsetY', (string) $clamp($this->getData('signatureSectionOffsetY'), -400, 400, 0));
+        $templateDao->upsertSetting($tid, 'signatureSectionPaddingTop', (string) $clamp($this->getData('signatureSectionPaddingTop'), 0, 400, 0));
+        $templateDao->upsertSetting($tid, 'signatureSectionGap', (string) $clamp($this->getData('signatureSectionGap'), 0, 400, 80));
+        $templateDao->upsertSetting($tid, 'editorBlockOffsetX', (string) $clamp($this->getData('editorBlockOffsetX'), -400, 400, 0));
+        $templateDao->upsertSetting($tid, 'editorBlockOffsetY', (string) $clamp($this->getData('editorBlockOffsetY'), -400, 400, 0));
+        $templateDao->upsertSetting($tid, 'dateBlockOffsetX', (string) $clamp($this->getData('dateBlockOffsetX'), -400, 400, 0));
+        $templateDao->upsertSetting($tid, 'dateBlockOffsetY', (string) $clamp($this->getData('dateBlockOffsetY'), -400, 400, 0));
 
         // Global vertical shift for all certificate text (− up / + down)
-        $p->updateSetting($id, 'contentOffsetY',             $clamp($this->getData('contentOffsetY'), -400, 400, 0));
+        $templateDao->upsertSetting($tid, 'contentOffsetY', (string) $clamp($this->getData('contentOffsetY'), -400, 400, 0));
 
         $qrSize = (int) $this->getData('qrSize');
-        $p->updateSetting($id, 'qrSize', ($qrSize >= 20 && $qrSize <= 300) ? $qrSize : 68);
-        $p->updateSetting($id, 'qrOffsetX', $clamp($this->getData('qrOffsetX'), -400, 400, 0));
-        $p->updateSetting($id, 'qrOffsetY', $clamp($this->getData('qrOffsetY'), -400, 400, 0));
+        $templateDao->upsertSetting($tid, 'qrSize', (string) (($qrSize >= 20 && $qrSize <= 300) ? $qrSize : 68));
+        $templateDao->upsertSetting($tid, 'qrOffsetX', (string) $clamp($this->getData('qrOffsetX'), -400, 400, 0));
+        $templateDao->upsertSetting($tid, 'qrOffsetY', (string) $clamp($this->getData('qrOffsetY'), -400, 400, 0));
 
         // Element visibility toggles (unchecked checkbox => not submitted => hide)
         foreach (self::elementToggleKeys() as $toggle) {
-            $p->updateSetting($id, $toggle, $this->getData($toggle) ? '1' : '0');
+            $templateDao->upsertSetting($tid, $toggle, $this->getData($toggle) ? '1' : '0');
         }
 
-        $accentColor = preg_match('/^#[0-9a-fA-F]{6}$/', $this->getData('accentColor'))
+        $accentColor = preg_match('/^#[0-9a-fA-F]{6}$/', (string) $this->getData('accentColor'))
             ? $this->getData('accentColor') : '#b8975a';
-        $p->updateSetting($id, 'accentColor', $accentColor);
+        $templateDao->upsertSetting($tid, 'accentColor', $accentColor);
 
-        $textColor = preg_match('/^#[0-9a-fA-F]{6}$/', $this->getData('textColor'))
+        $textColor = preg_match('/^#[0-9a-fA-F]{6}$/', (string) $this->getData('textColor'))
             ? $this->getData('textColor') : '#1a1a2e';
-        $p->updateSetting($id, 'textColor', $textColor);
+        $templateDao->upsertSetting($tid, 'textColor', $textColor);
 
         // Certificate body: store raw text per locale (placeholders replaced at render time)
         $certificateBodyData = $this->getData('certificateBody');
-        $p->updateSetting($id, 'certificateBody', is_array($certificateBodyData) ? $certificateBodyData : [], 'object');
+        $certificateBodyArr = is_array($certificateBodyData) ? $certificateBodyData : [];
+        foreach (array_keys($supportedLocales) as $locale) {
+            $templateDao->upsertSetting($tid, 'certificateBody', $certificateBodyArr[$locale] ?? '', 'string', $locale);
+        }
 
-        $p->updateSetting($id, 'sendEmail', $this->getData('sendEmail') ? '1' : '0');
-        $p->updateSetting($id, 'enableQrCode', $this->getData('enableQrCode') ? '1' : '0');
+        $templateDao->upsertSetting($tid, 'sendEmail', $this->getData('sendEmail') ? '1' : '0');
+        $templateDao->upsertSetting($tid, 'enableQrCode', $this->getData('enableQrCode') ? '1' : '0');
 
         $allowedFormats = ['long', 'medium', 'short', 'Y-m-d', 'd-m-Y', 'd/m/Y', 'm/d/Y', 'Y/m/d', 'd.m.Y', 'Y.m.d', 'd F Y', 'F d, Y', 'j F Y', 'd M Y', 'M d, Y'];
         $dateFormat = $this->getData('dateFormat') ?: 'long';
-        $p->updateSetting($id, 'dateFormat', in_array($dateFormat, $allowedFormats) ? $dateFormat : 'long');
+        $templateDao->upsertSetting($tid, 'dateFormat', in_array($dateFormat, $allowedFormats) ? $dateFormat : 'long');
 
         $allowedLocales = ['','ar','ar_IQ','ar_SA','ar_EG','ar_AE','ar_KW','ar_BH','ar_QA','ar_OM','ar_JO','ar_LB','ar_SY','ar_PS','ar_MA','ar_DZ','ar_TN','ar_LY','ar_SD','ar_YE','en','en_US','en_GB','en_AU','en_CA','fr','fr_FR','fr_CA','de','de_DE','es','es_ES','tr','tr_TR','fa','fa_IR','ku','ckb'];
         $dateLocale = trim($this->getData('dateLocale') ?? '');
-        $p->updateSetting($id, 'dateLocale', in_array($dateLocale, $allowedLocales) ? $dateLocale : '');
+        $templateDao->upsertSetting($tid, 'dateLocale', in_array($dateLocale, $allowedLocales) ? $dateLocale : '');
 
-        // wkhtmltopdf path: store as-is; gateway validates executability at runtime
+        // wkhtmltopdf path: system-level binary path — stays in plugin_settings
         $p->updateSetting($id, 'wkhtmltopdfPath', trim($this->getData('wkhtmltopdfPath') ?? ''));
 
-        $p->updateSetting($id, 'signatureUrl',       $this->getData('signatureUrl'));
-        $p->updateSetting($id, 'customLogoUrl',      $this->getData('customLogoUrl'));
-        $p->updateSetting($id, 'backgroundImageUrl', $this->getData('backgroundImageUrl'));
+        $templateDao->upsertSetting($tid, 'signatureUrl', (string) ($this->getData('signatureUrl') ?? ''));
+        $templateDao->upsertSetting($tid, 'customLogoUrl', (string) ($this->getData('customLogoUrl') ?? ''));
+        $templateDao->upsertSetting($tid, 'backgroundImageUrl', (string) ($this->getData('backgroundImageUrl') ?? ''));
 
         // Process any uploaded temporary files (these override the URL text fields)
-        $request              = Application::get()->getRequest();
-        $user                 = $request->getUser();
-        $publicFileManager    = new PublicFileManager();
+        $request = Application::get()->getRequest();
+        $user = $request->getUser();
+        $publicFileManager = new PublicFileManager();
         $temporaryFileManager = new TemporaryFileManager();
         /** @var \PKP\file\TemporaryFileDAO $temporaryFileDao */
         $temporaryFileDao = DAORegistry::getDAO('TemporaryFileDAO');
@@ -376,7 +412,7 @@ class ReviewerCertificateSettingsForm extends Form
             if ($publicFileManager->copyContextFile($id, $temporaryFile->getFilePath(), $filename)) {
                 // Remove the previously stored managed file so the public
                 // directory does not accumulate orphaned uploads.
-                $oldUrl = (string) $p->getSetting($id, $settingKey);
+                $oldUrl = (string) ($this->_getTemplateSetting($templateDao, $tid, $settingKey) ?? '');
                 if ($oldUrl !== '') {
                     $oldName = basename(parse_url($oldUrl, PHP_URL_PATH) ?: '');
                     if ($oldName !== '' && $oldName !== $filename && strpos($oldName, 'reviewer_cert_' . $fileType . '_') === 0) {
@@ -387,7 +423,7 @@ class ReviewerCertificateSettingsForm extends Form
                 $url = $request->getBaseUrl()
                     . '/' . $publicFileManager->getContextFilesPath($id)
                     . '/' . $filename;
-                $p->updateSetting($id, $settingKey, $url);
+                $templateDao->upsertSetting($tid, $settingKey, $url);
             }
 
             $temporaryFileManager->deleteById($tempFileId, $user->getId());
@@ -410,18 +446,49 @@ class ReviewerCertificateSettingsForm extends Form
         return ($which && is_executable($which)) ? $which : '';
     }
 
-    private function _getLocalizedSetting(ReviewerCertificatePlugin $plugin, int $contextId, string $name, string $default = ''): array
-    {
-        $raw = $plugin->getSetting($contextId, $name);
-        if (is_array($raw) && !empty($raw)) {
-            return $raw;
+    /**
+     * Read a non-localized setting value from the template settings table.
+     * Returns null when not yet saved.
+     */
+    private function _getTemplateSetting(
+        \APP\plugins\generic\reviewerCertificate\classes\ReviewerCertificateTemplateDAO $templateDao,
+        int $templateId,
+        string $name
+    ): ?string {
+        if ($templateId <= 0) {
+            return null;
         }
+        $row = $templateDao->getSettingRow($templateId, $name, '');
+        return $row ? $row['setting_value'] : null;
+    }
+
+    /**
+     * Read a localized setting from the template settings table and return a
+     * [locale => value] map suitable for multilingual form widgets.
+     *
+     * When no per-locale rows exist, falls back to the supplied $default for
+     * every supported form locale.
+     */
+    private function _getLocalizedTemplateSetting(
+        \APP\plugins\generic\reviewerCertificate\classes\ReviewerCertificateTemplateDAO $templateDao,
+        int $templateId,
+        string $name,
+        string $default = ''
+    ): array {
         $supportedLocales = Locale::getSupportedFormLocales();
-        $fallback = ($raw !== null && $raw !== '' && !is_array($raw)) ? (string) $raw : $default;
         $result = [];
-        foreach (array_keys($supportedLocales) as $loc) {
-            $result[$loc] = $fallback;
+
+        if ($templateId > 0) {
+            foreach (array_keys($supportedLocales) as $locale) {
+                $row = $templateDao->getSettingRow($templateId, $name, $locale);
+                $result[$locale] = $row ? $row['setting_value'] : $default;
+            }
+        } else {
+            foreach (array_keys($supportedLocales) as $locale) {
+                $result[$locale] = $default;
+            }
         }
+
         return $result;
     }
 }
