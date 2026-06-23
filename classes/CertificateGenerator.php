@@ -91,6 +91,8 @@ class CertificateGenerator
             'logoUrl',
             'backgroundImageUrl',
             'reviewId',
+            'journalName',
+            'currentLocale',
         ];
     }
 
@@ -245,6 +247,15 @@ class CertificateGenerator
         // Background image URL
         $backgroundImageUrl = (string) ($getSetting('backgroundImageUrl') ?? '');
 
+        // Resolve the journal display name: prefer the admin journalNameText override
+        // (stored in shared), else fall back to the live context name.  We freeze
+        // this resolved value in perCert so a cert always has a non-blank journal
+        // name even when no override is configured.
+        $journalNameTextOverride = (string) ($getSetting('journalNameText', ''));
+        $journalNameResolved = ($journalNameTextOverride !== '')
+            ? $journalNameTextOverride
+            : (string) $context->getLocalizedName();
+
         $perCert = [
             'reviewerName' => $reviewerName,
             'reviewerAffiliation' => $reviewerAffiliation,
@@ -255,6 +266,14 @@ class CertificateGenerator
             'logoUrl' => $logoUrl,
             'backgroundImageUrl' => $backgroundImageUrl,
             'reviewId' => $reviewId,
+            // Freeze-time resolved journal name (override or live context name).
+            // Stored in perCert because different certs may be issued under
+            // different journal names / locales over time.
+            'journalName' => $journalNameResolved,
+            // Freeze-time locale — used at render time to derive isRtl and to
+            // set the HTML lang attribute, so a cert frozen in Arabic always
+            // renders RTL regardless of the server's current locale.
+            'currentLocale' => $locale,
         ];
 
         // ------------------------------------------------------------------
@@ -412,12 +431,9 @@ class CertificateGenerator
 
         // Compute certificateBodyHtml from raw certificateBody stored in snapshot
         $certificateBodyRaw = (string) ($merged['certificateBody'] ?? '');
-        $journalName = (string) ($merged['journalNameText'] ?: '');
-        // journal name for substitution: prefer journalNameText override, else
-        // we don't have the live journal name here — we stored it in journalNameText
-        // if the admin set it, otherwise it won't be substituted (acceptable for
-        // snapshot rendering; the template falls back to the $journalName var).
-        // Prefer the live context name for the substitution placeholder if available.
+        // Use the frozen resolved journal name (perCert); fall back to the
+        // journalNameText admin override for rows frozen before this fix.
+        $journalName = (string) ($merged['journalName'] ?? $merged['journalNameText'] ?? '');
         $submissionTitle = (string) ($merged['submissionTitle'] ?? '');
         $certificateBodyHtml = $certificateBodyRaw
             ? str_replace(
@@ -442,9 +458,14 @@ class CertificateGenerator
             ['reviewId' => $reviewId]
         );
 
-        // RTL detection from stored locale if available, else current
-        $locale = Locale::getLocale();
+        // RTL detection: use the freeze-time locale stored in perCert so a cert
+        // frozen in Arabic always renders RTL regardless of the server's current
+        // locale.  Fall back to Locale::getLocale() only for rows frozen before
+        // this fix (which lack the currentLocale key).
         $rtlLocales = ['ar', 'fa', 'he', 'ur', 'ckb', 'ps'];
+        $locale = (isset($perCert['currentLocale']) && $perCert['currentLocale'] !== '')
+            ? (string) $perCert['currentLocale']
+            : Locale::getLocale();
         $isRtl = in_array(substr($locale, 0, 2), $rtlLocales);
 
         $templateMgr = TemplateManager::getManager($request);
@@ -480,8 +501,11 @@ class CertificateGenerator
             'certificateUrl' => $gatewayUrl,
             'isRtl' => $isRtl,
             'currentLocale' => $locale,
-            // journal name: use override if set, else empty (template falls back)
-            'journalName' => $merged['journalNameText'] ?? '',
+            // Frozen resolved journal name (override or live context name at freeze
+            // time).  The template uses $journalNameText as the primary display
+            // value and falls back to $journalName — we set both so either path
+            // yields the correct name.
+            'journalName' => $journalName,
         ]);
 
         // Assign element toggle booleans
