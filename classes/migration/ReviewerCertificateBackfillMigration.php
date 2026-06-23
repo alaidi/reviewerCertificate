@@ -28,11 +28,11 @@
 namespace APP\plugins\generic\reviewerCertificate\classes\migration;
 
 use APP\core\Application;
+use APP\facades\Repo;
 use APP\plugins\generic\reviewerCertificate\classes\CertificateGenerator;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Support\Facades\DB;
 use PKP\db\DAORegistry;
-use PKP\facades\Repo;
 use PKP\plugins\PluginRegistry;
 
 class ReviewerCertificateBackfillMigration extends Migration
