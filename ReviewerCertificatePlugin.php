@@ -669,10 +669,22 @@ class ReviewerCertificatePlugin extends GenericPlugin
                 // ── Edit / new template ──────────────────────────────────────────
             case 'editTemplate':
                 $templateId = (int) ($request->getUserVar('templateId') ?: 0);
+                if (!$templateId) {
+                    // "New template" — insert a fresh non-default row and edit it.
+                    $newTemplate = $templateDao->newDataObject();
+                    $newTemplate->setContextId($contextId);
+                    $newTemplate->setTemplateName('New Template');
+                    $newTemplate->setLayout('certificate');
+                    $newTemplate->setIsDefault(0);
+                    $newTemplate->setEnabled(1);
+                    $newTemplate->setDateCreated(\PKP\core\Core::getCurrentDate());
+                    $newTemplate->setDateModified(\PKP\core\Core::getCurrentDate());
+                    $templateId = $templateDao->insertObject($newTemplate);
+                }
                 if (!class_exists(ReviewerCertificateSettingsForm::class, false)) {
                     require_once __DIR__ . '/ReviewerCertificateSettingsForm.php';
                 }
-                $form = new ReviewerCertificateSettingsForm($this, $contextId, $templateId ?: null);
+                $form = new ReviewerCertificateSettingsForm($this, $contextId, $templateId);
                 $form->initData();
                 return new JSONMessage(true, $form->fetch($request));
 
@@ -692,6 +704,9 @@ class ReviewerCertificatePlugin extends GenericPlugin
 
                 // ── Delete template ──────────────────────────────────────────────
             case 'deleteTemplate':
+                if (!$request->checkCSRF()) {
+                    return new JSONMessage(false, __('form.csrfInvalid'));
+                }
                 $templateId = (int) ($request->getUserVar('templateId') ?: 0);
                 if (!$templateId) {
                     return new JSONMessage(false, __('plugins.generic.reviewerCertificate.templates.error.noTemplate'));
@@ -725,6 +740,9 @@ class ReviewerCertificatePlugin extends GenericPlugin
 
                 // ── Set default template ─────────────────────────────────────────
             case 'setDefaultTemplate':
+                if (!$request->checkCSRF()) {
+                    return new JSONMessage(false, __('form.csrfInvalid'));
+                }
                 $templateId = (int) ($request->getUserVar('templateId') ?: 0);
                 if (!$templateId) {
                     return new JSONMessage(false, __('plugins.generic.reviewerCertificate.templates.error.noTemplate'));

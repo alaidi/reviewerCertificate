@@ -45,7 +45,7 @@
 					{* Set default (only if not already default) *}
 					{if !$tpl->getIsDefault()}
 					<a class="pkpButton pkpButton--ghost"
-					   href="{$manageUrl|escape}&amp;verb=setDefaultTemplate&amp;templateId={$tpl->getTemplateId()|escape:'url'}"
+					   href="{$manageUrl|escape}&amp;verb=setDefaultTemplate&amp;templateId={$tpl->getTemplateId()|escape:'url'}&amp;csrfToken={csrf type="raw"|escape}"
 					   data-confirm="{translate key="plugins.generic.reviewerCertificate.templates.verify.setDefault"|escape}">
 						{translate key="plugins.generic.reviewerCertificate.templates.setDefault"}
 					</a>
@@ -54,7 +54,7 @@
 					{* Delete (only if not default, to hint the user) *}
 					{if !$tpl->getIsDefault()}
 					<a class="pkpButton pkpButton--ghost pkpButton--warningIcon"
-					   href="{$manageUrl|escape}&amp;verb=deleteTemplate&amp;templateId={$tpl->getTemplateId()|escape:'url'}"
+					   href="{$manageUrl|escape}&amp;verb=deleteTemplate&amp;templateId={$tpl->getTemplateId()|escape:'url'}&amp;csrfToken={csrf type="raw"|escape}"
 					   data-confirm="{translate key="plugins.generic.reviewerCertificate.templates.verify.delete"|escape}">
 						{translate key="plugins.generic.reviewerCertificate.templates.delete"}
 					</a>
