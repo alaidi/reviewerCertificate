@@ -16,7 +16,6 @@ namespace APP\plugins\generic\reviewerCertificate;
 
 use APP\core\Application;
 use APP\facades\Repo;
-use APP\file\PublicFileManager;
 use APP\template\TemplateManager;
 use Illuminate\Support\Facades\Mail;
 use PKP\core\JSONMessage;
@@ -84,6 +83,14 @@ class ReviewerCertificatePlugin extends GenericPlugin
         if (!$reviewer) {
             return false;
         }
+
+        // Freeze the certificate snapshot into the DB before rendering.
+        // freeze() is idempotent — returns the existing row if already frozen.
+        require_once __DIR__ . '/classes/CertificateGenerator.php';
+        $templateDao = \PKP\db\DAORegistry::getDAO('ReviewerCertificateTemplateDAO');
+        $template = $templateDao->getDefault((int) $context->getId());
+        $generator = new \APP\plugins\generic\reviewerCertificate\classes\CertificateGenerator();
+        $cert = $generator->freeze($this, $request, $reviewAssignment, $context, $template);
 
         // Generate and save the static certificate HTML; get its direct URL.
         // This always runs so the certificate stays available on the reviewer
@@ -225,149 +232,30 @@ class ReviewerCertificatePlugin extends GenericPlugin
 
     public function generateAndSaveCertificate($request, $reviewAssignment, $context): ?string
     {
-        $submission = Repo::submission()->get($reviewAssignment->getSubmissionId());
         $reviewer = Repo::user()->get($reviewAssignment->getReviewerId());
-        if (!$submission || !$reviewer) {
+        if (!$reviewer) {
             return null;
         }
 
         $contextId = $context->getId();
         $reviewId = $reviewAssignment->getId();
 
-        // Locale + direction
-        $locale = Locale::getLocale();
-        $rtlLocales = ['ar', 'fa', 'he', 'ur', 'ckb', 'ps'];
-        $isRtl = in_array(substr($locale, 0, 2), $rtlLocales);
-
-        // Core certificate data
-        $publication = $submission->getCurrentPublication();
-        $submissionTitle = $publication->getLocalizedTitle();
-        $reviewerName = $reviewer->getFullName();
-        $reviewerAffiliation = $reviewer->getLocalizedAffiliation();
-        $journalName = $context->getLocalizedName();
-        $dateCompleted = $this->_formatDate($reviewAssignment->getDateCompleted(), $locale, $this->getSetting($contextId, 'dateFormat') ?? 'long', $this->getSetting($contextId, 'dateLocale') ?? '');
-        $rawAcknowledged = $reviewAssignment->getDateAcknowledged();
-        $dateAcknowledged = $rawAcknowledged
-            ? $this->_formatDate($rawAcknowledged, $locale, $this->getSetting($contextId, 'dateFormat') ?? 'long', $this->getSetting($contextId, 'dateLocale') ?? '')
-            : $dateCompleted;
-
-        // Plugin settings
-        $editorName = $this->getLocalizedSetting($contextId, 'editorName', $locale, '');
-        $editorTitle = $this->getLocalizedSetting($contextId, 'editorTitle', $locale, 'Editor-in-Chief');
-        $editorNameFontSize = (int) ($this->getSetting($contextId, 'editorNameFontSize') ?: 12);
-        $editorNameColor = $this->getSetting($contextId, 'editorNameColor') ?: '#222222';
-        $journalNameFontSize = (int) ($this->getSetting($contextId, 'journalNameFontSize') ?: 12);
-        $journalNameColor = $this->getSetting($contextId, 'journalNameColor') ?: '#7a6030';
-        $signatureSize = (int) ($this->getSetting($contextId, 'signatureSize') ?: 70);
-        $logoSize = (int) ($this->getSetting($contextId, 'logoSize') ?: 70);
-        $accentColor = $this->getSetting($contextId, 'accentColor') ?: '#b8975a';
-        $enableQrCode = (bool) ($this->getSetting($contextId, 'enableQrCode') ?? true);
-        $qrSize = (int) ($this->getSetting($contextId, 'qrSize') ?: 68);
-        $qrOffsetX = (int) ($this->getSetting($contextId, 'qrOffsetX') ?: 0);
-        $qrOffsetY = (int) ($this->getSetting($contextId, 'qrOffsetY') ?: 0);
-        $signatureUrl = $this->getSetting($contextId, 'signatureUrl') ?? '';
-        $customLogoUrl = $this->getSetting($contextId, 'customLogoUrl') ?? '';
-        $backgroundImageUrl = $this->getSetting($contextId, 'backgroundImageUrl') ?? '';
-
-        if (!preg_match('/^#[0-9a-fA-F]{6}$/', $accentColor)) {
-            $accentColor = '#b8975a';
+        // Load the frozen certificate from the DB, or freeze it now if missing.
+        require_once __DIR__ . '/classes/CertificateGenerator.php';
+        $certDao = \PKP\db\DAORegistry::getDAO('ReviewerCertificateDAO');
+        $cert = $certDao->getByReviewId((int) $reviewId);
+        if (!$cert) {
+            $templateDao = \PKP\db\DAORegistry::getDAO('ReviewerCertificateTemplateDAO');
+            $template = $templateDao->getDefault((int) $contextId);
+            $generator = new \APP\plugins\generic\reviewerCertificate\classes\CertificateGenerator();
+            $cert = $generator->freeze($this, $request, $reviewAssignment, $context, $template);
+        } else {
+            $generator = new \APP\plugins\generic\reviewerCertificate\classes\CertificateGenerator();
         }
 
-        $textColor = $this->getSetting($contextId, 'textColor') ?: '#1a1a2e';
-        if (!preg_match('/^#[0-9a-fA-F]{6}$/', $textColor)) {
-            $textColor = '#1a1a2e';
-        }
-
-        // Global vertical shift for all certificate text (− up / + down)
-        $contentOffsetY = max(-400, min(400, (int) ($this->getSetting($contextId, 'contentOffsetY') ?: 0)));
-
-        // Per-element visibility (default visible when never configured)
-        $elementToggles = [];
-        foreach (self::elementToggleKeys() as $toggle) {
-            $stored = $this->getSetting($contextId, $toggle);
-            $elementToggles[$toggle] = ($stored === null || $stored === '') ? true : ((string) $stored === '1');
-        }
-
-        // Localized text overrides (empty => template uses the default)
-        $textOverrides = [];
-        foreach (self::textOverrideKeys() as $key) {
-            $textOverrides[$key] = $this->getLocalizedSetting($contextId, $key, $locale, '');
-        }
-
-        // Custom body text
-        $certificateBodyRaw = $this->getLocalizedSetting($contextId, 'certificateBody', $locale, '');
-        $certificateBodyHtml = $certificateBodyRaw
-            ? str_replace(
-                ['{journalName}', '{submissionTitle}'],
-                [
-                    '<em>' . htmlspecialchars($journalName, ENT_QUOTES | ENT_HTML5, 'UTF-8') . '</em>',
-                    '<em>' . htmlspecialchars($submissionTitle, ENT_QUOTES | ENT_HTML5, 'UTF-8') . '</em>',
-                ],
-                $certificateBodyRaw
-            )
-            : null;
-
-        // Journal logo
-        $logoUrl = $customLogoUrl;
-        if (!$logoUrl) {
-            $logoData = $context->getLocalizedData('pageHeaderLogoImage');
-            if ($logoData && !empty($logoData['uploadName'])) {
-                $publicFileManager = new PublicFileManager();
-                $logoUrl = $request->getBaseUrl() . '/'
-                    . $publicFileManager->getContextFilesPath($contextId) . '/'
-                    . $logoData['uploadName'];
-            }
-        }
-
-        // The live gateway URL — used as the QR code target inside the saved file
-        $gatewayUrl = $request->getDispatcher()->url(
-            $request,
-            PKPApplication::ROUTE_PAGE,
-            null,
-            'gateway',
-            'plugin',
-            ['ReviewerCertificateGatewayPlugin', 'generate'],
-            ['reviewId' => $reviewId]
-        );
-
-        // Render template to string
-        $templateMgr = TemplateManager::getManager($request);
-        $templateMgr->assign([
-            'reviewerName' => $reviewerName,
-            'reviewerAffiliation' => $reviewerAffiliation,
-            'submissionTitle' => $submissionTitle,
-            'journalName' => $journalName,
-            'dateCompleted' => $dateCompleted,
-            'dateAcknowledged' => $dateAcknowledged,
-            'reviewId' => $reviewId,
-            'editorName' => $editorName,
-            'editorTitle' => $editorTitle,
-            'editorNameFontSize' => $editorNameFontSize,
-            'editorNameColor' => $editorNameColor,
-            'journalNameFontSize' => $journalNameFontSize,
-            'journalNameColor' => $journalNameColor,
-            'signatureSize' => $signatureSize,
-            'logoSize' => $logoSize,
-            'accentColor' => $accentColor,
-            'textColor' => $textColor,
-            'enableQrCode' => $enableQrCode,
-            'qrSize' => $qrSize,
-            'qrOffsetX' => $qrOffsetX,
-            'qrOffsetY' => $qrOffsetY,
-            'certificateBodyHtml' => $certificateBodyHtml,
-            'signatureUrl' => $signatureUrl,
-            'logoUrl' => $logoUrl,
-            'backgroundImageUrl' => $backgroundImageUrl,
-            'contentOffsetY' => $contentOffsetY,
-            'isRtl' => $isRtl,
-            'currentLocale' => $locale,
-            'certificateUrl' => $gatewayUrl,
-        ]);
-        $templateMgr->assign($elementToggles);
-        $templateMgr->assign($textOverrides);
-
+        // Render from the frozen snapshot — no live settings resolution here.
         try {
-            $html = $templateMgr->fetch($this->getTemplateResource('certificate.tpl'));
+            $html = $generator->renderFromCertificate($this, $request, $cert);
         } catch (\Exception $e) {
             error_log('[ReviewerCertificate] Template render failed: ' . $e->getMessage());
             return null;
