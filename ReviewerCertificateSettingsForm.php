@@ -41,7 +41,20 @@ class ReviewerCertificateSettingsForm extends Form
             /** @var \APP\plugins\generic\reviewerCertificate\classes\ReviewerCertificateTemplateDAO $templateDao */
             $templateDao = DAORegistry::getDAO('ReviewerCertificateTemplateDAO');
             $defaultTemplate = $templateDao->getDefault($journalId);
-            $this->templateId = $defaultTemplate ? (int) $defaultTemplate->getTemplateId() : 0;
+            if ($defaultTemplate !== null) {
+                $this->templateId = (int) $defaultTemplate->getTemplateId();
+            } else {
+                // No default template exists yet — lazily create one so that
+                // settings saved by this form always land on a valid row.
+                $t = $templateDao->newDataObject();
+                $t->setContextId($journalId);
+                $t->setTemplateName('Default');
+                $t->setLayout('certificate');
+                $t->setIsDefault(1);
+                $t->setEnabled(1);
+                $t->setDateCreated(\PKP\core\Core::getCurrentDate());
+                $this->templateId = $templateDao->insertObject($t);
+            }
         }
 
         parent::__construct($plugin->getTemplateResource('settingsForm.tpl'));
@@ -99,33 +112,6 @@ class ReviewerCertificateSettingsForm extends Form
         $this->setData('signatureUrl', $this->_getTemplateSetting($templateDao, $tid, 'signatureUrl'));
         $this->setData('customLogoUrl', $this->_getTemplateSetting($templateDao, $tid, 'customLogoUrl'));
         $this->setData('backgroundImageUrl', $this->_getTemplateSetting($templateDao, $tid, 'backgroundImageUrl'));
-    }
-
-    /**
-     * Normalize a stored setting into a [localeKey => value] array so the
-     * multilingual form widgets render correctly.
-     *
-     * A legacy scalar value (saved before multilingual support) is
-     * pre-filled into every supported form locale rather than being
-     * guessed onto a single locale: the language of free text cannot be
-     * reliably inferred, and a wrong guess silently mislabels the value
-     * (e.g. Arabic text tagged as English). The admin then corrects each
-     * language box explicitly.
-     */
-    private function _toLocalized($value): array
-    {
-        if (is_array($value)) {
-            return $value;
-        }
-        if ($value === null || $value === '') {
-            return [];
-        }
-
-        $localized = [];
-        foreach (array_keys($this->supportedLocales ?? []) as $localeKey) {
-            $localized[$localeKey] = (string) $value;
-        }
-        return $localized;
     }
 
     /**
@@ -208,7 +194,6 @@ class ReviewerCertificateSettingsForm extends Form
         $supportedLocales = $context->getSupportedFormLocales();
         $templateMgr->assign('supportedLocales', $supportedLocales);
 
-        $id = $this->_journalId;
         $tid = $this->templateId;
 
         /** @var \APP\plugins\generic\reviewerCertificate\classes\ReviewerCertificateTemplateDAO $templateDao */
