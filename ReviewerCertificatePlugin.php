@@ -598,6 +598,7 @@ class ReviewerCertificatePlugin extends GenericPlugin
 
     /**
      * Add a Settings action button in the plugin list.
+     * Points at the `templates` verb so the gallery row opens the template list.
      */
     public function getActions($request, $verb): array
     {
@@ -613,7 +614,7 @@ class ReviewerCertificatePlugin extends GenericPlugin
                             null,
                             'manage',
                             null,
-                            ['verb' => 'settings', 'plugin' => $this->getName(), 'category' => 'generic']
+                            ['verb' => 'templates', 'plugin' => $this->getName(), 'category' => 'generic']
                         ),
                         $this->getDisplayName()
                     ),
@@ -627,16 +628,122 @@ class ReviewerCertificatePlugin extends GenericPlugin
 
     /**
      * Handle settings modal requests.
+     *
+     * Verbs:
+     *   templates        — list all templates for this context
+     *   editTemplate     — show the settings form for a specific template
+     *   saveTemplate     — save the settings form for a specific template
+     *   deleteTemplate   — delete a template (with guard)
+     *   setDefaultTemplate — mark a template as the default
+     *   settings         — legacy; redirects to the default template's edit form
      */
     public function manage($args, $request): JSONMessage
     {
+        $context = $request->getContext();
+        $contextId = (int) $context->getId();
+
+        /** @var \APP\plugins\generic\reviewerCertificate\classes\ReviewerCertificateTemplateDAO $templateDao */
+        $templateDao = \PKP\db\DAORegistry::getDAO('ReviewerCertificateTemplateDAO');
+
         switch ($request->getUserVar('verb')) {
-            case 'settings':
-                $context = $request->getContext();
+
+            // ── Template list ────────────────────────────────────────────────
+            case 'templates':
+                $templates = $templateDao->getAllByContextId($contextId);
+                $templateMgr = \APP\template\TemplateManager::getManager($request);
+                $templateMgr->assign([
+                    'plugin' => $this,
+                    'pluginName' => $this->getName(),
+                    'templates' => $templates,
+                    'manageUrl' => $request->getRouter()->url(
+                        $request,
+                        null,
+                        null,
+                        'manage',
+                        null,
+                        ['plugin' => $this->getName(), 'category' => 'generic']
+                    ),
+                ]);
+                return new JSONMessage(true, $templateMgr->fetch($this->getTemplateResource('templatesBackend.tpl')));
+
+                // ── Edit / new template ──────────────────────────────────────────
+            case 'editTemplate':
+                $templateId = (int) ($request->getUserVar('templateId') ?: 0);
                 if (!class_exists(ReviewerCertificateSettingsForm::class, false)) {
                     require_once __DIR__ . '/ReviewerCertificateSettingsForm.php';
                 }
-                $form = new ReviewerCertificateSettingsForm($this, $context->getId());
+                $form = new ReviewerCertificateSettingsForm($this, $contextId, $templateId ?: null);
+                $form->initData();
+                return new JSONMessage(true, $form->fetch($request));
+
+                // ── Save template ────────────────────────────────────────────────
+            case 'saveTemplate':
+                $templateId = (int) ($request->getUserVar('templateId') ?: 0);
+                if (!class_exists(ReviewerCertificateSettingsForm::class, false)) {
+                    require_once __DIR__ . '/ReviewerCertificateSettingsForm.php';
+                }
+                $form = new ReviewerCertificateSettingsForm($this, $contextId, $templateId ?: null);
+                $form->readInputData();
+                if ($form->validate()) {
+                    $form->execute();
+                    return new JSONMessage(true);
+                }
+                return new JSONMessage(true, $form->fetch($request));
+
+                // ── Delete template ──────────────────────────────────────────────
+            case 'deleteTemplate':
+                $templateId = (int) ($request->getUserVar('templateId') ?: 0);
+                if (!$templateId) {
+                    return new JSONMessage(false, __('plugins.generic.reviewerCertificate.templates.error.noTemplate'));
+                }
+
+                $templates = $templateDao->getAllByContextId($contextId);
+
+                // Guard: refuse to delete if it is the only template.
+                if (count($templates) <= 1) {
+                    return new JSONMessage(false, __('plugins.generic.reviewerCertificate.templates.error.cannotDeleteLast'));
+                }
+
+                // Guard: find the template being deleted, verify it belongs to this context.
+                $toDelete = $templateDao->getById($templateId);
+                if (!$toDelete || (int) $toDelete->getContextId() !== $contextId) {
+                    return new JSONMessage(false, __('plugins.generic.reviewerCertificate.templates.error.notFound'));
+                }
+
+                // If deleting the current default, promote another template.
+                if ((int) $toDelete->getIsDefault() === 1) {
+                    foreach ($templates as $candidate) {
+                        if ((int) $candidate->getTemplateId() !== $templateId) {
+                            $templateDao->setDefault((int) $candidate->getTemplateId(), $contextId);
+                            break;
+                        }
+                    }
+                }
+
+                $templateDao->deleteById($templateId);
+                return new JSONMessage(true);
+
+                // ── Set default template ─────────────────────────────────────────
+            case 'setDefaultTemplate':
+                $templateId = (int) ($request->getUserVar('templateId') ?: 0);
+                if (!$templateId) {
+                    return new JSONMessage(false, __('plugins.generic.reviewerCertificate.templates.error.noTemplate'));
+                }
+                $template = $templateDao->getById($templateId);
+                if (!$template || (int) $template->getContextId() !== $contextId) {
+                    return new JSONMessage(false, __('plugins.generic.reviewerCertificate.templates.error.notFound'));
+                }
+                $templateDao->setDefault($templateId, $contextId);
+                return new JSONMessage(true);
+
+                // ── Legacy "settings" verb — redirect to default template edit ────
+            case 'settings':
+                $defaultTemplate = $templateDao->getDefault($contextId);
+                $defaultTemplateId = $defaultTemplate ? (int) $defaultTemplate->getTemplateId() : null;
+                if (!class_exists(ReviewerCertificateSettingsForm::class, false)) {
+                    require_once __DIR__ . '/ReviewerCertificateSettingsForm.php';
+                }
+                $form = new ReviewerCertificateSettingsForm($this, $contextId, $defaultTemplateId);
 
                 if ($request->getUserVar('save')) {
                     $form->readInputData();
@@ -649,6 +756,7 @@ class ReviewerCertificatePlugin extends GenericPlugin
                 }
                 return new JSONMessage(true, $form->fetch($request));
         }
+
         return parent::manage($args, $request);
     }
 
