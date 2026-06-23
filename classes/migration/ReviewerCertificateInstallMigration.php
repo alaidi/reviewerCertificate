@@ -90,6 +90,26 @@ class ReviewerCertificateInstallMigration extends Migration
             });
         }
 
+        // Existing installs created by the pre-rewrite (wide) templates schema lack
+        // the thin schema's columns; add any that are missing before seeding.
+        if (Schema::hasTable('reviewer_certificate_templates')) {
+            if (!Schema::hasColumn('reviewer_certificate_templates', 'layout')) {
+                Schema::table('reviewer_certificate_templates', function (Blueprint $table) {
+                    $table->string('layout', 40)->default('certificate');
+                });
+            }
+            if (!Schema::hasColumn('reviewer_certificate_templates', 'is_default')) {
+                Schema::table('reviewer_certificate_templates', function (Blueprint $table) {
+                    $table->tinyInteger('is_default')->default(0);
+                });
+            }
+            if (!Schema::hasColumn('reviewer_certificate_templates', 'enabled')) {
+                Schema::table('reviewer_certificate_templates', function (Blueprint $table) {
+                    $table->tinyInteger('enabled')->default(1);
+                });
+            }
+        }
+
         require_once __DIR__ . '/ReviewerCertificateSeedTemplateMigration.php';
         (new ReviewerCertificateSeedTemplateMigration())->up();
 
