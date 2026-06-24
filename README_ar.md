@@ -62,7 +62,7 @@
 
    ```bash
    cd /path/to/ojs/plugins/generic
-   unzip ~/Downloads/reviewerCertificate-1.4.0.3.zip
+   tar -xzf ~/Downloads/reviewerCertificate-1.5.0.0.tar.gz
    # تأكد أن المجلد الناتج هو بالضبط: reviewerCertificate/
    ```
 
@@ -81,7 +81,7 @@
 ```bash
 cd /path/to/ojs/plugins/generic
 git clone https://github.com/alaidi/reviewerCertificate.git
-git -C reviewerCertificate checkout v1.4.0.3
+git -C reviewerCertificate checkout v1.5.0.0
 ```
 
 ثم فعّلها من صفحة الإضافات كما في الخيار أ.
@@ -157,6 +157,11 @@ git -C reviewerCertificate checkout v1.4.0.3
 > خطأً بصمت — راجع كل صندوق وصحّحه قبل الحفظ.
 
 ## سجل التغييرات
+
+### 1.5.0.0 — 2026-06-24
+
+- **جديد:** صار بالإمكان سحب انتساب المُحكِّم وتموضعه مستقلًا في معاينة الشهادة، ولم يعد موضعه النهائي مرتبطًا بموضع اسم المُحكِّم
+- **اختبارات:** أُضيف اختبار تراجعي مركّز يثبّت قائمة مفاتيح إزاحة العناصر، بما فيها `reviewerAffiliation`
 
 ### 1.4.0.3 — 2026-05-22
 

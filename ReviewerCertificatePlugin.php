@@ -228,6 +228,7 @@ class ReviewerCertificatePlugin extends GenericPlugin
             'subheading',
             'presentedTo',
             'reviewerName',
+            'reviewerAffiliation',
             'body',
             'dateLine',
         ];

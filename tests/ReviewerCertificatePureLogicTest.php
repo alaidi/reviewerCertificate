@@ -41,6 +41,24 @@ final class ReviewerCertificatePureLogicTest extends TestCase
         );
     }
 
+    public function testElementOffsetKeysRemainStable(): void
+    {
+        $this->assertSame(
+            [
+                'logo',
+                'journalName',
+                'heading',
+                'subheading',
+                'presentedTo',
+                'reviewerName',
+                'reviewerAffiliation',
+                'body',
+                'dateLine',
+            ],
+            self::elementOffsetKeys()
+        );
+    }
+
     public function testToLocalizedReturnsExistingLocalizedArrayUnchanged(): void
     {
         $value = [
@@ -112,6 +130,21 @@ final class ReviewerCertificatePureLogicTest extends TestCase
             'presentedToText',
             'completedOnText',
             'dateLabelText',
+        ];
+    }
+
+    private static function elementOffsetKeys(): array
+    {
+        return [
+            'logo',
+            'journalName',
+            'heading',
+            'subheading',
+            'presentedTo',
+            'reviewerName',
+            'reviewerAffiliation',
+            'body',
+            'dateLine',
         ];
     }
 

@@ -59,7 +59,7 @@ install — the plugin only registers a gateway and a few hooks while enabled.
 
    ```bash
    cd /path/to/ojs/plugins/generic
-   unzip ~/Downloads/reviewerCertificate-1.4.0.3.zip
+   tar -xzf ~/Downloads/reviewerCertificate-1.5.0.0.tar.gz
    # ensure the extracted folder is exactly: reviewerCertificate/
    ```
 
@@ -78,7 +78,7 @@ install — the plugin only registers a gateway and a few hooks while enabled.
 ```bash
 cd /path/to/ojs/plugins/generic
 git clone https://github.com/alaidi/reviewerCertificate.git
-git -C reviewerCertificate checkout v1.4.0.3
+git -C reviewerCertificate checkout v1.5.0.0
 ```
 
 Then enable it from the Plugins page as in Option A.
@@ -249,6 +249,11 @@ language.
 > and correct it before saving.
 
 ## Changelog
+
+### 1.5.0.0 — 2026-06-24
+
+- **New:** reviewer affiliation can now be dragged independently in the certificate preview, so its saved placement is no longer tied to the reviewer-name position
+- **Tests:** added a focused regression test that keeps the element-offset key list stable, including `reviewerAffiliation`
 
 ### 1.4.0.3 — 2026-05-22
 

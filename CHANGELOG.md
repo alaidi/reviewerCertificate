@@ -2,6 +2,11 @@
 
 All notable changes to `reviewerCertificate` are documented in this file.
 
+## 1.5.0.0 - 2026-06-24
+
+- New: reviewer affiliation can now be dragged independently in the certificate preview, so its final placement is no longer locked to the reviewer-name position.
+- Tests: added a focused regression test that keeps the element-offset key list stable, including the new `reviewerAffiliation` entry.
+
 ## 1.4.0.3 - 2026-05-22
 
 - Docs: added OJS setup screenshots to the English and Arabic READMEs.
