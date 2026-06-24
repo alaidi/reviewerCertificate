@@ -59,7 +59,7 @@ install — the plugin only registers a gateway and a few hooks while enabled.
 
    ```bash
    cd /path/to/ojs/plugins/generic
-   unzip ~/Downloads/reviewerCertificate-1.4.0.0.zip
+   unzip ~/Downloads/reviewerCertificate-1.4.0.3.zip
    # ensure the extracted folder is exactly: reviewerCertificate/
    ```
 
@@ -78,7 +78,7 @@ install — the plugin only registers a gateway and a few hooks while enabled.
 ```bash
 cd /path/to/ojs/plugins/generic
 git clone https://github.com/alaidi/reviewerCertificate.git
-git -C reviewerCertificate checkout v1.4.0.0
+git -C reviewerCertificate checkout v1.4.0.3
 ```
 
 Then enable it from the Plugins page as in Option A.
@@ -249,6 +249,13 @@ language.
 > and correct it before saving.
 
 ## Changelog
+
+### 1.4.0.3 — 2026-05-22
+
+- **Docs:** added OJS setup screenshots to the English and Arabic READMEs and synced the release examples to the current tag/archive
+- **License:** added the root GPLv3 `LICENSE` file and documented third-party component licenses
+- **Tests:** added a standalone PHPUnit harness plus focused plugin unit tests
+- **CI:** added a GitHub Actions workflow that runs PHPUnit on pushes and pull requests
 
 ### 1.4.0.2 — 2026-05-19
 

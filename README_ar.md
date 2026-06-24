@@ -62,7 +62,7 @@
 
    ```bash
    cd /path/to/ojs/plugins/generic
-   unzip ~/Downloads/reviewerCertificate-1.4.0.2.zip
+   unzip ~/Downloads/reviewerCertificate-1.4.0.3.zip
    # تأكد أن المجلد الناتج هو بالضبط: reviewerCertificate/
    ```
 
@@ -81,7 +81,7 @@
 ```bash
 cd /path/to/ojs/plugins/generic
 git clone https://github.com/alaidi/reviewerCertificate.git
-git -C reviewerCertificate checkout v1.4.0.2
+git -C reviewerCertificate checkout v1.4.0.3
 ```
 
 ثم فعّلها من صفحة الإضافات كما في الخيار أ.
@@ -157,6 +157,13 @@ git -C reviewerCertificate checkout v1.4.0.2
 > خطأً بصمت — راجع كل صندوق وصحّحه قبل الحفظ.
 
 ## سجل التغييرات
+
+### 1.4.0.3 — 2026-05-22
+
+- **توثيق:** إضافة صور خطوات الإعداد داخل OJS إلى ملفي README العربي والإنجليزي، ومزامنة أمثلة التنزيل مع وسم/أرشيف الإصدار الحالي
+- **ترخيص:** إضافة ملف `LICENSE` الجذري برخصة GPLv3 وتوثيق تراخيص مكوّنات الطرف الثالث
+- **اختبارات:** إضافة حزمة PHPUnit مستقلة مع اختبارات وحدات مركزة للإضافة
+- **تكامل مستمر:** إضافة GitHub Actions لتشغيل PHPUnit عند `push` و`pull_request`
 
 ### 1.4.0.2 — 2026-05-19
 
