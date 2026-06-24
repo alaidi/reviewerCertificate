@@ -2,6 +2,11 @@
 
 All notable changes to `reviewerCertificate` are documented in this file.
 
+## 1.5.0.1 - 2026-06-24
+
+- Fixed: repackaged the release so online upgrades now include the `Element Font Sizes` controls that were already present in the source tree.
+- Docs: synced the documented release tag/archive examples to `1.5.0.1`.
+
 ## 1.5.0.0 - 2026-06-24
 
 - New: reviewer affiliation can now be dragged independently in the certificate preview, so its final placement is no longer locked to the reviewer-name position.

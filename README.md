@@ -23,6 +23,7 @@ A generic plugin for Open Journal Systems (OJS) 3.5 that automatically generates
 - **Multilingual content** — Editor name, Editor title and certificate body text each accept a separate value per supported journal language; the certificate renders in the requested language with graceful fallback to the primary locale
 - **Locale-aware date formatting** — uses PHP `intl` extension when available; configurable date format with an optional date-language override (Automatic by default, follows the certificate language)
 - **Show / Hide & Move controls** — toggle individual certificate elements on/off (journal name, heading, subheading, presented-to label, reviewer name, body text, date line, QR code, logo, signature); text-override inputs and related sections hide automatically when unchecked
+- **Element Font Sizes** — override the font size of the main certificate text elements per template, while leaving any field blank to keep its default size
 - **Content offset** — shift all certificate content up or down by pixel value
 - **Customizable appearance**
   - Accent color with preset themes (Gold, Blue, Dark, Emerald)
@@ -59,7 +60,7 @@ install — the plugin only registers a gateway and a few hooks while enabled.
 
    ```bash
    cd /path/to/ojs/plugins/generic
-   tar -xzf ~/Downloads/reviewerCertificate-1.5.0.0.tar.gz
+   tar -xzf ~/Downloads/reviewerCertificate-1.5.0.1.tar.gz
    # ensure the extracted folder is exactly: reviewerCertificate/
    ```
 
@@ -78,7 +79,7 @@ install — the plugin only registers a gateway and a few hooks while enabled.
 ```bash
 cd /path/to/ojs/plugins/generic
 git clone https://github.com/alaidi/reviewerCertificate.git
-git -C reviewerCertificate checkout v1.5.0.0
+git -C reviewerCertificate checkout v1.5.0.1
 ```
 
 Then enable it from the Plugins page as in Option A.
@@ -249,6 +250,11 @@ language.
 > and correct it before saving.
 
 ## Changelog
+
+### 1.5.0.1 — 2026-06-24
+
+- **Fixed:** repackaged the release so online upgrades now include the **Element Font Sizes** controls that were already present in the source tree
+- **Docs:** synced the documented release tag/archive examples to `1.5.0.1`
 
 ### 1.5.0.0 — 2026-06-24
 
