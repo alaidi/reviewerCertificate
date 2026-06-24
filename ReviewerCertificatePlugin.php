@@ -259,6 +259,46 @@ class ReviewerCertificatePlugin extends GenericPlugin
     }
 
     /**
+     * Text elements whose font size can be overridden per template. Stored
+     * together as one JSON map (setting "elementFontSizes"); a value of 0 means
+     * "use the template's built-in size". journalName/editorName are excluded —
+     * they have their own dedicated font-size settings.
+     */
+    public static function elementFontSizeKeys(): array
+    {
+        return [
+            'heading',
+            'subheading',
+            'presentedTo',
+            'reviewerName',
+            'reviewerAffiliation',
+            'body',
+            'dateLine',
+        ];
+    }
+
+    /**
+     * Normalize a raw elementFontSizes value (JSON string or array) into a
+     * complete [key => int] map. 0 = use default; any other value is clamped
+     * to 8–72 px. Unknown keys are dropped.
+     */
+    public static function normalizeElementFontSizes($raw): array
+    {
+        $data = is_array($raw)
+            ? $raw
+            : (is_string($raw) && $raw !== '' ? json_decode($raw, true) : []);
+        if (!is_array($data)) {
+            $data = [];
+        }
+        $out = [];
+        foreach (self::elementFontSizeKeys() as $key) {
+            $v = isset($data[$key]) ? (int) $data[$key] : 0;
+            $out[$key] = $v > 0 ? max(8, min(72, $v)) : 0;
+        }
+        return $out;
+    }
+
+    /**
      * Localized free-text override fields. Each lets the admin replace a
      * fixed label/string on the certificate; left blank, the certificate
      * falls back to the built-in translation (or live data, for the journal

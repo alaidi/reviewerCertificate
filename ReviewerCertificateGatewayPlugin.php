@@ -240,6 +240,16 @@ class ReviewerCertificateGatewayPlugin extends GatewayPlugin
         }
         $elementOffsets = ReviewerCertificatePlugin::normalizeElementOffsets($elementOffsetsRaw);
 
+        // Per-element font sizes, stored as one JSON map (0 = use default).
+        $elementFontSizesRaw = $getTemplateSetting('elementFontSizes', '');
+        if ($previewMode) {
+            $reqEFS = $request->getUserVar('elementFontSizes');
+            if (is_string($reqEFS) && $reqEFS !== '') {
+                $elementFontSizesRaw = $reqEFS;
+            }
+        }
+        $elementFontSizes = ReviewerCertificatePlugin::normalizeElementFontSizes($elementFontSizesRaw);
+
         // Per-element visibility (default visible when never configured)
         $elementToggles = [];
         foreach (ReviewerCertificatePlugin::elementToggleKeys() as $toggle) {
@@ -324,6 +334,7 @@ class ReviewerCertificateGatewayPlugin extends GatewayPlugin
             'editorNameColor' => $editorNameColor,
             'journalNameFontSize' => $journalNameFontSize,
             'journalNameColor' => $journalNameColor,
+            'elementFontSizes' => $elementFontSizes,
             'signatureSize' => $signatureSize,
             'logoSize' => $logoSize,
             'signatureSectionOffsetY' => $signatureSectionOffsetY,

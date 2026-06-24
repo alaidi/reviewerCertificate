@@ -62,6 +62,33 @@ msgstr "حجم خط اسم المجلة"
 msgid "plugins.generic.reviewerCertificate.settings.journalNameColor"
 msgstr "لون اسم المجلة"
 
+msgid "plugins.generic.reviewerCertificate.settings.fontSizeSection"
+msgstr "أحجام خطوط العناصر"
+
+msgid "plugins.generic.reviewerCertificate.settings.fontSizeHelp"
+msgstr "تجاوز حجم الخط (بالبكسل) لكل عنصر نصي. اتركه فارغاً لاستخدام الحجم الافتراضي."
+
+msgid "plugins.generic.reviewerCertificate.settings.fontSizeHeading"
+msgstr "العنوان الرئيسي"
+
+msgid "plugins.generic.reviewerCertificate.settings.fontSizeSubheading"
+msgstr "العنوان الفرعي"
+
+msgid "plugins.generic.reviewerCertificate.settings.fontSizePresentedTo"
+msgstr "مُقدَّم إلى"
+
+msgid "plugins.generic.reviewerCertificate.settings.fontSizeReviewerName"
+msgstr "اسم المحكِّم"
+
+msgid "plugins.generic.reviewerCertificate.settings.fontSizeReviewerAffiliation"
+msgstr "جهة المحكِّم"
+
+msgid "plugins.generic.reviewerCertificate.settings.fontSizeBody"
+msgstr "النص الأساسي"
+
+msgid "plugins.generic.reviewerCertificate.settings.fontSizeDateLine"
+msgstr "سطر التاريخ"
+
 msgid "plugins.generic.reviewerCertificate.settings.themeSection"
 msgstr "نمط الألوان"
 

@@ -71,6 +71,7 @@ class CertificateGenerator
                 'qrOffsetY',
                 'contentOffsetY',
                 'elementOffsets',
+                'elementFontSizes',
                 'layout',
             ]
         );
@@ -299,6 +300,7 @@ class CertificateGenerator
         $qrOffsetY = (int) ($getSetting('qrOffsetY', 0));
         $contentOffsetY = max(-400, min(400, (int) ($getSetting('contentOffsetY', 0))));
         $elementOffsets = ReviewerCertificatePlugin::normalizeElementOffsets($getSetting('elementOffsets', ''));
+        $elementFontSizes = ReviewerCertificatePlugin::normalizeElementFontSizes($getSetting('elementFontSizes', ''));
 
         // Validate colors
         if (!preg_match('/^#[0-9a-fA-F]{6}$/', $accentColor)) {
@@ -348,6 +350,7 @@ class CertificateGenerator
                 'qrOffsetY' => $qrOffsetY,
                 'contentOffsetY' => $contentOffsetY,
                 'elementOffsets' => $elementOffsets,
+                'elementFontSizes' => $elementFontSizes,
                 'layout' => $layout,
             ],
             $elementToggles,
@@ -527,6 +530,7 @@ class CertificateGenerator
             'qrOffsetY' => (int) ($merged['qrOffsetY'] ?? 0),
             'contentOffsetY' => (int) ($merged['contentOffsetY'] ?? 0),
             'elementOffsets' => ReviewerCertificatePlugin::normalizeElementOffsets($merged['elementOffsets'] ?? []),
+            'elementFontSizes' => ReviewerCertificatePlugin::normalizeElementFontSizes($merged['elementFontSizes'] ?? []),
             'certificateBodyHtml' => $certificateBodyHtml,
             // QR / meta
             'certificateUrl' => $gatewayUrl,

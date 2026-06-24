@@ -149,6 +149,9 @@ function rcApplyTheme(name) {ldelim}
 	{* Per-element drag offsets (logo/text/etc.), updated live by the preview. *}
 	<input type="hidden" id="elementOffsets" name="elementOffsets" value="{$elementOffsets|escape}">
 
+	{* Per-element font-size overrides (px; 0 = use default), updated by the inputs below. *}
+	<input type="hidden" id="elementFontSizes" name="elementFontSizes" value="{$elementFontSizes|escape}">
+
 	{fbvFormArea id="reviewerCertificateSettingsArea"}
 
 		<p style="margin-bottom:1rem">{translate key="plugins.generic.reviewerCertificate.settings.description"}</p>
@@ -202,7 +205,7 @@ function rcApplyTheme(name) {ldelim}
 				'editorBlockOffsetX','editorBlockOffsetY','dateBlockOffsetX','dateBlockOffsetY',
 				'editorNameFontSize','editorNameColor','journalNameFontSize','journalNameColor',
 				'signatureSize','logoSize','accentColor','textColor','contentOffsetY',
-				'qrSize','qrOffsetX','qrOffsetY','elementOffsets'
+				'qrSize','qrOffsetX','qrOffsetY','elementOffsets','elementFontSizes'
 			];
 			var params = 'reviewId=' + id + '&rcPreview=1';
 			rcLiveFields.forEach(function(name) {ldelim}
@@ -454,6 +457,60 @@ function rcApplyTheme(name) {ldelim}
 				<p class="pkp_help" style="margin-top:.35rem;">{translate key="plugins.generic.reviewerCertificate.settings.contentOffsetYHelp"}</p>
 			</div>
 		{/fbvFormSection}
+
+		{* ── Element Font Sizes ──────────────────────────────────────────────── *}
+		{fbvFormSection title="plugins.generic.reviewerCertificate.settings.fontSizeSection"}
+			<p class="pkp_help" style="margin-bottom:.85rem;">
+				{translate key="plugins.generic.reviewerCertificate.settings.fontSizeHelp"}
+			</p>
+			{assign var="rcFontFields" value=[
+				['heading','plugins.generic.reviewerCertificate.settings.fontSizeHeading'],
+				['subheading','plugins.generic.reviewerCertificate.settings.fontSizeSubheading'],
+				['presentedTo','plugins.generic.reviewerCertificate.settings.fontSizePresentedTo'],
+				['reviewerName','plugins.generic.reviewerCertificate.settings.fontSizeReviewerName'],
+				['reviewerAffiliation','plugins.generic.reviewerCertificate.settings.fontSizeReviewerAffiliation'],
+				['body','plugins.generic.reviewerCertificate.settings.fontSizeBody'],
+				['dateLine','plugins.generic.reviewerCertificate.settings.fontSizeDateLine']
+			]}
+			<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:.75rem 1rem;">
+				{foreach from=$rcFontFields item="f"}
+				<div>
+					<label for="rcFs_{$f[0]}" style="display:block;font-size:13px;font-weight:bold;margin-bottom:.25rem;">
+						{translate key=$f[1]}
+					</label>
+					<input type="number" id="rcFs_{$f[0]}" class="rc-fs-input" data-rc-key="{$f[0]}"
+						min="8" max="72" step="1" placeholder="auto"
+						style="width:90px;padding:.35rem .5rem;border:1px solid #ccc;border-radius:3px;font-size:14px;">
+					<span style="font-size:12px;color:#888;margin-left:.3rem;">px</span>
+				</div>
+				{/foreach}
+			</div>
+		{/fbvFormSection}
+
+		{literal}
+		<script>
+		$(function() {
+			var hidden = document.getElementById('elementFontSizes');
+			var inputs = Array.prototype.slice.call(document.querySelectorAll('.rc-fs-input'));
+			if (!hidden) return;
+			var map = {};
+			try { map = JSON.parse(hidden.value || '{}') || {}; } catch (e) {}
+			function sync() {
+				var m = {};
+				inputs.forEach(function(inp) {
+					var v = parseInt(inp.value, 10);
+					m[inp.getAttribute('data-rc-key')] = (v >= 8) ? Math.min(72, v) : 0;
+				});
+				hidden.value = JSON.stringify(m);
+			}
+			inputs.forEach(function(inp) {
+				var k = inp.getAttribute('data-rc-key');
+				if (map[k] && map[k] > 0) inp.value = map[k];
+				inp.addEventListener('input', sync);
+			});
+		});
+		</script>
+		{/literal}
 
 		{* ── Element Text Overrides ──────────────────────────────────────────── *}
 		{fbvFormSection title="plugins.generic.reviewerCertificate.settings.textOverrideSection"}

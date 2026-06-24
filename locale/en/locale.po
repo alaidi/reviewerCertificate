@@ -89,6 +89,33 @@ msgstr "Journal Name Font Size"
 msgid "plugins.generic.reviewerCertificate.settings.journalNameColor"
 msgstr "Journal Name Color"
 
+msgid "plugins.generic.reviewerCertificate.settings.fontSizeSection"
+msgstr "Element Font Sizes"
+
+msgid "plugins.generic.reviewerCertificate.settings.fontSizeHelp"
+msgstr "Override the font size (in px) of individual text elements. Leave blank to use the built-in default."
+
+msgid "plugins.generic.reviewerCertificate.settings.fontSizeHeading"
+msgstr "Heading"
+
+msgid "plugins.generic.reviewerCertificate.settings.fontSizeSubheading"
+msgstr "Subheading"
+
+msgid "plugins.generic.reviewerCertificate.settings.fontSizePresentedTo"
+msgstr "Presented To"
+
+msgid "plugins.generic.reviewerCertificate.settings.fontSizeReviewerName"
+msgstr "Reviewer Name"
+
+msgid "plugins.generic.reviewerCertificate.settings.fontSizeReviewerAffiliation"
+msgstr "Reviewer Affiliation"
+
+msgid "plugins.generic.reviewerCertificate.settings.fontSizeBody"
+msgstr "Body Text"
+
+msgid "plugins.generic.reviewerCertificate.settings.fontSizeDateLine"
+msgstr "Date Line"
+
 msgid "plugins.generic.reviewerCertificate.settings.themeSection"
 msgstr "Color Theme"
 

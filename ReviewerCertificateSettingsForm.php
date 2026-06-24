@@ -87,6 +87,7 @@ class ReviewerCertificateSettingsForm extends Form
         $this->setData('dateBlockOffsetY', $this->_getTemplateSetting($templateDao, $tid, 'dateBlockOffsetY') ?: '0');
         $this->setData('contentOffsetY', $this->_getTemplateSetting($templateDao, $tid, 'contentOffsetY') ?: '0');
         $this->setData('elementOffsets', $this->_getTemplateSetting($templateDao, $tid, 'elementOffsets') ?: '{}');
+        $this->setData('elementFontSizes', $this->_getTemplateSetting($templateDao, $tid, 'elementFontSizes') ?: '{}');
         $this->setData('qrSize', $this->_getTemplateSetting($templateDao, $tid, 'qrSize') ?: '68');
         $this->setData('qrOffsetX', $this->_getTemplateSetting($templateDao, $tid, 'qrOffsetX') ?: '0');
         $this->setData('qrOffsetY', $this->_getTemplateSetting($templateDao, $tid, 'qrOffsetY') ?: '0');
@@ -156,6 +157,7 @@ class ReviewerCertificateSettingsForm extends Form
             'dateBlockOffsetY',
             'contentOffsetY',
             'elementOffsets',
+            'elementFontSizes',
             'qrSize',
             'qrOffsetX',
             'qrOffsetY',
@@ -330,6 +332,10 @@ class ReviewerCertificateSettingsForm extends Form
         // Per-element drag offsets: validate + re-encode as a clean JSON map.
         $elementOffsets = ReviewerCertificatePlugin::normalizeElementOffsets($this->getData('elementOffsets'));
         $templateDao->upsertSetting($tid, 'elementOffsets', (string) json_encode($elementOffsets, JSON_UNESCAPED_UNICODE));
+
+        // Per-element font sizes (0 = use default): validate + re-encode.
+        $elementFontSizes = ReviewerCertificatePlugin::normalizeElementFontSizes($this->getData('elementFontSizes'));
+        $templateDao->upsertSetting($tid, 'elementFontSizes', (string) json_encode($elementFontSizes, JSON_UNESCAPED_UNICODE));
 
         $qrSize = (int) $this->getData('qrSize');
         $templateDao->upsertSetting($tid, 'qrSize', (string) (($qrSize >= 20 && $qrSize <= 300) ? $qrSize : 68));
