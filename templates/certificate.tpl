@@ -356,6 +356,44 @@
 		[dir="rtl"] .signature-label { font-family: 'Cairo', sans-serif; letter-spacing: 0; }
 		[dir="rtl"] .signature-name  { font-family: 'Cairo', sans-serif; }
 		[dir="rtl"] .rc-qr-wrap      { right: auto; left: calc(28px + {$qrOffsetX|default:0}px); }
+
+		{if $rcPreviewMode|default:false}
+		/* Drag-to-place affordance — only in the settings live preview. */
+		.rc-pos.rc-draggable {
+			cursor: grab;
+			outline: 2px dashed {$accentColor|escape};
+			outline-offset: 3px;
+			border-radius: 2px;
+			touch-action: none;
+			user-select: none;
+		}
+		.rc-pos.rc-draggable:hover { outline-color: #2d6a9f; }
+		.rc-pos.rc-draggable.rc-dragging { cursor: grabbing; outline-style: solid; }
+		/* Anchor the drag hint to in-content elements without disturbing the
+		   QR wrap (absolute), which lives outside .content. */
+		.content .rc-pos.rc-draggable { position: relative; }
+		.rc-pos-drag-hint {
+			position: absolute;
+			top: -22px;
+			left: 50%;
+			transform: translateX(-50%);
+			background: #2d6a9f;
+			color: #fff;
+			font-family: Arial, sans-serif;
+			font-size: 9px;
+			line-height: 1;
+			letter-spacing: .5px;
+			white-space: nowrap;
+			padding: 4px 7px;
+			border-radius: 3px;
+			pointer-events: none;
+			opacity: 0;
+			transition: opacity .15s;
+			z-index: 20;
+		}
+		.rc-pos.rc-draggable:hover .rc-pos-drag-hint,
+		.rc-pos.rc-draggable.rc-dragging .rc-pos-drag-hint { opacity: 1; }
+		{/if}
 	</style>
 </head>
 <body>
@@ -436,27 +474,35 @@ async function rcDownloadImage(btn) {ldelim}
 
 		{* Journal logo *}
 		{if $showLogo && $logoUrl}
-		<div class="logo-wrap">
+		<div class="logo-wrap rc-pos" data-rc-key="logo" data-rc-store="map"
+			data-rc-x="{$elementOffsets.logo.x|default:0}" data-rc-y="{$elementOffsets.logo.y|default:0}"
+			style="transform:translate({$elementOffsets.logo.x|default:0}px,{$elementOffsets.logo.y|default:0}px);">
+			{if $rcPreviewMode|default:false}<span class="rc-pos-drag-hint">{translate key="plugins.generic.reviewerCertificate.certificate.dragHint"}</span>{/if}
 			<img src="{$logoUrl|escape}" alt="{$journalName|escape}" style="max-height:{$logoSize|escape}px;max-width:{math equation='s*3' s=$logoSize}px;">
 		</div>
 		{/if}
 
 		{if $showJournalName}
-		<div class="journal-name" style="font-size:{$journalNameFontSize|escape}px;color:{$journalNameColor|escape};">{if $journalNameText}{$journalNameText|escape}{else}{$journalName|escape}{/if}</div>
+		<div class="journal-name rc-pos" data-rc-key="journalName" data-rc-store="map"
+			data-rc-x="{$elementOffsets.journalName.x|default:0}" data-rc-y="{$elementOffsets.journalName.y|default:0}"
+			style="font-size:{$journalNameFontSize|escape}px;color:{$journalNameColor|escape};transform:translate({$elementOffsets.journalName.x|default:0}px,{$elementOffsets.journalName.y|default:0}px);">{if $rcPreviewMode|default:false}<span class="rc-pos-drag-hint">{translate key="plugins.generic.reviewerCertificate.certificate.dragHint"}</span>{/if}{if $journalNameText}{$journalNameText|escape}{else}{$journalName|escape}{/if}</div>
 		{/if}
 
 		{if $showDividers}<div class="divider"></div>{/if}
-		{if $showHeading}<h1 class="cert-heading">{if $headingText}{$headingText|escape}{else}{translate key="plugins.generic.reviewerCertificate.certificate.heading"}{/if}</h1>{/if}
-		{if $showSubheading}<div class="cert-subheading">{if $subheadingText}{$subheadingText|escape}{else}{translate key="plugins.generic.reviewerCertificate.certificate.subheading"}{/if}</div>{/if}
+		{if $showHeading}<h1 class="cert-heading rc-pos" data-rc-key="heading" data-rc-store="map" data-rc-x="{$elementOffsets.heading.x|default:0}" data-rc-y="{$elementOffsets.heading.y|default:0}" style="transform:translate({$elementOffsets.heading.x|default:0}px,{$elementOffsets.heading.y|default:0}px);">{if $rcPreviewMode|default:false}<span class="rc-pos-drag-hint">{translate key="plugins.generic.reviewerCertificate.certificate.dragHint"}</span>{/if}{if $headingText}{$headingText|escape}{else}{translate key="plugins.generic.reviewerCertificate.certificate.heading"}{/if}</h1>{/if}
+		{if $showSubheading}<div class="cert-subheading rc-pos" data-rc-key="subheading" data-rc-store="map" data-rc-x="{$elementOffsets.subheading.x|default:0}" data-rc-y="{$elementOffsets.subheading.y|default:0}" style="transform:translate({$elementOffsets.subheading.x|default:0}px,{$elementOffsets.subheading.y|default:0}px);">{if $rcPreviewMode|default:false}<span class="rc-pos-drag-hint">{translate key="plugins.generic.reviewerCertificate.certificate.dragHint"}</span>{/if}{if $subheadingText}{$subheadingText|escape}{else}{translate key="plugins.generic.reviewerCertificate.certificate.subheading"}{/if}</div>{/if}
 
 		{if $showDividers}<div class="divider"></div>{/if}
 
-		{if $showPresentedTo}<div class="presented-to">{if $presentedToText}{$presentedToText|escape}{else}{translate key="plugins.generic.reviewerCertificate.certificate.presentedTo"}{/if}</div>{/if}
-		{if $showReviewerName}<div class="reviewer-name">{$reviewerName|escape}</div>{/if}
+		{if $showPresentedTo}<div class="presented-to rc-pos" data-rc-key="presentedTo" data-rc-store="map" data-rc-x="{$elementOffsets.presentedTo.x|default:0}" data-rc-y="{$elementOffsets.presentedTo.y|default:0}" style="transform:translate({$elementOffsets.presentedTo.x|default:0}px,{$elementOffsets.presentedTo.y|default:0}px);">{if $rcPreviewMode|default:false}<span class="rc-pos-drag-hint">{translate key="plugins.generic.reviewerCertificate.certificate.dragHint"}</span>{/if}{if $presentedToText}{$presentedToText|escape}{else}{translate key="plugins.generic.reviewerCertificate.certificate.presentedTo"}{/if}</div>{/if}
+		{if $showReviewerName}<div class="reviewer-name rc-pos" data-rc-key="reviewerName" data-rc-store="map" data-rc-x="{$elementOffsets.reviewerName.x|default:0}" data-rc-y="{$elementOffsets.reviewerName.y|default:0}" style="transform:translate({$elementOffsets.reviewerName.x|default:0}px,{$elementOffsets.reviewerName.y|default:0}px);">{if $rcPreviewMode|default:false}<span class="rc-pos-drag-hint">{translate key="plugins.generic.reviewerCertificate.certificate.dragHint"}</span>{/if}{$reviewerName|escape}</div>{/if}
 		{if $showReviewerName && $reviewerAffiliation}<div class="reviewer-affiliation">{$reviewerAffiliation|escape}</div>{/if}
 
 		{if $showBody}
-		<p class="body-text">
+		<p class="body-text rc-pos" data-rc-key="body" data-rc-store="map"
+			data-rc-x="{$elementOffsets.body.x|default:0}" data-rc-y="{$elementOffsets.body.y|default:0}"
+			style="transform:translate({$elementOffsets.body.x|default:0}px,{$elementOffsets.body.y|default:0}px);">
+			{if $rcPreviewMode|default:false}<span class="rc-pos-drag-hint">{translate key="plugins.generic.reviewerCertificate.certificate.dragHint"}</span>{/if}
 			{if $certificateBodyHtml}
 				{$certificateBodyHtml nofilter}
 			{else}
@@ -469,7 +515,10 @@ async function rcDownloadImage(btn) {ldelim}
 		{/if}
 
 		{if $showDateLine}
-		<div class="date-line">
+		<div class="date-line rc-pos" data-rc-key="dateLine" data-rc-store="map"
+			data-rc-x="{$elementOffsets.dateLine.x|default:0}" data-rc-y="{$elementOffsets.dateLine.y|default:0}"
+			style="transform:translate({$elementOffsets.dateLine.x|default:0}px,{$elementOffsets.dateLine.y|default:0}px);">
+			{if $rcPreviewMode|default:false}<span class="rc-pos-drag-hint">{translate key="plugins.generic.reviewerCertificate.certificate.dragHint"}</span>{/if}
 			{if $completedOnText}{$completedOnText|escape}{else}{translate key="plugins.generic.reviewerCertificate.certificate.completedOn"}{/if}
 			{$dateCompleted|escape}
 		</div>
@@ -479,7 +528,10 @@ async function rcDownloadImage(btn) {ldelim}
 		{if $showSignatureSection}
 		<div class="signature-section" style="gap:{$signatureSectionGap|escape}px;padding-top:{$signatureSectionPaddingTop|escape}px;transform:translateY({$signatureSectionOffsetY|escape}px);">
 
-			<div class="signature-block" style="transform:translate({$editorBlockOffsetX|escape}px,{$editorBlockOffsetY|escape}px);">
+			<div class="signature-block rc-pos" data-rc-key="editorBlock"
+				data-rc-x="{$editorBlockOffsetX|default:0}" data-rc-y="{$editorBlockOffsetY|default:0}"
+				style="transform:translate({$editorBlockOffsetX|escape}px,{$editorBlockOffsetY|escape}px);">
+				{if $rcPreviewMode|default:false}<div class="rc-pos-drag-hint">{translate key="plugins.generic.reviewerCertificate.certificate.dragHint"}</div>{/if}
 				{if $signatureUrl}
 					<div class="signature-img-wrap">
 						<img src="{$signatureUrl|escape}" alt="{translate key="plugins.generic.reviewerCertificate.certificate.editorSignature"}" style="max-height:{$signatureSize|escape}px;max-width:{math equation='s*3' s=$signatureSize}px;">
@@ -495,13 +547,18 @@ async function rcDownloadImage(btn) {ldelim}
 				{/if}
 			</div>
 
-			<div class="signature-block" style="transform:translate({$dateBlockOffsetX|escape}px,{$dateBlockOffsetY|escape}px);">
+			{if $showDateBlock}
+			<div class="signature-block rc-pos" data-rc-key="dateBlock"
+				data-rc-x="{$dateBlockOffsetX|default:0}" data-rc-y="{$dateBlockOffsetY|default:0}"
+				style="transform:translate({$dateBlockOffsetX|escape}px,{$dateBlockOffsetY|escape}px);">
+				{if $rcPreviewMode|default:false}<div class="rc-pos-drag-hint">{translate key="plugins.generic.reviewerCertificate.certificate.dragHint"}</div>{/if}
 				<div class="signature-img-wrap signature-date-wrap">
 					<div style="font-size:14px;font-weight:bold;color:#333;padding-bottom:4px;">{$dateAcknowledged|escape}</div>
 				</div>
 				<div class="signature-line"></div>
 				<div class="signature-label">{if $dateLabelText}{$dateLabelText|escape}{else}{translate key="plugins.generic.reviewerCertificate.certificate.date"}{/if}</div>
 			</div>
+			{/if}
 
 		</div>
 		{/if}
@@ -509,7 +566,9 @@ async function rcDownloadImage(btn) {ldelim}
 
 	{* QR code for verification *}
 	{if $enableQrCode}
-	<div class="rc-qr-wrap" id="rc-qr-wrap">
+	<div class="rc-qr-wrap rc-pos" id="rc-qr-wrap" data-rc-key="qr" data-rc-mode="rel" data-rc-ysign="-1"
+		data-rc-x="{$qrOffsetX|default:0}" data-rc-y="{$qrOffsetY|default:0}">
+		{if $rcPreviewMode|default:false}<div class="rc-pos-drag-hint">{translate key="plugins.generic.reviewerCertificate.certificate.dragHint"}</div>{/if}
 		<div id="rc-qrcode"></div>
 		<div class="rc-qr-label">{translate key="plugins.generic.reviewerCertificate.certificate.verify"}</div>
 	</div>
@@ -526,6 +585,80 @@ async function rcDownloadImage(btn) {ldelim}
 				colorLight: '#ffffff',
 				correctLevel: QRCode.CorrectLevel.M
 			{rdelim});
+		{rdelim}
+	{rdelim})();
+	</script>
+	{/if}
+
+	{if $rcPreviewMode|default:false}
+	<script>
+	{* Live-preview only: drag any .rc-pos element around the certificate and
+	   push its offsets back to the settings form (see settingsForm.tpl). *}
+	(function() {ldelim}
+		var cert = document.querySelector('.certificate');
+		if (!cert) return;
+		var NAT_W = 960;
+		function clamp(v) {ldelim} return Math.max(-400, Math.min(400, v)); {rdelim}
+
+		var els = document.querySelectorAll('.rc-pos');
+		for (var i = 0; i < els.length; i++) {ldelim} initOne(els[i]); {rdelim}
+
+		function initOne(el) {ldelim}
+			var key = el.getAttribute('data-rc-key');
+			if (!key) return;
+			var mode  = el.getAttribute('data-rc-mode') || 'abs';
+			var store = el.getAttribute('data-rc-store') || 'field';
+			var ysign = parseInt(el.getAttribute('data-rc-ysign'), 10) || 1;
+			var curX = parseInt(el.getAttribute('data-rc-x'), 10) || 0;
+			var curY = parseInt(el.getAttribute('data-rc-y'), 10) || 0;
+			el.classList.add('rc-draggable');
+
+			var dragging = false, startPX = 0, startPY = 0, startX = 0, startY = 0, scale = 1;
+
+			function apply(dx, dy) {ldelim}
+				{* abs: element is positioned by transform translate(fieldX, fieldY);
+				   rel: element is anchored (bottom/right) — translate by raw delta. *}
+				el.style.transform = (mode === 'abs')
+					? 'translate(' + curX + 'px,' + curY + 'px)'
+					: 'translate(' + dx + 'px,' + dy + 'px)';
+			{rdelim}
+			function send() {ldelim}
+				if (window.parent === window) return;
+				window.parent.postMessage({ldelim}
+					source: 'rc-pos', type: 'move', key: key, store: store,
+					offsetX: Math.round(curX), offsetY: Math.round(curY)
+				{rdelim}, '*');
+			{rdelim}
+
+			el.addEventListener('pointerdown', function(e) {ldelim}
+				e.stopPropagation();
+				dragging = true;
+				startPX = e.clientX; startPY = e.clientY;
+				startX = curX; startY = curY;
+				var r = cert.getBoundingClientRect();
+				scale = r.width > 0 ? (r.width / NAT_W) : 1;
+				el.classList.add('rc-dragging');
+				try {ldelim} el.setPointerCapture(e.pointerId); {rdelim} catch (err) {ldelim}{rdelim}
+				e.preventDefault();
+			{rdelim});
+			el.addEventListener('pointermove', function(e) {ldelim}
+				if (!dragging) return;
+				var dx = (e.clientX - startPX) / scale;
+				var dy = (e.clientY - startPY) / scale;
+				curX = clamp(startX + dx);
+				curY = clamp(startY + ysign * dy);
+				apply(dx, dy);
+				send();
+			{rdelim});
+			function end(e) {ldelim}
+				if (!dragging) return;
+				dragging = false;
+				el.classList.remove('rc-dragging');
+				try {ldelim} el.releasePointerCapture(e.pointerId); {rdelim} catch (err) {ldelim}{rdelim}
+				send();
+			{rdelim}
+			el.addEventListener('pointerup', end);
+			el.addEventListener('pointercancel', end);
 		{rdelim}
 	{rdelim})();
 	</script>

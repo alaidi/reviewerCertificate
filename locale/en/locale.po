@@ -233,6 +233,9 @@ msgstr "Thank you for completing your review. You can now download your Certific
 msgid "plugins.generic.reviewerCertificate.certificate.verify"
 msgstr "Verify"
 
+msgid "plugins.generic.reviewerCertificate.certificate.dragHint"
+msgstr "Drag to move"
+
 msgid "plugins.generic.reviewerCertificate.certificate.downloadPdf"
 msgstr "Download PDF"
 
@@ -256,6 +259,18 @@ msgstr "My Certificates"
 
 msgid "plugins.generic.reviewerCertificate.list.heading"
 msgstr "My Certificates of Appreciation"
+
+msgid "plugins.generic.reviewerCertificate.list.headingAll"
+msgstr "All Reviewer Certificates"
+
+msgid "plugins.generic.reviewerCertificate.list.refresh"
+msgstr "Refresh"
+
+msgid "plugins.generic.reviewerCertificate.list.refreshHelp"
+msgstr "Regenerate this certificate from the current template and settings, refreshing its frozen data."
+
+msgid "plugins.generic.reviewerCertificate.list.refreshed"
+msgstr "Certificate refreshed from the current template and settings."
 
 msgid "plugins.generic.reviewerCertificate.list.colSubmission"
 msgstr "Manuscript"
@@ -388,6 +403,9 @@ msgstr "Completed-on date line"
 
 msgid "plugins.generic.reviewerCertificate.settings.showSignatureSection"
 msgstr "Signature & date section"
+
+msgid "plugins.generic.reviewerCertificate.settings.showDateBlock"
+msgstr "Show signature date"
 
 msgid "plugins.generic.reviewerCertificate.settings.contentOffsetY"
 msgstr "Move all certificate text up/down"

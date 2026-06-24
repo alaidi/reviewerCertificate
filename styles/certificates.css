@@ -8,54 +8,49 @@
  */
 
 .rc-list .wrap {
-	max-width: 880px;
+	max-width: 1180px;
 	margin: 0 auto;
 	background: #fff;
-	border: 1px solid #d9d2c3;
-	border-radius: 8px;
+	border: 1px solid #e3ddd0;
+	border-radius: 12px;
 	overflow: hidden;
+	box-shadow: 0 6px 24px rgba(45, 64, 89, 0.08);
 }
+
+/* ── Header ─────────────────────────────────────────────── */
 .rc-list .head {
-	background: #2d6a9f;
+	display: flex;
+	align-items: center;
+	gap: 1rem;
+	background: linear-gradient(135deg, #2d6a9f 0%, #1f4f78 100%);
 	color: #fff;
 	padding: 1.6rem 2rem;
+	position: relative;
 }
-.rc-list .head h1 { font-size: 1.4rem; margin-bottom: .25rem; }
+.rc-list .head::after {
+	content: '';
+	position: absolute;
+	left: 0; right: 0; bottom: 0;
+	height: 3px;
+	background: linear-gradient(to right, #b8975a, #e0c489, #b8975a);
+}
+.rc-list .head-badge {
+	flex-shrink: 0;
+	width: 54px; height: 54px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	border-radius: 50%;
+	background: rgba(255, 255, 255, 0.14);
+	border: 1px solid rgba(255, 255, 255, 0.25);
+	color: #f4e3c1;
+}
+.rc-list .head h1 { font-size: 1.4rem; margin-bottom: .2rem; line-height: 1.2; }
 .rc-list .head p { font-size: .9rem; opacity: .9; }
+
 .rc-list .body { padding: 1.5rem 2rem 2rem; }
-.rc-list table { width: 100%; border-collapse: collapse; }
-.rc-list th, .rc-list td {
-	padding: .8rem .6rem;
-	border-bottom: 1px solid #eee;
-	font-size: .92rem;
-	vertical-align: middle;
-}
-.rc-list th {
-	font-size: .78rem;
-	text-transform: uppercase;
-	letter-spacing: .04em;
-	color: #888;
-	border-bottom: 2px solid #ddd;
-}
-.rc-list[dir="rtl"] th, .rc-list[dir="rtl"] td { text-align: right; }
-.rc-list[dir="ltr"] th, .rc-list[dir="ltr"] td { text-align: left; }
-.rc-list tr:last-child td { border-bottom: none; }
-.rc-list .title-cell { font-weight: 600; color: #2c2c2c; }
-.rc-list .date-cell { color: #666; white-space: nowrap; }
-.rc-list .actions { white-space: nowrap; }
-.rc-list .btn {
-	display: inline-block;
-	padding: 6px 14px;
-	border-radius: 4px;
-	text-decoration: none;
-	font-size: .82rem;
-	font-weight: 600;
-	margin-right: .4rem;
-}
-.rc-list[dir="rtl"] .btn { margin-right: 0; margin-left: .4rem; }
-.rc-list .btn-view { background: #2d6a9f; color: #fff; }
-.rc-list .btn-pdf { background: #c0392b; color: #fff; }
-.rc-list .empty { text-align: center; padding: 3rem 1rem; color: #888; font-size: .95rem; }
+
+/* ── Toolbar / search ───────────────────────────────────── */
 .rc-list .toolbar {
 	display: flex;
 	flex-wrap: wrap;
@@ -64,57 +59,224 @@
 	gap: .75rem;
 	margin-bottom: 1.25rem;
 }
-.rc-list .search-form { display: flex; gap: .5rem; }
+.rc-list .search-form {
+	display: flex;
+	gap: .5rem;
+	position: relative;
+	align-items: center;
+}
+.rc-list .search-icon {
+	position: absolute;
+	top: 50%;
+	transform: translateY(-50%);
+	inset-inline-start: 11px;
+	color: #9aa3ad;
+	pointer-events: none;
+	display: flex;
+}
 .rc-list .search-form input[type="search"] {
-	padding: 7px 12px;
+	padding: 8px 12px 8px 34px;
 	border: 1px solid #ccc;
-	border-radius: 4px;
+	border-radius: 6px;
 	font-size: .9rem;
 	min-width: 240px;
 	font-family: inherit;
+	transition: border-color .15s, box-shadow .15s;
 }
-.rc-list .search-form input[type="search"]:focus { outline: none; border-color: #2d6a9f; }
+.rc-list[dir="rtl"] .search-form input[type="search"] { padding: 8px 34px 8px 12px; }
+.rc-list .search-form input[type="search"]:focus {
+	outline: none;
+	border-color: #2d6a9f;
+	box-shadow: 0 0 0 3px rgba(45, 106, 159, 0.15);
+}
 .rc-list .search-form button {
-	padding: 7px 16px;
+	padding: 8px 16px;
 	border: none;
-	border-radius: 4px;
+	border-radius: 6px;
 	background: #2d6a9f;
 	color: #fff;
 	font-size: .85rem;
 	font-weight: 600;
 	cursor: pointer;
 	font-family: inherit;
+	transition: background .15s;
 }
+.rc-list .search-form button:hover { background: #1f4f78; }
 .rc-list .search-form .btn-clear {
-	padding: 7px 14px;
+	padding: 8px 14px;
 	border: 1px solid #ccc;
-	border-radius: 4px;
+	border-radius: 6px;
 	background: #fff;
 	color: #666;
 	text-decoration: none;
 	font-size: .85rem;
 	font-weight: 600;
+	display: inline-flex;
+	align-items: center;
 }
-.rc-list .result-count { color: #888; font-size: .85rem; }
+.rc-list .search-form .btn-clear:hover { background: #f5f2ec; }
+.rc-list .result-count { color: #8a8a8a; font-size: .85rem; }
+
+/* ── Certificate cards ──────────────────────────────────── */
+.rc-list .cert-grid {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	display: flex;
+	flex-direction: column;
+	gap: .75rem;
+}
+.rc-list .cert-card {
+	display: flex;
+	align-items: center;
+	gap: 1rem;
+	padding: 1rem 1.15rem;
+	border: 1px solid #e7e1d4;
+	border-radius: 10px;
+	background: #fff;
+	transition: transform .15s, box-shadow .15s, border-color .15s;
+}
+.rc-list .cert-card:hover {
+	transform: translateY(-2px);
+	box-shadow: 0 8px 22px rgba(45, 64, 89, 0.12);
+	border-color: #cdbfa0;
+}
+.rc-list .cert-icon {
+	flex-shrink: 0;
+	width: 44px; height: 44px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	border-radius: 10px;
+	background: #f3ede0;
+	color: #b8975a;
+}
+.rc-list .cert-main { flex: 1 1 auto; min-width: 0; }
+.rc-list .cert-title {
+	font-size: .98rem;
+	font-weight: 600;
+	color: #2c2c2c;
+	line-height: 1.35;
+	margin: 0 0 .3rem;
+	display: -webkit-box;
+	-webkit-line-clamp: 2;
+	-webkit-box-orient: vertical;
+	overflow: hidden;
+}
+.rc-list .cert-meta {
+	display: inline-flex;
+	align-items: center;
+	gap: .35rem;
+	font-size: .82rem;
+	color: #6f8a5e;
+	background: #eef4e8;
+	padding: 2px 9px;
+	border-radius: 20px;
+}
+.rc-list .cert-meta svg { flex-shrink: 0; }
+.rc-list .cert-actions {
+	flex-shrink: 0;
+	display: flex;
+	gap: .4rem;
+	flex-wrap: wrap;
+	justify-content: flex-end;
+}
+.rc-list .btn {
+	display: inline-block;
+	padding: 7px 15px;
+	border-radius: 6px;
+	text-decoration: none;
+	font-size: .82rem;
+	font-weight: 600;
+	white-space: nowrap;
+	transition: background .15s, opacity .15s;
+}
+.rc-list .btn-view { background: #2d6a9f; color: #fff; }
+.rc-list .btn-view:hover { background: #1f4f78; }
+.rc-list .btn-pdf { background: #fff; color: #c0392b; border: 1px solid #e2b3ad; }
+.rc-list .btn-pdf:hover { background: #fdf0ee; }
+.rc-list .refresh-form { margin: 0; display: inline; }
+.rc-list .btn-refresh {
+	display: inline-flex;
+	align-items: center;
+	gap: .35rem;
+	cursor: pointer;
+	background: #f3ede0;
+	color: #8a6d2f;
+	border: 1px solid #d8c69c;
+	font-family: inherit;
+}
+.rc-list .btn-refresh:hover { background: #ece1c8; }
+.rc-list .btn-refresh svg { flex-shrink: 0; }
+
+/* Reviewer name (admin "all" view) */
+.rc-list .cert-reviewer {
+	display: inline-flex;
+	align-items: center;
+	gap: .35rem;
+	font-size: .82rem;
+	color: #4a5b73;
+	margin-bottom: .3rem;
+}
+.rc-list .cert-reviewer svg { flex-shrink: 0; color: #7a8aa3; }
+
+/* Refresh success banner */
+.rc-list .rc-flash {
+	display: flex;
+	align-items: center;
+	gap: .5rem;
+	background: #eef6ea;
+	border: 1px solid #c3e0b6;
+	color: #3d6b2c;
+	padding: .7rem 1rem;
+	border-radius: 8px;
+	font-size: .88rem;
+	margin-bottom: 1.1rem;
+}
+.rc-list .rc-flash svg { flex-shrink: 0; }
+
+/* ── Empty state ────────────────────────────────────────── */
+.rc-list .empty {
+	text-align: center;
+	padding: 3rem 1rem;
+	color: #9a9a9a;
+}
+.rc-list .empty-icon { color: #d3c7ac; margin-bottom: .75rem; }
+.rc-list .empty p { font-size: .95rem; margin: 0; }
+
+/* ── Pagination ─────────────────────────────────────────── */
 .rc-list .pagination {
 	display: flex;
 	align-items: center;
 	justify-content: center;
 	gap: .4rem;
-	margin-top: 1.5rem;
+	margin-top: 1.75rem;
 	flex-wrap: wrap;
 }
 .rc-list .pagination a, .rc-list .pagination span {
 	display: inline-block;
-	min-width: 34px;
-	padding: 6px 10px;
+	min-width: 36px;
+	padding: 7px 11px;
 	text-align: center;
-	border: 1px solid #d9d2c3;
-	border-radius: 4px;
+	border: 1px solid #e3ddd0;
+	border-radius: 6px;
 	text-decoration: none;
 	font-size: .85rem;
 	color: #2d6a9f;
+	transition: background .15s;
 }
-.rc-list .pagination a:hover { background: #f0ece4; }
+.rc-list .pagination a:hover { background: #f3ede0; }
 .rc-list .pagination .current { background: #2d6a9f; color: #fff; border-color: #2d6a9f; font-weight: 600; }
 .rc-list .pagination .disabled { color: #bbb; border-color: #eee; }
+
+/* ── Responsive ─────────────────────────────────────────── */
+@media (max-width: 620px) {
+	.rc-list .body { padding: 1.25rem 1rem 1.5rem; }
+	.rc-list .head { padding: 1.3rem 1.25rem; }
+	.rc-list .toolbar { justify-content: stretch; }
+	.rc-list .search-form { flex: 1 1 100%; }
+	.rc-list .search-form input[type="search"] { min-width: 0; flex: 1 1 auto; }
+	.rc-list .cert-card { flex-wrap: wrap; }
+	.rc-list .cert-main { flex-basis: calc(100% - 60px); }
+	.rc-list .cert-actions { flex-basis: 100%; justify-content: flex-start; }
+}

@@ -23,6 +23,7 @@ use PKP\core\PKPApplication;
 use PKP\facades\Locale;
 use PKP\linkAction\LinkAction;
 use PKP\linkAction\request\AjaxModal;
+use PKP\linkAction\request\RemoteActionConfirmationModal;
 use PKP\plugins\GenericPlugin;
 use PKP\plugins\Hook;
 use PKP\plugins\PluginRegistry;
@@ -209,7 +210,51 @@ class ReviewerCertificatePlugin extends GenericPlugin
             'showBody',
             'showDateLine',
             'showSignatureSection',
+            'showDateBlock',
         ];
+    }
+
+    /**
+     * Elements that can be freely repositioned by dragging in the live preview.
+     * Their offsets are stored together as one JSON map (setting "elementOffsets")
+     * rather than a pair of settings each, and applied as a translate() transform.
+     */
+    public static function elementOffsetKeys(): array
+    {
+        return [
+            'logo',
+            'journalName',
+            'heading',
+            'subheading',
+            'presentedTo',
+            'reviewerName',
+            'body',
+            'dateLine',
+        ];
+    }
+
+    /**
+     * Normalize a raw elementOffsets value (JSON string or array) into a
+     * complete [key => ['x'=>int,'y'=>int]] map with every known key present
+     * and each offset clamped to ±400. Unknown keys are dropped.
+     */
+    public static function normalizeElementOffsets($raw): array
+    {
+        $data = is_array($raw)
+            ? $raw
+            : (is_string($raw) && $raw !== '' ? json_decode($raw, true) : []);
+        if (!is_array($data)) {
+            $data = [];
+        }
+        $clamp = fn ($v) => max(-400, min(400, (int) $v));
+        $out = [];
+        foreach (self::elementOffsetKeys() as $key) {
+            $out[$key] = [
+                'x' => isset($data[$key]['x']) ? $clamp($data[$key]['x']) : 0,
+                'y' => isset($data[$key]['y']) ? $clamp($data[$key]['y']) : 0,
+            ];
+        }
+        return $out;
     }
 
     /**
@@ -504,8 +549,9 @@ class ReviewerCertificatePlugin extends GenericPlugin
             return false;
         }
 
-        // Show the link only to users who hold the reviewer role here
-        if (!$this->_userIsReviewer((int) $user->getId(), (int) $context->getId())) {
+        // Show the link to reviewers (their own certificates) and to managers/
+        // editors/site admins (the all-certificates admin view).
+        if (!$this->_userCanSeeCertificates((int) $user->getId(), (int) $context->getId())) {
             return false;
         }
 
@@ -596,6 +642,30 @@ class ReviewerCertificatePlugin extends GenericPlugin
         return false;
     }
 
+    /**
+     * Whether the user may see the certificate list page: reviewers (own
+     * certificates) or managers/sub-editors/site admins (all certificates).
+     */
+    private function _userCanSeeCertificates(int $userId, int $contextId): bool
+    {
+        $userGroups = UserGroup::withUserIds([$userId])
+            ->withContextIds([$contextId])
+            ->get();
+
+        foreach ($userGroups as $userGroup) {
+            if (in_array((int) $userGroup->roleId, [
+                Role::ROLE_ID_REVIEWER,
+                Role::ROLE_ID_MANAGER,
+                Role::ROLE_ID_SUB_EDITOR,
+                Role::ROLE_ID_SITE_ADMIN,
+            ], true)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     public function getDisplayName(): string
     {
         return __('plugins.generic.reviewerCertificate.displayName');
@@ -660,19 +730,90 @@ class ReviewerCertificatePlugin extends GenericPlugin
             // ── Template list ────────────────────────────────────────────────
             case 'templates':
                 $templates = $templateDao->getAllByContextId($contextId);
+                $router = $request->getRouter();
+                $newTemplateAction = new LinkAction(
+                    'newTemplate',
+                    new AjaxModal(
+                        $router->url(
+                            $request,
+                            null,
+                            null,
+                            'manage',
+                            null,
+                            ['plugin' => $this->getName(), 'category' => 'generic', 'verb' => 'editTemplate']
+                        ),
+                        __('plugins.generic.reviewerCertificate.templates.newTemplate')
+                    ),
+                    __('plugins.generic.reviewerCertificate.templates.newTemplate')
+                );
+                $editTemplateActions = [];
+                $setDefaultTemplateActions = [];
+                $deleteTemplateActions = [];
+                foreach ($templates as $template) {
+                    $templateId = (int) $template->getTemplateId();
+                    $editTemplateActions[$templateId] = new LinkAction(
+                        'editTemplate' . $templateId,
+                        new AjaxModal(
+                            $router->url(
+                                $request,
+                                null,
+                                null,
+                                'manage',
+                                null,
+                                ['plugin' => $this->getName(), 'category' => 'generic', 'verb' => 'editTemplate', 'templateId' => $templateId]
+                            ),
+                            __('plugins.generic.reviewerCertificate.templates.edit')
+                        ),
+                        __('plugins.generic.reviewerCertificate.templates.edit')
+                    );
+                    if (!(int) $template->getIsDefault()) {
+                        $setDefaultTemplateActions[$templateId] = new LinkAction(
+                            'setDefaultTemplate' . $templateId,
+                            new RemoteActionConfirmationModal(
+                                $request->getSession(),
+                                __('plugins.generic.reviewerCertificate.templates.verify.setDefault'),
+                                __('plugins.generic.reviewerCertificate.templates.setDefault'),
+                                $router->url(
+                                    $request,
+                                    null,
+                                    null,
+                                    'manage',
+                                    null,
+                                    ['plugin' => $this->getName(), 'category' => 'generic', 'verb' => 'setDefaultTemplate', 'templateId' => $templateId]
+                                ),
+                                'primary'
+                            ),
+                            __('plugins.generic.reviewerCertificate.templates.setDefault')
+                        );
+                        $deleteTemplateActions[$templateId] = new LinkAction(
+                            'deleteTemplate' . $templateId,
+                            new RemoteActionConfirmationModal(
+                                $request->getSession(),
+                                __('plugins.generic.reviewerCertificate.templates.verify.delete'),
+                                __('plugins.generic.reviewerCertificate.templates.delete'),
+                                $router->url(
+                                    $request,
+                                    null,
+                                    null,
+                                    'manage',
+                                    null,
+                                    ['plugin' => $this->getName(), 'category' => 'generic', 'verb' => 'deleteTemplate', 'templateId' => $templateId]
+                                ),
+                                'negative'
+                            ),
+                            __('plugins.generic.reviewerCertificate.templates.delete')
+                        );
+                    }
+                }
                 $templateMgr = \APP\template\TemplateManager::getManager($request);
                 $templateMgr->assign([
                     'plugin' => $this,
                     'pluginName' => $this->getName(),
                     'templates' => $templates,
-                    'manageUrl' => $request->getRouter()->url(
-                        $request,
-                        null,
-                        null,
-                        'manage',
-                        null,
-                        ['plugin' => $this->getName(), 'category' => 'generic']
-                    ),
+                    'newTemplateAction' => $newTemplateAction,
+                    'editTemplateActions' => $editTemplateActions,
+                    'setDefaultTemplateActions' => $setDefaultTemplateActions,
+                    'deleteTemplateActions' => $deleteTemplateActions,
                 ]);
                 return new JSONMessage(true, $templateMgr->fetch($this->getTemplateResource('templatesBackend.tpl')));
 

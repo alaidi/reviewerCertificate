@@ -19,6 +19,7 @@
 namespace APP\plugins\generic\reviewerCertificate;
 
 use APP\core\Application;
+use APP\facades\Repo;
 use APP\handler\Handler;
 use APP\template\TemplateManager;
 use PKP\plugins\PluginRegistry;
@@ -49,6 +50,16 @@ class ReviewerCertificateListHandler extends Handler
                 Role::ROLE_ID_SITE_ADMIN,
             ],
             ['index']
+        );
+
+        // Refreshing a frozen certificate is a manager/editor-only action.
+        $this->addRoleAssignment(
+            [
+                Role::ROLE_ID_MANAGER,
+                Role::ROLE_ID_SUB_EDITOR,
+                Role::ROLE_ID_SITE_ADMIN,
+            ],
+            ['refresh']
         );
     }
 
@@ -90,17 +101,64 @@ class ReviewerCertificateListHandler extends Handler
             $context->getPath(),
             'reviewerCertificates'
         );
+        $refreshUrl = $request->getDispatcher()->url(
+            $request,
+            Application::ROUTE_PAGE,
+            $context->getPath(),
+            'reviewerCertificates',
+            'refresh'
+        );
+
+        $viewAll = ($gateway && $context && $user)
+            ? $gateway->isPrivilegedUser((int) $user->getId(), (int) $context->getId())
+            : false;
 
         $data = ($gateway && $context && $user)
-            ? $gateway->buildCertificatesViewData($request, $context, $user, $listUrl)
+            ? $gateway->buildCertificatesViewData($request, $context, $user, $listUrl, $viewAll, $refreshUrl)
             : [];
 
         $templateMgr->assign($data);
         $templateMgr->assign([
             'pageTitle' => __('plugins.generic.reviewerCertificate.list.title'),
-            'pageWidth' => TemplateManager::PAGE_WIDTH_NARROW,
+            'pageWidth' => TemplateManager::PAGE_WIDTH_WIDE,
         ]);
 
         $templateMgr->display($this->_plugin->getTemplateResource('certificatesBackend.tpl'));
+    }
+
+    /**
+     * Re-freeze one certificate from the current template/settings (admin only),
+     * then return to the list. POST + CSRF + manager/editor role required.
+     */
+    public function refresh($args, $request)
+    {
+        $context = $request->getContext();
+        $user = $request->getUser();
+        if (!$context || !$user) {
+            $request->redirect(null, 'reviewerCertificates');
+            return;
+        }
+
+        $gateway = PluginRegistry::getPlugin('gateways', 'ReviewerCertificateGatewayPlugin');
+        $privileged = $gateway && $gateway->isPrivilegedUser((int) $user->getId(), (int) $context->getId());
+
+        if ($privileged && $request->isPost() && $request->checkCSRF()) {
+            $reviewId = (int) $request->getUserVar('reviewId');
+            $reviewAssignment = $reviewId ? Repo::reviewAssignment()->get($reviewId) : null;
+            if ($reviewAssignment && $reviewAssignment->getDateCompleted()) {
+                $submission = Repo::submission()->get($reviewAssignment->getSubmissionId());
+                if ($submission && (int) $submission->getData('contextId') === (int) $context->getId()) {
+                    require_once __DIR__ . '/classes/CertificateGenerator.php';
+                    $templateDao = \PKP\db\DAORegistry::getDAO('ReviewerCertificateTemplateDAO');
+                    $template = $templateDao->getDefault((int) $context->getId());
+                    $generator = new \APP\plugins\generic\reviewerCertificate\classes\CertificateGenerator();
+                    $generator->refreeze($this->_plugin, $request, $reviewAssignment, $context, $template);
+                    // Rewrite the saved HTML file from the refreshed snapshot.
+                    $this->_plugin->generateAndSaveCertificate($request, $reviewAssignment, $context);
+                }
+            }
+        }
+
+        $request->redirect(null, 'reviewerCertificates', null, null, ['refreshed' => 1]);
     }
 }

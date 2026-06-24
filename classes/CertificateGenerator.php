@@ -70,6 +70,7 @@ class CertificateGenerator
                 'qrOffsetX',
                 'qrOffsetY',
                 'contentOffsetY',
+                'elementOffsets',
                 'layout',
             ]
         );
@@ -297,6 +298,7 @@ class CertificateGenerator
         $qrOffsetX = (int) ($getSetting('qrOffsetX', 0));
         $qrOffsetY = (int) ($getSetting('qrOffsetY', 0));
         $contentOffsetY = max(-400, min(400, (int) ($getSetting('contentOffsetY', 0))));
+        $elementOffsets = ReviewerCertificatePlugin::normalizeElementOffsets($getSetting('elementOffsets', ''));
 
         // Validate colors
         if (!preg_match('/^#[0-9a-fA-F]{6}$/', $accentColor)) {
@@ -345,6 +347,7 @@ class CertificateGenerator
                 'qrOffsetX' => $qrOffsetX,
                 'qrOffsetY' => $qrOffsetY,
                 'contentOffsetY' => $contentOffsetY,
+                'elementOffsets' => $elementOffsets,
                 'layout' => $layout,
             ],
             $elementToggles,
@@ -389,6 +392,33 @@ class CertificateGenerator
         $certDao->insertObject($cert);
 
         return $cert;
+    }
+
+    /**
+     * Refresh an already-frozen certificate: re-resolve its snapshot from the
+     * current template/settings and overwrite the stored data. The certificate
+     * code, issue date and download count are kept so existing QR/verify links
+     * and stats survive. Freezes fresh when no row exists yet.
+     */
+    public function refreeze($plugin, $request, $reviewAssignment, $context, $template): ReviewerCertificate
+    {
+        /** @var ReviewerCertificateDAO $certDao */
+        $certDao = \PKP\db\DAORegistry::getDAO('ReviewerCertificateDAO');
+
+        $existing = $certDao->getByReviewId((int) $reviewAssignment->getId());
+        if (!$existing) {
+            return $this->freeze($plugin, $request, $reviewAssignment, $context, $template);
+        }
+
+        $data = $this->resolveSnapshotData($plugin, $request, $reviewAssignment, $context, $template);
+        $snapshotId = $certDao->findOrCreateContentSnapshot($data['shared']);
+
+        $existing->setTemplateId($template ? (int) $template->getTemplateId() : null);
+        $existing->setSnapshotId($snapshotId);
+        $existing->setSnapshot(json_encode($data['perCert'], JSON_UNESCAPED_UNICODE));
+        $certDao->updateObject($existing);
+
+        return $existing;
     }
 
     /**
@@ -496,6 +526,7 @@ class CertificateGenerator
             'qrOffsetX' => (int) ($merged['qrOffsetX'] ?? 0),
             'qrOffsetY' => (int) ($merged['qrOffsetY'] ?? 0),
             'contentOffsetY' => (int) ($merged['contentOffsetY'] ?? 0),
+            'elementOffsets' => ReviewerCertificatePlugin::normalizeElementOffsets($merged['elementOffsets'] ?? []),
             'certificateBodyHtml' => $certificateBodyHtml,
             // QR / meta
             'certificateUrl' => $gatewayUrl,

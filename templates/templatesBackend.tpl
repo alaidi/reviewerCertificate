@@ -7,12 +7,7 @@
 <div class="rc-templates-backend">
 	<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;">
 		<h2 style="margin:0;">{translate key="plugins.generic.reviewerCertificate.templates.heading"}</h2>
-		<a class="pkpButton"
-		   href="{$manageUrl|escape}&amp;verb=editTemplate"
-		   data-modal="ajax"
-		   data-title="{translate key="plugins.generic.reviewerCertificate.templates.newTemplate"|escape}">
-			{translate key="plugins.generic.reviewerCertificate.templates.newTemplate"}
-		</a>
+		{include file="linkAction/linkAction.tpl" action=$newTemplateAction contextId="reviewerCertificateNewTemplate"}
 	</div>
 
 	{if $templates|@count}
@@ -35,29 +30,16 @@
 				</td>
 				<td>
 					{* Edit *}
-					<a class="pkpButton pkpButton--ghost"
-					   href="{$manageUrl|escape}&amp;verb=editTemplate&amp;templateId={$tpl->getTemplateId()|escape:'url'}"
-					   data-modal="ajax"
-					   data-title="{translate key="plugins.generic.reviewerCertificate.templates.edit"|escape}">
-						{translate key="plugins.generic.reviewerCertificate.templates.edit"}
-					</a>
+					{include file="linkAction/linkAction.tpl" action=$editTemplateActions[$tpl->getTemplateId()] contextId=$tpl->getTemplateId()}
 
 					{* Set default (only if not already default) *}
 					{if !$tpl->getIsDefault()}
-					<a class="pkpButton pkpButton--ghost"
-					   href="{$manageUrl|escape}&amp;verb=setDefaultTemplate&amp;templateId={$tpl->getTemplateId()|escape:'url'}&amp;csrfToken={csrf type="raw"|escape}"
-					   data-confirm="{translate key="plugins.generic.reviewerCertificate.templates.verify.setDefault"|escape}">
-						{translate key="plugins.generic.reviewerCertificate.templates.setDefault"}
-					</a>
+					{include file="linkAction/linkAction.tpl" action=$setDefaultTemplateActions[$tpl->getTemplateId()] contextId=$tpl->getTemplateId()}
 					{/if}
 
 					{* Delete (only if not default, to hint the user) *}
 					{if !$tpl->getIsDefault()}
-					<a class="pkpButton pkpButton--ghost pkpButton--warningIcon"
-					   href="{$manageUrl|escape}&amp;verb=deleteTemplate&amp;templateId={$tpl->getTemplateId()|escape:'url'}&amp;csrfToken={csrf type="raw"|escape}"
-					   data-confirm="{translate key="plugins.generic.reviewerCertificate.templates.verify.delete"|escape}">
-						{translate key="plugins.generic.reviewerCertificate.templates.delete"}
-					</a>
+					{include file="linkAction/linkAction.tpl" action=$deleteTemplateActions[$tpl->getTemplateId()] contextId=$tpl->getTemplateId()}
 					{/if}
 				</td>
 			</tr>

@@ -146,6 +146,9 @@ function rcApplyTheme(name) {ldelim}
 	{csrf}
 	{include file="common/formErrors.tpl"}
 
+	{* Per-element drag offsets (logo/text/etc.), updated live by the preview. *}
+	<input type="hidden" id="elementOffsets" name="elementOffsets" value="{$elementOffsets|escape}">
+
 	{fbvFormArea id="reviewerCertificateSettingsArea"}
 
 		<p style="margin-bottom:1rem">{translate key="plugins.generic.reviewerCertificate.settings.description"}</p>
@@ -199,7 +202,7 @@ function rcApplyTheme(name) {ldelim}
 				'editorBlockOffsetX','editorBlockOffsetY','dateBlockOffsetX','dateBlockOffsetY',
 				'editorNameFontSize','editorNameColor','journalNameFontSize','journalNameColor',
 				'signatureSize','logoSize','accentColor','textColor','contentOffsetY',
-				'qrSize','qrOffsetX','qrOffsetY'
+				'qrSize','qrOffsetX','qrOffsetY','elementOffsets'
 			];
 			var params = 'reviewId=' + id + '&rcPreview=1';
 			rcLiveFields.forEach(function(name) {ldelim}
@@ -211,7 +214,7 @@ function rcApplyTheme(name) {ldelim}
 
 			var rcToggleFields = [
 					'showLogo','showJournalName','showDividers','showHeading','showSubheading',
-					'showPresentedTo','showReviewerName','showBody','showDateLine','showSignatureSection'
+					'showPresentedTo','showReviewerName','showBody','showDateLine','showSignatureSection','showDateBlock'
 				];
 				rcToggleFields.forEach(function(name) {ldelim}
 					var el = document.getElementById(name);
@@ -239,6 +242,36 @@ function rcApplyTheme(name) {ldelim}
 			frame.onload = function() {ldelim} loading.style.display = 'none'; {rdelim};
 			frame.src = url;
 		{rdelim}
+
+		{* Receive drag updates from the preview iframe and write them into
+		   the offset fields so they persist when the form is saved. *}
+		window.addEventListener('message', function(e) {ldelim}
+			var d = e.data;
+			if (!d || d.type !== 'move' || d.source !== 'rc-pos' || typeof d.key !== 'string') return;
+
+			{* store === 'map' elements (logo/text/etc.) write into the single
+			   elementOffsets JSON field; the rest write to their X/Y inputs. *}
+			if (d.store === 'map') {ldelim}
+				var hidden = document.getElementById('elementOffsets');
+				if (!hidden) return;
+				var map = {ldelim}{rdelim};
+				try {ldelim} map = JSON.parse(hidden.value || '{ldelim}{rdelim}') || {ldelim}{rdelim}; {rdelim} catch (err) {ldelim}{rdelim}
+				map[d.key] = {ldelim} x: d.offsetX || 0, y: d.offsetY || 0 {rdelim};
+				hidden.value = JSON.stringify(map);
+				return;
+			{rdelim}
+
+			var fx = document.getElementById(d.key + 'OffsetX');
+			var fy = document.getElementById(d.key + 'OffsetY');
+			if (fx && typeof d.offsetX === 'number') {ldelim}
+				fx.value = d.offsetX;
+				fx.dispatchEvent(new Event('input', {ldelim} bubbles: true {rdelim}));
+			{rdelim}
+			if (fy && typeof d.offsetY === 'number') {ldelim}
+				fy.value = d.offsetY;
+				fy.dispatchEvent(new Event('input', {ldelim} bubbles: true {rdelim}));
+			{rdelim}
+		{rdelim});
 		</script>
 
 		{* ── Editor-in-Chief ─────────────────────────────────────────────────── *}
@@ -403,6 +436,10 @@ function rcApplyTheme(name) {ldelim}
 				<label style="display:flex;align-items:center;gap:.55rem;cursor:pointer;font-size:14px;">
 					<input type="checkbox" id="showSignatureSection" name="showSignatureSection" value="1" {if $showSignatureSection}checked{/if} style="width:16px;height:16px;cursor:pointer;">
 					{translate key="plugins.generic.reviewerCertificate.settings.showSignatureSection"}
+				</label>
+				<label style="display:flex;align-items:center;gap:.55rem;cursor:pointer;font-size:14px;">
+					<input type="checkbox" id="showDateBlock" name="showDateBlock" value="1" {if $showDateBlock}checked{/if} style="width:16px;height:16px;cursor:pointer;">
+					{translate key="plugins.generic.reviewerCertificate.settings.showDateBlock"}
 				</label>
 			</div>
 

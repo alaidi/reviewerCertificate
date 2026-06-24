@@ -230,6 +230,9 @@ msgstr "شكراً لإتمامك عملية التحكيم. يمكنك الآن
 msgid "plugins.generic.reviewerCertificate.certificate.verify"
 msgstr "تحقق"
 
+msgid "plugins.generic.reviewerCertificate.certificate.dragHint"
+msgstr "اسحب للتحريك"
+
 msgid "plugins.generic.reviewerCertificate.certificate.downloadPdf"
 msgstr "تنزيل PDF"
 
@@ -253,6 +256,18 @@ msgstr "شهاداتي"
 
 msgid "plugins.generic.reviewerCertificate.list.heading"
 msgstr "شهادات التقدير الخاصة بي"
+
+msgid "plugins.generic.reviewerCertificate.list.headingAll"
+msgstr "جميع شهادات المحكمين"
+
+msgid "plugins.generic.reviewerCertificate.list.refresh"
+msgstr "تحديث"
+
+msgid "plugins.generic.reviewerCertificate.list.refreshHelp"
+msgstr "إعادة توليد هذه الشهادة من القالب والإعدادات الحالية لتحديث بياناتها المجمّدة."
+
+msgid "plugins.generic.reviewerCertificate.list.refreshed"
+msgstr "تم تحديث الشهادة من القالب والإعدادات الحالية."
 
 msgid "plugins.generic.reviewerCertificate.list.colSubmission"
 msgstr "البحث"
@@ -385,6 +400,9 @@ msgstr "سطر تاريخ الإنجاز"
 
 msgid "plugins.generic.reviewerCertificate.settings.showSignatureSection"
 msgstr "قسم التوقيع والتاريخ"
+
+msgid "plugins.generic.reviewerCertificate.settings.showDateBlock"
+msgstr "إظهار تاريخ التوقيع"
 
 msgid "plugins.generic.reviewerCertificate.settings.contentOffsetY"
 msgstr "تحريك كل نصوص الشهادة لأعلى/لأسفل"

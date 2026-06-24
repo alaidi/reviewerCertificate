@@ -86,6 +86,7 @@ class ReviewerCertificateSettingsForm extends Form
         $this->setData('dateBlockOffsetX', $this->_getTemplateSetting($templateDao, $tid, 'dateBlockOffsetX') ?: '0');
         $this->setData('dateBlockOffsetY', $this->_getTemplateSetting($templateDao, $tid, 'dateBlockOffsetY') ?: '0');
         $this->setData('contentOffsetY', $this->_getTemplateSetting($templateDao, $tid, 'contentOffsetY') ?: '0');
+        $this->setData('elementOffsets', $this->_getTemplateSetting($templateDao, $tid, 'elementOffsets') ?: '{}');
         $this->setData('qrSize', $this->_getTemplateSetting($templateDao, $tid, 'qrSize') ?: '68');
         $this->setData('qrOffsetX', $this->_getTemplateSetting($templateDao, $tid, 'qrOffsetX') ?: '0');
         $this->setData('qrOffsetY', $this->_getTemplateSetting($templateDao, $tid, 'qrOffsetY') ?: '0');
@@ -154,6 +155,7 @@ class ReviewerCertificateSettingsForm extends Form
             'dateBlockOffsetX',
             'dateBlockOffsetY',
             'contentOffsetY',
+            'elementOffsets',
             'qrSize',
             'qrOffsetX',
             'qrOffsetY',
@@ -167,6 +169,7 @@ class ReviewerCertificateSettingsForm extends Form
             'showBody',
             'showDateLine',
             'showSignatureSection',
+            'showDateBlock',
             'accentColor',
             'textColor',
             'certificateBody',
@@ -323,6 +326,10 @@ class ReviewerCertificateSettingsForm extends Form
 
         // Global vertical shift for all certificate text (− up / + down)
         $templateDao->upsertSetting($tid, 'contentOffsetY', (string) $clamp($this->getData('contentOffsetY'), -400, 400, 0));
+
+        // Per-element drag offsets: validate + re-encode as a clean JSON map.
+        $elementOffsets = ReviewerCertificatePlugin::normalizeElementOffsets($this->getData('elementOffsets'));
+        $templateDao->upsertSetting($tid, 'elementOffsets', (string) json_encode($elementOffsets, JSON_UNESCAPED_UNICODE));
 
         $qrSize = (int) $this->getData('qrSize');
         $templateDao->upsertSetting($tid, 'qrSize', (string) (($qrSize >= 20 && $qrSize <= 300) ? $qrSize : 68));
